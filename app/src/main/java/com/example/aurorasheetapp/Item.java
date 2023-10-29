@@ -5,8 +5,9 @@ import java.util.Date;
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
  */
+// I changed the date to integer for testing so feel free to change its type
 public class Item {
-    private Date dateOfPurchase;
+    private int dateOfPurchase;
     private String briefDescription;
     private String make;
     private double serialNumber;
@@ -24,7 +25,7 @@ public class Item {
      * @param estimatedValue   The estimated value of the item.
      * @param comment          Additional comments about the item.
      */
-    public Item(Date dateOfPurchase, String briefDescription, String make, double serialNumber, String model, double estimatedValue, String comment) {
+    public Item(int dateOfPurchase, String briefDescription, String make, double serialNumber, String model, double estimatedValue, String comment) {
 
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
@@ -36,16 +37,17 @@ public class Item {
     }
     /**
      * Get the date of purchase or acquisition.
+     *
      * @return The date of purchase.
      */
-    public Date getDateOfPurchase() {
+    public int getDateOfPurchase() {
         return dateOfPurchase;
     }
     /**
      * Set the date of purchase or acquisition.
      * @param dateOfPurchase The date of purchase to set.
      */
-    public void setDateOfPurchase(Date dateOfPurchase) {
+    public void setDateOfPurchase(int dateOfPurchase) {
         this.dateOfPurchase = dateOfPurchase;
     }
     /**
