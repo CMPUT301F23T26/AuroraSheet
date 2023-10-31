@@ -1,0 +1,97 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+<ImageView
+    android:id="@+id/imageViewItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/toolbar"
+    android:adjustViewBounds="true"
+    android:scaleType="centerCrop"/>
+
+<EditText
+    android:id="@+id/itemName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/imageViewItem"
+    android:layout_marginTop="8dp"
+    android:hint="Item Name"
+    android:textSize="18sp"/>
+
+<EditText
+    android:id="@+id/itemDescription"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/itemName"
+    android:layout_marginTop="8dp"
+    android:hint="Description"
+    android:textSize="16sp"/>
+
+<!-- Make and Model Side by Side -->
+<LinearLayout
+    android:id="@+id/layoutMakeModel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/itemDescription"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/itemMake"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="Make"/>
+
+    <EditText
+        android:id="@+id/itemModel"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="Model"/>
+</LinearLayout>
+
+<!-- Value and Serial Number Side by Side -->
+<LinearLayout
+    android:id="@+id/layoutValueSerial"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/layoutMakeModel"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/itemValue"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="Value"/>
+
+    <EditText
+        android:id="@+id/itemSerialNumber"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="Serial Number"/>
+</LinearLayout>
+
+<!-- Comment -->
+<EditText
+    android:id="@+id/itemComment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/layoutValueSerial"
+    android:layout_marginTop="8dp"
+    android:hint="Comment"/>
+
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/addItemButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/itemComment"/>
+
+</RelativeLayout>
