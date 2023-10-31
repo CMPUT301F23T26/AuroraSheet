@@ -42,13 +42,20 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="16dp">
+
         <TextView
-            android:id="@+id/textTotalValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Total: $100"
-            android:textSize="34sp" />
+            android:layout_weight="0.6"
+            android:text="@string/total"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/totalValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:textSize="24sp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonAdd"

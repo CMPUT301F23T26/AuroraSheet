@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
 
+    private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomArrayAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
 
-
+        totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
+
+        // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
+
+        // display total value for all the items
+        totalAmountTextView = findViewById(R.id.totalValue);
+        totalAmountTextView.setText(computeTotal());
     }
 
     @Override
@@ -83,5 +91,14 @@ public class MainActivity extends AppCompatActivity {
             listItems.add(listItem);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    // move this to item list class?
+    public String computeTotal() {
+        double total = 0;
+        for (Item item : listItems) {
+            total += item.getEstimatedValue();
+        }
+        return String.format("%.2f", total);
     }
 }
