@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+/**
+ * This class serves as the main activity and manages a list of Item Records.
+ */
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;

@@ -10,8 +10,11 @@ import android.widget.EditText;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**
+ * This class manages adding new items to the item list. It gets user input and validates
+ * all the item fields before sending the data back to the main item list activity.
+ */
 public class AddItemActivity extends AppCompatActivity {
-
     private EditText itemName;
     private EditText itemDescription;
     private EditText itemValue;

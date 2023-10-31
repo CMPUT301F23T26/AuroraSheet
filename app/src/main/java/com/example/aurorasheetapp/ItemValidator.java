@@ -1,7 +1,11 @@
 package com.example.aurorasheetapp;
 
+/**
+ * This class is used by the AddItemActivity and ViewItemActivity classes to make sure all the
+ * user input is valid and in the correct formats for adding or editing items.
+ */
 public class ItemValidator {
-public static boolean validateItemName(String itemName) {
+    public static boolean validateItemName(String itemName) {
         return itemName.length() > 0;
     }
 
