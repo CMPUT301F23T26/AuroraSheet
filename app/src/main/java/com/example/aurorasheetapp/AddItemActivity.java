@@ -1,20 +1,31 @@
 package com.example.aurorasheetapp;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.IOException;
 
 /**
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
 public class AddItemActivity extends AppCompatActivity {
+    private Button chooseImageButton;
+    private ImageView itemImage;
     private EditText itemName;
     private EditText itemDescription;
     private EditText itemValue;
@@ -28,6 +39,8 @@ public class AddItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        chooseImageButton = findViewById(R.id.selectImageButton);
+        itemImage = findViewById(R.id.imageViewItem);
         itemName = findViewById(R.id.itemName);
         itemDescription = findViewById(R.id.itemDescription);
         itemValue = findViewById(R.id.itemValue);
@@ -36,6 +49,12 @@ public class AddItemActivity extends AppCompatActivity {
         itemComment = findViewById(R.id.itemComment);
         addItemButton = findViewById(R.id.addItemButton);
 
+        chooseImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageChooser();
+            }
+        });
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +79,33 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
+    public void imageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
+    }
 
-
-
+    ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
+            new ActivityResultContracts
+                    .StartActivityForResult(),
+            result -> {
+                if (result.getResultCode()
+                        == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // do your operation from here....
+                    if (data != null
+                            && data.getData() != null) {
+                        Uri selectedImageUri = data.getData();
+                        Bitmap selectedImageBitmap;
+                        try {
+                            selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                            itemImage.setImageBitmap(selectedImageBitmap);
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
 }

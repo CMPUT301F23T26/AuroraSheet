@@ -1,11 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<Button
+    android:id="@+id/selectImageButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="select image"/>
 
 <ImageView
     android:id="@+id/imageViewItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_below="@id/selectImageButton"
     android:adjustViewBounds="true"
     android:scaleType="centerCrop"/>
 
@@ -16,6 +23,7 @@ android:layout_height="match_parent">
     android:layout_below="@id/imageViewItem"
     android:layout_marginTop="8dp"
     android:hint="Item Name"
+    android:inputType="textPersonName"
     android:textSize="18sp"/>
 
 <EditText
@@ -25,6 +33,7 @@ android:layout_height="match_parent">
     android:layout_below="@id/itemName"
     android:layout_marginTop="8dp"
     android:hint="Description"
+    android:inputType="text"
     android:textSize="16sp"/>
 
 <LinearLayout
@@ -39,6 +48,7 @@ android:layout_height="match_parent">
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:inputType="textPersonName"
         android:hint="Make"/>
 
     <EditText
@@ -46,6 +56,7 @@ android:layout_height="match_parent">
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:inputType="textPersonName"
         android:hint="Model"/>
 </LinearLayout>
 
@@ -61,6 +72,7 @@ android:layout_height="match_parent">
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
         android:hint="Value"/>
 
     <EditText
@@ -68,6 +80,7 @@ android:layout_height="match_parent">
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:inputType="number"
         android:hint="Serial Number"/>
 </LinearLayout>
 
@@ -85,6 +98,7 @@ android:layout_height="match_parent">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/itemComment"
-        android:layout_marginTop="11dp" />
+        android:layout_marginTop="11dp"
+        app:srcCompat="@android:drawable/checkbox_on_background" />
 
 </RelativeLayout>

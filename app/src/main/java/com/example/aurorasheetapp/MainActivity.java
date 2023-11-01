@@ -1,5 +1,7 @@
 package com.example.aurorasheetapp;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-                startActivityForResult(intent, 1);
+                addItemLauncher.launch(intent);
             }
         });
 
@@ -72,8 +74,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // get the data from the add expense activity and add it to the item list
-        if (resultCode == 1) {
+        if (requestCode == 1) {
+            handleAddItemResult(data);
+        }
+    }
+
+
+    // move this to item list class?
+    public String computeTotal() {
+        double total = 0;
+        for (Item item : listItems) {
+            total += item.getEstimatedValue();
+        }
+        return String.format("%.2f", total);
+    }
+
+    private void handleAddItemResult(Intent data) {
+        if (data != null) {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             String value = data.getStringExtra("value");
@@ -92,15 +109,20 @@ public class MainActivity extends AppCompatActivity {
             );
             listItems.add(listItem);
             adapter.notifyDataSetChanged();
+            totalAmountTextView.setText(computeTotal());
         }
     }
 
-    // move this to item list class?
-    public String computeTotal() {
-        double total = 0;
-        for (Item item : listItems) {
-            total += item.getEstimatedValue();
-        }
-        return String.format("%.2f", total);
-    }
+
+    private final ActivityResultLauncher<Intent> addItemLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == 1) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                handleAddItemResult(data);
+                            }
+                        }
+                    });
+
 }
