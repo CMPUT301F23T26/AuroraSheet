@@ -22,5 +22,4 @@
     <color name="colorAccent">#3F51B5</color>       <!-- Peach -->
     <color name="shade6">#FFF3F1</color>            <!-- Very Light Peach -->
     <color name="shade7">#ADA8E6</color>          <!-- Semi-transparent Peach Pink -->
-    <color name="white">#FFFFFF</color>             <!-- Pure White -->
 </resources>
