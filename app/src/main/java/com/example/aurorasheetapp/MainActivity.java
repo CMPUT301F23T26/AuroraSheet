@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             String value = data.getStringExtra("value");
+            String serial = data.getStringExtra("serial");
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
