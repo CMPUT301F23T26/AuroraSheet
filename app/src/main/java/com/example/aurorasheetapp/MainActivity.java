@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0;i<10;i++){
             Item listItem = new Item(
                           "item",
-                    +i+1,
+                    new ItemDate(i+12, i+1, i+1999),
                     "good " +i+1,
                     "wooden "+i+1,
                     20 + i+1,
@@ -102,11 +102,9 @@ public class MainActivity extends AppCompatActivity {
     private void launchEditData(Intent intent, int i){
         if (intent != null){
             Item itemToEdit = listItems.get(i);
-            //No name for Item, uncomment when implemented
-            //intent.putExtra("name", itemToEdit.getName());
+            intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
-            //uncomment when implemented date
-            //intent.putExtra("date", itemToEdit.getDateOfPurchase());
+            intent.putExtra("date", itemToEdit.getDateOfPurchase().toString());
             intent.putExtra("make", itemToEdit.getMake());
             intent.putExtra("comment", itemToEdit.getComment());
             intent.putExtra("model", itemToEdit.getModel());
@@ -126,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             Item listItem = new Item(
 
                     name,
-                    2,
+                    new ItemDate(20, 12, 2012),
                     description,
                     make,
                     1,
@@ -148,15 +146,17 @@ public class MainActivity extends AppCompatActivity {
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
+            ItemDate date = new ItemDate(data.getStringExtra("time"));
             int index = data.getIntExtra("index", -1);
 
             if(index != -1){
                 Item item = listItems.get(index);
                 item.setMake(make);
                 item.setComment(comment);
-                //item.setName(name);
+                item.setName(name);
                 item.setEstimatedValue(value);
                 item.setModel(model);
+                item.setDateOfPurchase(date);
                 item.setBriefDescription(description);
             }
             adapter.notifyDataSetChanged();

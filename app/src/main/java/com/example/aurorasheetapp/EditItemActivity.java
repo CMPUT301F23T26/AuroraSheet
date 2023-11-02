@@ -22,7 +22,8 @@ import java.io.IOException;
 public class EditItemActivity extends AppCompatActivity {
     private Button chooseImageButton, deleteImageButton;
     private ImageView itemImage;
-    private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment;
+    private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
+                        itemDate;
     private FloatingActionButton confirmButton, deleteButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class EditItemActivity extends AppCompatActivity {
         itemMake = findViewById(R.id.itemMake_edit);
         itemModel = findViewById(R.id.itemModel_edit);
         itemComment = findViewById(R.id.itemComment_edit);
+        itemDate = findViewById(R.id.date_edit);
         confirmButton = findViewById(R.id.confirmButton_edit);
         deleteButton = findViewById(R.id.deleteItemButton_edit);
 
@@ -53,6 +55,7 @@ public class EditItemActivity extends AppCompatActivity {
         make = inputIntent.getStringExtra("make");
         model = inputIntent.getStringExtra("model");
         comment = inputIntent.getStringExtra("comment");
+        String time = inputIntent.getStringExtra("date");
         i = inputIntent.getIntExtra("index", -1);
 
         itemName.setText(name);
@@ -61,6 +64,7 @@ public class EditItemActivity extends AppCompatActivity {
         itemMake.setText(make);
         itemModel.setText(model);
         itemComment.setText(comment);
+        itemDate.setText(time);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +77,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("model", itemModel.getText());
                     outputIntent.putExtra("make", itemMake.getText());
                     outputIntent.putExtra("comment", itemComment.getText());
+                    outputIntent.putExtra("time", itemDate.getText());
                     outputIntent.putExtra("index", i);
                     setResult(2, outputIntent);
                     finish();

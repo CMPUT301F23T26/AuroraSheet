@@ -92,14 +92,14 @@
         android:hint="Serial Number"/>
 </LinearLayout>
 
-<EditText
-    android:id="@+id/itemComment_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/layoutValueSerial_edit"
-    android:layout_marginTop="8dp"
-    android:hint="Comment"/>
 
+    <EditText
+        android:id="@+id/itemComment_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutValueSerial_edit"
+        android:layout_marginTop="56dp"
+        android:hint="Comment" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmButton_edit"
@@ -118,5 +118,25 @@
         android:layout_marginTop="11dp"
         android:layout_marginEnd="19dp"
         app:srcCompat="@android:drawable/btn_dialog" />
+
+    <LinearLayout
+        android:id="@+id/dateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:layout_below="@+id/layoutValueSerial_edit"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="6dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/date_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Date (dd-mm-yyyy)"
+            android:inputType="textPersonName" />
+
+    </LinearLayout>
 
 </RelativeLayout>
