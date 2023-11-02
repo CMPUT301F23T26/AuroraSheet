@@ -7,6 +7,7 @@ import java.util.Date;
  */
 // I changed the date to integer for testing so feel free to change its type
 public class Item {
+    private String name;
     private int dateOfPurchase;
     private String briefDescription;
     private String make;
@@ -17,6 +18,7 @@ public class Item {
     /**
      * Constructs an Item with the specified attributes.
      *
+     * @param name             The name of the item
      * @param dateOfPurchase   The date of purchase or acquisition.
      * @param briefDescription A brief description of the item.
      * @param make             The make or manufacturer of the item.
@@ -25,8 +27,9 @@ public class Item {
      * @param estimatedValue   The estimated value of the item.
      * @param comment          Additional comments about the item.
      */
-    public Item(int dateOfPurchase, String briefDescription, String make, double serialNumber, String model, double estimatedValue, String comment) {
-
+    public Item(String name, int dateOfPurchase, String briefDescription, String make,
+                double serialNumber, String model, double estimatedValue, String comment) {
+        this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
         this.make = make;
@@ -35,6 +38,22 @@ public class Item {
         this.estimatedValue = estimatedValue;
         this.comment = comment;
     }
+    /**
+     * Get the name of the item.
+     *
+     * @return The name of item.
+     */
+    public String getName() {
+        return name;
+    }
+    /**
+     * set the name of the item.
+     *@param name The name of the item to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * Get the date of purchase or acquisition.
      *

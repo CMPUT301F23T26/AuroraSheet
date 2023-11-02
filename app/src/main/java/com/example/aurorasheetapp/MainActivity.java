@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
+    private FloatingActionButton editButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 // just for texting you can delete later
         for (int i=0;i<10;i++){
             Item listItem = new Item(
+                          "item",
                     +i+1,
                     "good " +i+1,
                     "wooden "+i+1,
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
+        editButton = findViewById(R.id.buttonEdit);
+        int itemIndex = 1;
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                launchEditData(intent, itemIndex);
+            }
+        });
         // display total value for all the items
         totalAmountTextView = findViewById(R.id.totalValue);
         totalAmountTextView.setText(computeTotal());
@@ -89,6 +99,21 @@ public class MainActivity extends AppCompatActivity {
         return String.format("%.2f", total);
     }
 
+    private void launchEditData(Intent intent, int i){
+        if (intent != null){
+            Item itemToEdit = listItems.get(i);
+            //No name for Item, uncomment when implemented
+            //intent.putExtra("name", itemToEdit.getName());
+            intent.putExtra("value", itemToEdit.getEstimatedValue());
+            //uncomment when implemented date
+            //intent.putExtra("date", itemToEdit.getDateOfPurchase());
+            intent.putExtra("make", itemToEdit.getMake());
+            intent.putExtra("comment", itemToEdit.getComment());
+            intent.putExtra("model", itemToEdit.getModel());
+            intent.putExtra("description", itemToEdit.getBriefDescription());
+            editItemLauncher.launch(intent);
+        }
+    }
     private void handleAddItemResult(Intent data) {
         if (data != null) {
             String name = data.getStringExtra("name");
@@ -99,12 +124,14 @@ public class MainActivity extends AppCompatActivity {
             String comment = data.getStringExtra("comment");
 
             Item listItem = new Item(
-                    1,
+
                     name,
+                    2,
                     description,
-                    Integer.parseInt(value),
                     make,
                     1,
+                    model,
+                    Integer.parseInt(value),
                     comment
             );
             listItems.add(listItem);
@@ -113,6 +140,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void EditItemResult(Intent data) {
+        if (data != null) {
+            String name = data.getStringExtra("name");
+            String description = data.getStringExtra("description");
+            double value = data.getDoubleExtra("value", -1);
+            String make = data.getStringExtra("make");
+            String model = data.getStringExtra("model");
+            String comment = data.getStringExtra("comment");
+            int index = data.getIntExtra("index", -1);
+
+            if(index != -1){
+                Item item = listItems.get(index);
+                item.setMake(make);
+                item.setComment(comment);
+                //item.setName(name);
+                item.setEstimatedValue(value);
+                item.setModel(model);
+                item.setBriefDescription(description);
+            }
+            adapter.notifyDataSetChanged();
+            totalAmountTextView.setText(computeTotal());
+        }
+    }
 
     private final ActivityResultLauncher<Intent> addItemLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -121,6 +171,16 @@ public class MainActivity extends AppCompatActivity {
                             Intent data = result.getData();
                             if (data != null) {
                                 handleAddItemResult(data);
+                            }
+                        }
+                    });
+    private final ActivityResultLauncher<Intent> editItemLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == 1) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                EditItemResult(data);
                             }
                         }
                     });
