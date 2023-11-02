@@ -2,11 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<Button
-    android:id="@+id/selectImageButton_edit"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="select image"/>
+
+    <Button
+        android:id="@+id/selectImageButton_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:text="select image" />
 
     <Button
         android:id="@+id/deleteImageButton_edit"
@@ -138,5 +141,15 @@
             android:inputType="textPersonName" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/backButton_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="246dp"
+        android:text="back" />
 
 </RelativeLayout>

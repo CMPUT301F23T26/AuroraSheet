@@ -104,11 +104,12 @@ public class MainActivity extends AppCompatActivity {
             Item itemToEdit = listItems.get(i);
             intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
-            intent.putExtra("date", itemToEdit.getDateOfPurchase().toString());
+            intent.putExtra("time", itemToEdit.getDateOfPurchase().toString());
             intent.putExtra("make", itemToEdit.getMake());
             intent.putExtra("comment", itemToEdit.getComment());
             intent.putExtra("model", itemToEdit.getModel());
             intent.putExtra("description", itemToEdit.getBriefDescription());
+            intent.putExtra("index", i);
             editItemLauncher.launch(intent);
         }
     }
@@ -140,27 +141,38 @@ public class MainActivity extends AppCompatActivity {
 
     private void EditItemResult(Intent data) {
         if (data != null) {
-            String name = data.getStringExtra("name");
-            String description = data.getStringExtra("description");
-            double value = data.getDoubleExtra("value", -1);
-            String make = data.getStringExtra("make");
-            String model = data.getStringExtra("model");
-            String comment = data.getStringExtra("comment");
-            ItemDate date = new ItemDate(data.getStringExtra("time"));
-            int index = data.getIntExtra("index", -1);
-
-            if(index != -1){
-                Item item = listItems.get(index);
-                item.setMake(make);
-                item.setComment(comment);
-                item.setName(name);
-                item.setEstimatedValue(value);
-                item.setModel(model);
-                item.setDateOfPurchase(date);
-                item.setBriefDescription(description);
+            Boolean isDelete = data.getBooleanExtra("isDelete", false);
+            if(isDelete){
+                int index = data.getIntExtra("index", -1);
+                if(index > -1){
+                    listItems.remove(index);
+                    adapter.notifyDataSetChanged();
+                    totalAmountTextView.setText(computeTotal());
+                }
             }
-            adapter.notifyDataSetChanged();
-            totalAmountTextView.setText(computeTotal());
+            else{
+                String name = data.getStringExtra("name");
+                String description = data.getStringExtra("description");
+                String value = data.getStringExtra("value");
+                String make = data.getStringExtra("make");
+                String model = data.getStringExtra("model");
+                String comment = data.getStringExtra("comment");
+                ItemDate date = new ItemDate(data.getStringExtra("time"));
+                int index = data.getIntExtra("index", -1);
+
+                if(index != -1){
+                    Item item = listItems.get(index);
+                    item.setMake(make);
+                    item.setComment(comment);
+                    item.setName(name);
+                    item.setEstimatedValue(Double.parseDouble(value));
+                    item.setModel(model);
+                    item.setDateOfPurchase(date);
+                    item.setBriefDescription(description);
+                }
+                adapter.notifyDataSetChanged();
+                totalAmountTextView.setText(computeTotal());
+            }
         }
     }
 
