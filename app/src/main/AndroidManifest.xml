@@ -16,29 +16,31 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
 
-        <!-- Declare your Login activity -->
+        <!-- Declare your Login activity as the main entry point -->
         <activity
             android:name=".Login"
-            android:label="Login Activity"
-            android:exported="true">
-            <!-- If you want this activity to be the entry point of your application, add the MAIN action and LAUNCHER category here -->
-        </activity>
-
-        <!-- Declare your Registration activity -->
-        <activity
-            android:name=".Registration"
-            android:label="Registration Activity"
-            android:exported="false">
-        </activity>
-
-        <!-- Your existing MainActivity declaration -->
-        <activity
-            android:name=".MainActivity"
+            android:label="@string/login_activity_label"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- Declare your Registration activity -->
+        <activity
+            android:name=".Registration"
+            android:label="@string/registration_activity_label"
+            android:exported="true">
+            <!-- No intent-filter since it's not a direct entry point -->
+        </activity>
+
+        <!-- MainActivity declaration -->
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/main_activity_label"
+            android:exported="true">
+            <!-- No intent-filter as this is not the launcher activity -->
         </activity>
 
         <!-- Any other activities and application components declarations -->

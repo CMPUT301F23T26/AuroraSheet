@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AuroraSheetApp</string>
+    <string name="login_activity_label">Login Activity</string>
+    <string name="registration_activity_label">Registration Activity</string>
+    <string name="main_activity_label">Main Activity</string>
+    <!-- Add other string resources here as needed -->
 </resources>
