@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     private FloatingActionButton editButton;
+
+    private int itemIndex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
-        int itemIndex = 1;
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -200,9 +201,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     @Override
     public void onItemClick(int position) {
-        // TODO
-        // change this to go to view activity instead of add activity
-        Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-        addItemLauncher.launch(intent);
+        itemIndex = position;
     }
 }
