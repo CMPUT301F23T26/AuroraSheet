@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Tag> tags;
     private FloatingActionButton addTag_btn;
 
+    private ImageButton profile_btn;
+    private ImageButton sort_btn;
+    private ImageButton search_btn;
+
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     @Override
@@ -45,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         tagView = findViewById(R.id.tag_View);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        tagView.setHasFixedSize(true);
         tagView.setLayoutManager(layoutManager);
         listItems = new ArrayList<>();
         tags = new ArrayList<>();
@@ -75,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         tagAdapter = new CustomTagAdapter(tags, this);
         tagView.setAdapter(tagAdapter);
         addTag_btn = findViewById(R.id.addTagButton);
+        profile_btn = findViewById(R.id.userProfile_btn);
+        sort_btn = findViewById(R.id.sortItem_btn);
+        search_btn = findViewById(R.id.searchItem_btn);
 
         addTag_btn.setOnClickListener(new View.OnClickListener() {
             @Override
