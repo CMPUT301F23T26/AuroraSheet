@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewInterface{
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -126,4 +126,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+    @Override
+    public void onItemClick(int position) {
+        // TODO
+        // change this to go to view activity instead of add activity
+        Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
+        addItemLauncher.launch(intent);
+    }
 }
