@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewInterface{
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     private FloatingActionButton editButton;
+
+    private int itemIndex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
-        int itemIndex = 1;
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             String value = data.getStringExtra("value");
+            String serial = data.getStringExtra("serial");
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
@@ -197,4 +199,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+    @Override
+    public void onItemClick(int position) {
+        itemIndex = position;
+    }
 }

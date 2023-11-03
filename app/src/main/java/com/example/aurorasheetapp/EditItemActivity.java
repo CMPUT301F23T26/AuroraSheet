@@ -131,7 +131,6 @@ public class EditItemActivity extends AppCompatActivity {
                 if (result.getResultCode()
                         == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    // do your operation from here....
                     if (data != null
                             && data.getData() != null) {
                         Uri selectedImageUri = data.getData();

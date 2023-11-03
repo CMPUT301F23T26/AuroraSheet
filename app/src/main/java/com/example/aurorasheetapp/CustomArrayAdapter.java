@@ -14,18 +14,23 @@ import java.util.List;
 public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.ViewHolder> {
     private List<Item> listItems;
     private Context context;
+    private RecyclerViewInterface recyclerViewInterface;
 
-    public CustomArrayAdapter(List<Item> listItems, Context context) {
+    public CustomArrayAdapter(List<Item> listItems, RecyclerViewInterface recyclerViewInterface) {
         this.listItems = listItems;
-        this.context = context;
+        this.recyclerViewInterface  = recyclerViewInterface;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item,parent,false);
-        return new ViewHolder(v);
+        Context context = parent.getContext();
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
+        View itemView = layoutInflater.inflate(R.layout.list_item,parent,false);
+
+        ViewHolder viewHolder = new ViewHolder(itemView, recyclerViewInterface);
+        return viewHolder;
     }
 
     @Override
@@ -57,7 +62,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         public TextView estimatedvalue;
         public TextView make;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
             dateofpurchase = (TextView) itemView.findViewById(R.id.dateofpurchase);
@@ -67,6 +72,17 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             serialnumber = (TextView) itemView.findViewById(R.id.serialnumber);
             estimatedvalue = (TextView) itemView.findViewById(R.id.estimatedvalue);
             make = (TextView) itemView.findViewById(R.id.make);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recyclerViewInterface != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
