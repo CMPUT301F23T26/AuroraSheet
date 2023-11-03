@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -27,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
 
+    private RecyclerView tagView;
+    private RecyclerView.Adapter tagAdapter;
+    private ArrayList<Tag> tags;
+    private FloatingActionButton addTag_btn;
+
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     @Override
@@ -36,7 +42,14 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        tagView = findViewById(R.id.tag_View);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        tagView.setHasFixedSize(true);
+        tagView.setLayoutManager(layoutManager);
         listItems = new ArrayList<>();
+        tags = new ArrayList<>();
+
 // just for texting you can delete later
         for (int i=0;i<10;i++){
             Item listItem = new Item(
@@ -54,9 +67,25 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomArrayAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
 
+        for (int i = 1; i < 11; i++){
+            Tag tag = new Tag("Tag"+i);
+            tags.add(tag);
+        }
+
+        tagAdapter = new CustomTagAdapter(tags, this);
+        tagView.setAdapter(tagAdapter);
+        addTag_btn = findViewById(R.id.addTagButton);
+
+        addTag_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // add new tags here
+                // notify adapter data has changed
+            }
+        });
+
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
-
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
