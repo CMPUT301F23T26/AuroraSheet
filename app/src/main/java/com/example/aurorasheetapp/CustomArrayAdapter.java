@@ -36,6 +36,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item listItem = listItems.get(position);
+        holder.name.setText(String.valueOf(listItem.getName()));
         holder.dateofpurchase.setText(String.valueOf(listItem.getDateOfPurchase()));
         holder.briefdescription.setText(listItem.getBriefDescription());
         holder.serialnumber.setText(String.valueOf(listItem.getSerialNumber()));
@@ -51,7 +52,8 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         return listItems.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView name;
         public TextView dateofpurchase;
         public TextView briefdescription;
         public TextView model;
@@ -62,6 +64,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
 
         public ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
+            name = (TextView) itemView.findViewById(R.id.name);
             dateofpurchase = (TextView) itemView.findViewById(R.id.dateofpurchase);
             briefdescription = (TextView) itemView.findViewById(R.id.briefdescription);
             model = (TextView) itemView.findViewById(R.id.model);

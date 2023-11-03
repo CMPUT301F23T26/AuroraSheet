@@ -7,7 +7,8 @@ import java.util.Date;
  */
 // I changed the date to integer for testing so feel free to change its type
 public class Item {
-    private int dateOfPurchase;
+    private String name;
+    private ItemDate dateOfPurchase;
     private String briefDescription;
     private String make;
     private double serialNumber;
@@ -17,6 +18,7 @@ public class Item {
     /**
      * Constructs an Item with the specified attributes.
      *
+     * @param name             The name of the item
      * @param dateOfPurchase   The date of purchase or acquisition.
      * @param briefDescription A brief description of the item.
      * @param make             The make or manufacturer of the item.
@@ -25,8 +27,9 @@ public class Item {
      * @param estimatedValue   The estimated value of the item.
      * @param comment          Additional comments about the item.
      */
-    public Item(int dateOfPurchase, String briefDescription, String make, double serialNumber, String model, double estimatedValue, String comment) {
-
+    public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
+                double serialNumber, String model, double estimatedValue, String comment) {
+        this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
         this.make = make;
@@ -36,18 +39,34 @@ public class Item {
         this.comment = comment;
     }
     /**
+     * Get the name of the item.
+     *
+     * @return The name of item.
+     */
+    public String getName() {
+        return name;
+    }
+    /**
+     * set the name of the item.
+     *@param name The name of the item to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Get the date of purchase or acquisition.
      *
      * @return The date of purchase.
      */
-    public int getDateOfPurchase() {
+    public ItemDate getDateOfPurchase() {
         return dateOfPurchase;
     }
     /**
      * Set the date of purchase or acquisition.
      * @param dateOfPurchase The date of purchase to set.
      */
-    public void setDateOfPurchase(int dateOfPurchase) {
+    public void setDateOfPurchase(ItemDate dateOfPurchase) {
         this.dateOfPurchase = dateOfPurchase;
     }
     /**
