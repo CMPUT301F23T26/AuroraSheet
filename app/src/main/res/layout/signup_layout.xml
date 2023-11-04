@@ -110,7 +110,6 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:gravity="center"
-                android:onClick="onClick"
                 android:paddingTop="10dp"
                 android:text="Don't have an account? Sign up here."
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
