@@ -81,7 +81,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:hint="Serial Number"/>
+        android:hint="Serial Number (Optional)"/>
 </LinearLayout>
 
 <EditText
