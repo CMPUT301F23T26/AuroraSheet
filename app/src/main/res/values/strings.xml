@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">AuroraSheetApp</string>
     <string name="total">Total Estimated Value:</string>
+    <string name="select_image">select image</string>
+    <string name="serial_number_editpage">Serial Number (Optional)</string>
+    <string name="description_editpage">Description</string>
+    <string name="make_editpage">Make</string>
+    <string name="model_editpage">Model</string>
+    <string name="item_name_editpage">Item Name</string>
+    <string name="value_editpage">Value</string>
+    <string name="comment_editpage">Comment</string>
+    <string name="delete_image">delete image</string>
+    <string name="name_listdescription">name</string>
+    <string name="serial_number_listdescription">Serial Number</string>
+    <string name="model_listdescription">Model</string>
+    <string name="make_listdescription">Make</string>
+    <string name="estimated_value_listdescription">Estimated Value</string>
+    <string name="date_of_purchase_listdescription">Date of purchase</string>
+    <string name="comment_listdescription">comment</string>
+    <string name="description_listdescription">Brief description</string>
 </resources>

@@ -16,49 +16,49 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="name" />
+            android:text="@string/name_listdescription" />
 
         <TextView
             android:id="@+id/dateofpurchase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date of purchase" />
+            android:text="@string/date_of_purchase_listdescription" />
 
         <TextView
                 android:id="@+id/briefdescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Brief description" />
+                android:text="@string/description_listdescription" />
 
         <TextView
                 android:id="@+id/make"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Make" />
+                android:text="@string/make_listdescription" />
 
         <TextView
                 android:id="@+id/serialnumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Serial Number" />
+                android:text="@string/serial_number_listdescription" />
 
         <TextView
                 android:id="@+id/model"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Model" />
+                android:text="@string/model_listdescription" />
 
         <TextView
                 android:id="@+id/estimatedvalue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estimated Value" />
+                android:text="@string/estimated_value_listdescription" />
 
         <TextView
             android:id="@+id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="comment" />
+            android:text="@string/comment_listdescription" />
     </LinearLayout>
 
 </LinearLayout>
