@@ -240,30 +240,35 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
 
         //i added the following to access database and clear lisst of items and only display the ones in the database
-    private void loadItemsFromFirestore() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        firestore.collection("users")
-                .document(currentUser.getUid())
-                .collection("items")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        listItems.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d("Firestore", document.getId() + " => " + document.getData());
-                            Item item = document.toObject(Item.class);
-                            listItems.add(item);
+        private void loadItemsFromFirestore() {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser == null) {
+                Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("items")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listItems.clear();
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Item item = document.toObject(Item.class);
+                                listItems.add(item);
+                            }
+
+                            adapter.notifyDataSetChanged();
+                            totalAmountTextView.setText(computeTotal());
+                        } else {
+                            String error = task.getException().getMessage();
+                            Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
                         }
-                        adapter.notifyDataSetChanged();
-                        totalAmountTextView.setText(computeTotal());
-                    } else {
-                        Log.w("Firestore", "Error getting documents.", task.getException());
-                        Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-    }
+                    });
+        }
 
 
 
