@@ -3,144 +3,25 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
-        android:id="@+id/selectImageButton_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:text="select image" />
-
-    <Button
-        android:id="@+id/deleteImageButton_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="6dp"
-        android:text="delete image" />
-
-    <ImageView
-    android:id="@+id/imageViewItem_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/selectImageButton_edit"
-    android:adjustViewBounds="true"
-    android:scaleType="centerCrop"/>
-
-<EditText
-    android:id="@+id/itemName_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/imageViewItem_edit"
-    android:layout_marginTop="8dp"
-    android:hint="Item Name"
-    android:inputType="textPersonName"
-    android:textSize="18sp"/>
-
-<EditText
-    android:id="@+id/itemDescription_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/itemName_edit"
-    android:layout_marginTop="8dp"
-    android:hint="Description"
-    android:inputType="text"
-    android:textSize="16sp"/>
-
-<LinearLayout
-    android:id="@+id/layoutMakeModel_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/itemDescription_edit"
-    android:orientation="horizontal">
-
-    <EditText
-        android:id="@+id/itemMake_edit"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="Make"/>
-
-    <EditText
-        android:id="@+id/itemModel_edit"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="Model"/>
-</LinearLayout>
-
-<LinearLayout
-    android:id="@+id/layoutValueSerial_edit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/layoutMakeModel_edit"
-    android:orientation="horizontal">
-
-    <EditText
-        android:id="@+id/itemValue_edit"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:hint="Value"/>
-
-    <EditText
-        android:id="@+id/itemSerialNumber_edit"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Serial Number"/>
-</LinearLayout>
-
-
-    <EditText
-        android:id="@+id/itemComment_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutValueSerial_edit"
-        android:layout_marginTop="56dp"
-        android:hint="Comment" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmButton_edit"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/itemComment_edit"
-        android:layout_marginTop="11dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/deleteItemButton_edit"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="end|bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/itemComment_edit"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="19dp"
         app:srcCompat="@android:drawable/btn_dialog" />
-
-    <LinearLayout
-        android:id="@+id/dateLayout"
-        android:layout_width="match_parent"
-        android:layout_height="53dp"
-        android:layout_below="@+id/layoutValueSerial_edit"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="6dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/date_edit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Date (dd-mm-yyyy)"
-            android:inputType="textPersonName" />
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/backButton_edit"
@@ -148,8 +29,135 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="164dp"
-        android:layout_marginBottom="246dp"
+        android:layout_marginEnd="163dp"
+        android:layout_marginBottom="21dp"
         android:text="back" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="659dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/selectImageButton_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:text="select image" />
+
+                <Button
+                    android:id="@+id/deleteImageButton_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="delete image" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageViewItem_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop" />
+
+            <EditText
+                android:id="@+id/itemName_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Item Name"
+                android:inputType="textPersonName"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/itemDescription_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Description"
+                android:inputType="text"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutMakeModel_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/itemMake_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Make"
+                    android:inputType="textPersonName" />
+
+                <EditText
+                    android:id="@+id/itemModel_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Model"
+                    android:inputType="textPersonName" />
+
+                <LinearLayout
+                    android:id="@+id/dateLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/date_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Date (dd-mm-yyyy)"
+                        android:inputType="textPersonName" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutValueSerial_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/itemValue_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Value"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/itemSerialNumber_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Serial Number"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/itemComment_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:hint="Comment" />
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
