@@ -238,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     }
 
+
+        //i added the following to access database and clear lisst of items and only display the ones in the database
     private void loadItemsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firestore.collection("users")
