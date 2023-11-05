@@ -17,8 +17,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class manages adding new items to the item list. It gets user input and validates
@@ -36,10 +41,16 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText itemComment;
     private FloatingActionButton addItemButton;
 
+    //created instance
+    private FirebaseFirestore firestore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
+
+        //init a firebase
+        firestore = FirebaseFirestore.getInstance();
 
         chooseImageButton = findViewById(R.id.selectImageButton);
         itemImage = findViewById(R.id.imageViewItem);
@@ -73,6 +84,34 @@ public class AddItemActivity extends AppCompatActivity {
                 if(!validateInput()){
                     return;
                 }
+
+                //info bout current user
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser == null) {
+                    Toast.makeText(AddItemActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //put all obj details into a hashmap so we can push into database
+                Map<String, Object> newItem = new HashMap<>();
+                newItem.put("name", name);
+                newItem.put("description", description);
+                newItem.put("value", value);
+                newItem.put("serial", serial);
+                newItem.put("make", make);
+                newItem.put("model", model);
+                newItem.put("comment", comment);
+
+                //adding objects into database based on user
+                firestore.collection("users")
+                        .document(currentUser.getUid())
+                        .collection("items")
+                        .add(newItem)
+                        .addOnSuccessListener(documentReference -> Toast.makeText(AddItemActivity.this, "Item added", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
+
+
+
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("name", name);
