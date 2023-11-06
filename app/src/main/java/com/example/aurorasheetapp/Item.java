@@ -38,6 +38,13 @@ public class Item {
         this.estimatedValue = estimatedValue;
         this.comment = comment;
     }
+
+
+    public Item() {
+        }
+
+
+
     /**
      * Get the name of the item.
      *
