@@ -35,12 +35,19 @@
     android:hint="Description"
     android:inputType="text"
     android:textSize="16sp"/>
+<EditText
+    android:id="@+id/itemDate"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/itemDescription"
+    android:hint="Date (dd-mm-yyyy)"
+    android:inputType="textPersonName" />
 
 <LinearLayout
     android:id="@+id/layoutMakeModel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/itemDescription"
+    android:layout_below="@id/itemDate"
     android:orientation="horizontal">
 
     <EditText
