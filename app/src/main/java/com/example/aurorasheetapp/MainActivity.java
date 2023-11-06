@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
         }
     }
 
-
     private final ActivityResultLauncher<Intent> addItemLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
