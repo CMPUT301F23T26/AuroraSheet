@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,7 +25,7 @@ public class EditItemActivity extends AppCompatActivity {
     private Button chooseImageButton, deleteImageButton, backButton;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
-                        itemDate;
+                        itemDate, itemSerial;
     private FloatingActionButton confirmButton, deleteButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +44,12 @@ public class EditItemActivity extends AppCompatActivity {
         itemModel = findViewById(R.id.itemModel_edit);
         itemComment = findViewById(R.id.itemComment_edit);
         itemDate = findViewById(R.id.date_edit);
+        itemSerial = findViewById(R.id.itemSerialNumber_edit);
         confirmButton = findViewById(R.id.confirmButton_edit);
         deleteButton = findViewById(R.id.deleteItemButton_edit);
 
         //TODO: store / pass in image
-        String name, description, make, model, comment, time;
+        String name, description, make, model, comment, time, serial;
         Double value;
         int index;
         Intent inputIntent = getIntent();
@@ -59,6 +61,7 @@ public class EditItemActivity extends AppCompatActivity {
         comment = inputIntent.getStringExtra("comment");
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
+        serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
 
         itemName.setText(name);
         itemDescription.setText(description);
@@ -67,6 +70,7 @@ public class EditItemActivity extends AppCompatActivity {
         itemModel.setText(model);
         itemComment.setText(comment);
         itemDate.setText(time);
+        itemSerial.setText(serial);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +91,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("make", itemMake.getText().toString());
                     outputIntent.putExtra("comment", itemComment.getText().toString());
                     outputIntent.putExtra("time", itemDate.getText().toString());
+                    outputIntent.putExtra("serial", itemSerial.getText().toString());
                     outputIntent.putExtra("index", index);
                     setResult(1, outputIntent);
                     finish();

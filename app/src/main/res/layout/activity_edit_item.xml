@@ -9,19 +9,25 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
+        android:layout_marginStart="26dp"
+        android:layout_marginBottom="82dp"
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/deleteItemButton_edit"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_gravity="end|bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/btn_dialog" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginLeft="325dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="80dp"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <Button
         android:id="@+id/backButton_edit"
@@ -29,13 +35,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="163dp"
-        android:layout_marginBottom="21dp"
+        android:layout_marginEnd="167dp"
+        android:layout_marginBottom="83dp"
         android:text="back" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="659dp">
+        android:layout_height="696dp">
 
         <LinearLayout
             android:layout_width="match_parent"

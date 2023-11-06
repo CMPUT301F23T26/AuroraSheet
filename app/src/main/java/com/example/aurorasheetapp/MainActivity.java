@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             intent.putExtra("make", itemToEdit.getMake());
             intent.putExtra("comment", itemToEdit.getComment());
             intent.putExtra("model", itemToEdit.getModel());
+            intent.putExtra("serial", itemToEdit.getSerialNumber());
             intent.putExtra("description", itemToEdit.getBriefDescription());
             intent.putExtra("index", i);
             editItemLauncher.launch(intent);
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 String model = data.getStringExtra("model");
                 String comment = data.getStringExtra("comment");
                 ItemDate date = new ItemDate(data.getStringExtra("time"));
+                Double serial = Double.parseDouble(data.getStringExtra("serial"));
                 int index = data.getIntExtra("index", -1);
 
                 if (index != -1) {
@@ -178,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     item.setModel(model);
                     item.setDateOfPurchase(date);
                     item.setBriefDescription(description);
+                    item.setSerialNumber(serial);
                 }
                 adapter.notifyDataSetChanged();
                 totalAmountTextView.setText(computeTotal());
