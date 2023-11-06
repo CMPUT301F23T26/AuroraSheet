@@ -34,6 +34,7 @@ public class AddItemActivity extends AppCompatActivity {
     private ImageView itemImage;
     private EditText itemName;
     private EditText itemDescription;
+    private EditText itemDate;
     private EditText itemValue;
     private EditText itemSerial;
     private EditText itemMake;
@@ -56,6 +57,7 @@ public class AddItemActivity extends AppCompatActivity {
         itemImage = findViewById(R.id.imageViewItem);
         itemName = findViewById(R.id.itemName);
         itemDescription = findViewById(R.id.itemDescription);
+        itemDate = findViewById(R.id.itemDate);
         itemValue = findViewById(R.id.itemValue);
         itemSerial = findViewById(R.id.itemSerialNumber);
         itemMake = findViewById(R.id.itemMake);
@@ -75,6 +77,7 @@ public class AddItemActivity extends AppCompatActivity {
                 // get all of the user input for adding a new item
                 String name = itemName.getText().toString();
                 String description = itemDescription.getText().toString();
+                String date = itemDate.getText().toString();
                 String value = itemValue.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String make = itemMake.getText().toString();
@@ -96,6 +99,7 @@ public class AddItemActivity extends AppCompatActivity {
                 Map<String, Object> newItem = new HashMap<>();
                 newItem.put("name", name);
                 newItem.put("description", description);
+                newItem.put("date", date);
                 newItem.put("value", value);
                 newItem.put("serial", serial);
                 newItem.put("make", make);
@@ -110,12 +114,10 @@ public class AddItemActivity extends AppCompatActivity {
                         .addOnSuccessListener(documentReference -> Toast.makeText(AddItemActivity.this, "Item added", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
 
-
-
-
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("description", description);
+                intent.putExtra("date", date);
                 intent.putExtra("value", value);
                 intent.putExtra("serial", serial);
                 intent.putExtra("make", make);

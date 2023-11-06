@@ -55,22 +55,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         listItems = new ArrayList<>();
-// just for texting you can delete later
-//        for (int i = 0; i < 10; i++) {
-//            Item listItem = new Item(
-//                    "item",
-//                    new ItemDate(i + 12, i + 1, i + 1999),
-//                    "good " + i + 1,
-//                    "wooden " + i + 1,
-//                    20 + i + 1,
-//                    "tfd " + i + 1,
-//                    13 + i + 1,
-//                    "nahh " + i + 1
-//            );
-//            listItems.add(listItem);
-//
-//        }
-
 
         adapter = new CustomArrayAdapter(listItems, this);
         recyclerView.setAdapter(adapter);
@@ -148,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         if (data != null) {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
+            ItemDate date = new ItemDate(data.getStringExtra("date"));
             String value = data.getStringExtra("value");
             String serial = data.getStringExtra("serial");
             String make = data.getStringExtra("make");
@@ -155,12 +140,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             String comment = data.getStringExtra("comment");
 
             Item listItem = new Item(
-
                     name,
-                    new ItemDate(20, 12, 2012),
+                    date,
                     description,
                     make,
-                    1,
+                    Integer.parseInt(serial),
                     model,
                     Integer.parseInt(value),
                     comment
@@ -237,8 +221,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         deleteButton.setVisibility(View.VISIBLE);
 
     }
-
-
         //i added the following to access database and clear lisst of items and only display the ones in the database
         private void loadItemsFromFirestore() {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -257,7 +239,18 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                             listItems.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("Firestore", document.getId() + " => " + document.getData());
-                                Item item = document.toObject(Item.class);
+
+                                Item item = new Item(
+                                        document.getString("name"),
+                                        new ItemDate(document.getString("date")),
+                                        document.getString("description"),
+                                        document.getString("make"),
+                                        Double.parseDouble(document.getString("serial")),
+                                        document.getString("model"),
+                                        Double.parseDouble(document.getString("value")),
+                                        document.getString("comment")
+                                );
+
                                 listItems.add(item);
                             }
                             adapter.notifyDataSetChanged();
@@ -267,11 +260,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                             Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
                         }
                     });
-
         }
-
-
-
 
 
 }
