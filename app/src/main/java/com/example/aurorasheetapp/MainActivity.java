@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +19,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
-public class MainActivity extends AppCompatActivity implements RecyclerViewInterface{
+public class MainActivity extends AppCompatActivity implements RecyclerViewInterface {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -32,31 +38,25 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
 
+    private FirebaseFirestore firestore;
+
     private int itemIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //access database
+        firestore = FirebaseFirestore.getInstance();
+        loadItemsFromFirestore();
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         listItems = new ArrayList<>();
-// just for texting you can delete later
-        for (int i=0;i<10;i++){
-            Item listItem = new Item(
-                          "item",
-                    new ItemDate(i+12, i+1, i+1999),
-                    "good " +i+1,
-                    "wooden "+i+1,
-                    20 + i+1,
-                    "tfd "+ i+1,
-                    13 +i+1,
-                    "nahh "+i+1
-            );
-            listItems.add(listItem);
 
-        }
-        adapter = new CustomArrayAdapter(listItems,this);
+        adapter = new CustomArrayAdapter(listItems, this);
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);
@@ -86,23 +86,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(itemIndex > -1){
-                listItems.remove(itemIndex);
-                adapter.notifyDataSetChanged();
+                if (itemIndex > -1) {
+                    listItems.remove(itemIndex);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            handleAddItemResult(data);
-        }
-    }
 
-
-    // move this to item list class?
+    // move computeTotal to item list class?
+    /**
+     * Computes the total value of all the items in the list.
+     * @return A string representation of the total value of all the items.
+     */
     public String computeTotal() {
         double total = 0;
         for (Item item : listItems) {
@@ -111,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         return String.format("%.2f", total);
     }
 
-    private void launchEditData(Intent intent, int i){
-        if (intent != null){
+    private void launchEditData(Intent intent, int i) {
+        if (intent != null) {
             Item itemToEdit = listItems.get(i);
             intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
@@ -125,10 +121,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             editItemLauncher.launch(intent);
         }
     }
+
     private void handleAddItemResult(Intent data) {
         if (data != null) {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
+            ItemDate date = new ItemDate(data.getStringExtra("date"));
             String value = data.getStringExtra("value");
             String serial = data.getStringExtra("serial");
             String make = data.getStringExtra("make");
@@ -136,12 +134,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             String comment = data.getStringExtra("comment");
 
             Item listItem = new Item(
-
                     name,
-                    new ItemDate(20, 12, 2012),
+                    date,
                     description,
                     make,
-                    1,
+                    Integer.parseInt(serial),
                     model,
                     Integer.parseInt(value),
                     comment
@@ -155,15 +152,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private void EditItemResult(Intent data) {
         if (data != null) {
             Boolean isDelete = data.getBooleanExtra("isDelete", false);
-            if(isDelete){
+            if (isDelete) {
                 int index = data.getIntExtra("index", -1);
-                if(index > -1){
+                if (index > -1) {
                     listItems.remove(index);
                     adapter.notifyDataSetChanged();
                     totalAmountTextView.setText(computeTotal());
                 }
-            }
-            else{
+            } else {
                 String name = data.getStringExtra("name");
                 String description = data.getStringExtra("description");
                 String value = data.getStringExtra("value");
@@ -173,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 ItemDate date = new ItemDate(data.getStringExtra("time"));
                 int index = data.getIntExtra("index", -1);
 
-                if(index != -1){
+                if (index != -1) {
                     Item item = listItems.get(index);
                     item.setMake(make);
                     item.setComment(comment);
@@ -219,4 +215,46 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         deleteButton.setVisibility(View.VISIBLE);
 
     }
+        //i added the following to access database and clear lisst of items and only display the ones in the database
+        private void loadItemsFromFirestore() {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser == null) {
+                Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("items")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listItems.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("Firestore", document.getId() + " => " + document.getData());
+
+                                Item item = new Item(
+                                        document.getString("name"),
+                                        new ItemDate(document.getString("date")),
+                                        document.getString("description"),
+                                        document.getString("make"),
+                                        Double.parseDouble(document.getString("serial")),
+                                        document.getString("model"),
+                                        Double.parseDouble(document.getString("value")),
+                                        document.getString("comment")
+                                );
+
+                                listItems.add(item);
+                            }
+                            adapter.notifyDataSetChanged();
+                            totalAmountTextView.setText(computeTotal());
+                        } else {
+                            Log.w("Firestore", "Error getting documents.", task.getException());
+                            Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+
+
 }

@@ -61,8 +61,8 @@
         android:text="Description"
         android:textColor="#FF0000" />
 
-    <EditText
-        android:id="@+id/itemDescription"
+<EditText
+    android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_below="@id/desciptionText"
@@ -73,10 +73,10 @@
         android:layout_marginEnd="25dp"
         android:background="@drawable/bg_edit_text"
         android:inputType="text"
-        android:textSize="18sp" />
+        android:textSize="18sp"/>
 
-    <LinearLayout
-        android:id="@+id/layoutMakeModelText"
+<LinearLayout
+    android:id="@+id/layoutMakeModelText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/itemDescription"
