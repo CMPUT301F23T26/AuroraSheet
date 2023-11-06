@@ -58,4 +58,67 @@ public class ItemValidator {
     public static boolean validateItemComment(String itemComment) {
         return itemComment.length() > 0;
     }
-}
+    /**
+     * This method validates the item date by ensuring it is within acceptable range.
+     * @param itemDate                   date of the item as ItemDate structure
+     * @return
+     */
+    public static boolean validateDate(ItemDate itemDate) {
+        int month = itemDate.getMonth();
+        boolean checkMonth = (month >= 0) && (month <= 12);
+        boolean checkDay = false;
+        switch (month){
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                checkDay = itemDate.getDay() >= 0 && itemDate.getDay() <= 31;}
+        if (month == 2){
+            checkDay = itemDate.getDay() >= 0 && itemDate.getDay() <= 28;
+        }
+        switch ( month){
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                checkDay = itemDate.getDay() >= 0 && itemDate.getDay() <= 30;}
+        boolean checkYear = itemDate.getYear() >= 1000 && itemDate.getYear() <= 3000;
+        return (checkYear && checkMonth && checkDay);
+        }
+    /**
+     * This method validates the item date by ensuring it is within acceptable range.
+     * @param date                       date of the item in string structure
+     * @return
+     */
+    public static boolean validateDate(String date) {
+        String[] splice = date.split( "[\\s-/]+" );
+        int year = Integer.parseInt(splice[2]);
+        int month = Integer.parseInt(splice[1]);
+        int day = Integer.parseInt(splice[0]);
+        boolean checkMonth = (month >= 0) && (month <= 12);
+        boolean checkDay = false;
+        switch (month){
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                checkDay = day >= 0 && day <= 31;}
+        if (month == 2){
+            checkDay = day >= 0 && day <= 28;
+        }
+        switch ( month){
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                checkDay = day >= 0 && day <= 30;}
+        boolean checkYear = year >= 1000 && year <= 3000;
+        return (checkYear && checkMonth && checkDay);
+    }
+    }

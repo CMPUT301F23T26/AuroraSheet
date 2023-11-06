@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     private FloatingActionButton editButton;
+    private FloatingActionButton deleteButton;
 
     private int itemIndex;
     @Override
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
+        deleteButton = findViewById(R.id.buttonDelete);
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -80,8 +83,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         // display total value for all the items
         totalAmountTextView = findViewById(R.id.totalValue);
         totalAmountTextView.setText(computeTotal());
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(itemIndex > -1){
+                listItems.remove(itemIndex);
+                adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -202,5 +213,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     @Override
     public void onItemClick(int position) {
         itemIndex = position;
+
+        //shows two buttons once clicked
+        editButton.setVisibility(View.VISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+
     }
 }
