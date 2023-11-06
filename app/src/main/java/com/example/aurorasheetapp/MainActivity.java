@@ -94,17 +94,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         });
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            handleAddItemResult(data);
-        }
-    }
-
-
-    // move this to item list class?
+    // move computeTotal to item list class?
+    /**
+     * Computes the total value of all the items in the list.
+     * @return A string representation of the total value of all the items.
+     */
     public String computeTotal() {
         double total = 0;
         for (Item item : listItems) {
