@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
 
-    private int itemIndex;
+    private int itemIndex = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

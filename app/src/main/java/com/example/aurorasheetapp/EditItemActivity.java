@@ -61,7 +61,7 @@ public class EditItemActivity extends AppCompatActivity {
         comment = inputIntent.getStringExtra("comment");
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
-        serial = inputIntent.getStringExtra("serial").toString();
+        serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
 
         itemName.setText(name);
         itemDescription.setText(description);
