@@ -1,9 +1,25 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.AuroraSheetApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonStyle">@style/MyButtonStyle</item>
     </style>
 
-    <style name="Theme.AuroraSheetApp" parent="Base.Theme.AuroraSheetApp" />
+    <!-- Custom Button Style -->
+    <style name="MyButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/purple</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <!-- Add any other button styling items here if needed -->
+    </style>
+
+    <!-- Colors -->
+    <color name="colorPrimary">#AEDFF7</color>       <!-- Soft Blue -->
+    <color name="colorPrimaryDark">#7FBCE6</color>  <!-- Darker Soft Blue -->
+    <color name="colorAccent">#3F51B5</color>       <!-- Peach -->
+    <color name="shade6">#FFF3F1</color>            <!-- Very Light Peach -->
+    <color name="shade7">#ADA8E6</color>          <!-- Semi-transparent Peach Pink -->
 </resources>

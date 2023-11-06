@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1006225654193",
+    "project_id": "aurora-sheet",
+    "storage_bucket": "aurora-sheet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006225654193:android:c31310d373dc10785cfd90",
+        "android_client_info": {
+          "package_name": "com.example.aurorasheetapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm9tPkYBDCfTlK0m7aZLcgQCFIPg2vvRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

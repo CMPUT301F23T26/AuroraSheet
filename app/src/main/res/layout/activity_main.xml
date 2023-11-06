@@ -78,8 +78,20 @@
         android:layout_marginEnd="17dp"
         android:layout_marginBottom="110dp"
         android:clickable="true"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_edit" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="184dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </RelativeLayout>
 

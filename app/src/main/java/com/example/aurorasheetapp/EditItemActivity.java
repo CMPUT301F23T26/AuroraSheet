@@ -78,6 +78,7 @@ public class EditItemActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(validateInput()){
                     Intent outputIntent = new Intent();
                     outputIntent.putExtra("name", itemName.getText().toString());
                     outputIntent.putExtra("description", itemDescription.getText().toString());
@@ -89,6 +90,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("index", index);
                     setResult(1, outputIntent);
                     finish();
+                }
             }
         });
 
@@ -123,7 +125,37 @@ public class EditItemActivity extends AppCompatActivity {
         imageIntent.setAction(Intent.ACTION_GET_CONTENT);
         launchImageChoseActivity.launch(Intent.createChooser(imageIntent, "Select Picture"));
     }
-
+    public boolean validateInput(){
+        if(!ItemValidator.validateItemName(itemName.getText().toString())){
+            Toast.makeText(this, "Please enter a valid name", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemDescription(itemDescription.getText().toString())){
+            Toast.makeText(this, "Please enter a valid description", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemValue(itemValue.getText().toString())){
+            Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
+            Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemModel(itemModel.getText().toString())){
+            Toast.makeText(this, "Please enter a valid model", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemComment(itemComment.getText().toString())){
+            Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateDate(itemDate.getText().toString())){
+            Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
             new ActivityResultContracts
                     .StartActivityForResult(),
