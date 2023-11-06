@@ -255,19 +255,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             listItems.clear();
-
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("Firestore", document.getId() + " => " + document.getData());
                                 Item item = document.toObject(Item.class);
                                 listItems.add(item);
                             }
-
                             adapter.notifyDataSetChanged();
                             totalAmountTextView.setText(computeTotal());
                         } else {
-                            String error = task.getException().getMessage();
-                            Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                            Log.w("Firestore", "Error getting documents.", task.getException());
+                            Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
                         }
                     });
+
         }
 
 
