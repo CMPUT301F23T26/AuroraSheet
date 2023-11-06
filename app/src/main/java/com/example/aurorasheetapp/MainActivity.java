@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         listItems = new ArrayList<>();
+
 // just for texting you can delete later
         for (int i=0;i<10;i++){
             Item listItem = new Item(
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
                     "nahh "+i+1
             );
             listItems.add(listItem);
-
         }
+
         adapter = new CustomArrayAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
 
