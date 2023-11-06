@@ -17,21 +17,25 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TagFragment.OnFragmentInteractionListener {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
 
     private RecyclerView tagView;
     private RecyclerView.Adapter tagAdapter;
-    private ArrayList<Tag> tags;
+    private ArrayList<Tag> tags; // keeps track of all tags
+    private ArrayList<Tag> selected_tags; // keeps track of tags to display items
+    private Tag selected_tag;
     private FloatingActionButton addTag_btn;
 
     private ImageButton profile_btn;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         tagView.setLayoutManager(layoutManager);
         listItems = new ArrayList<>();
         tags = new ArrayList<>();
+        selected_tags = new ArrayList<>();
+        selected_tag = null;
 
 // just for texting you can delete later
         for (int i=0;i<10;i++){
@@ -76,7 +82,23 @@ public class MainActivity extends AppCompatActivity {
             tags.add(tag);
         }
 
-        tagAdapter = new CustomTagAdapter(tags, this);
+        tagAdapter = new CustomTagAdapter(tags, this, new CustomTagAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Tag tag) {
+                boolean status = tag.getStatus();
+                if (status){
+                    tag.unselect_tag();
+                } else {
+                    tag.select_tag();
+                }
+                tagAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onItemLongClick(Tag tag) {
+                new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
+            }
+        });
         tagView.setAdapter(tagAdapter);
         addTag_btn = findViewById(R.id.addTagButton);
         profile_btn = findViewById(R.id.userProfile_btn);
@@ -86,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         addTag_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // add new tags here
-                // notify adapter data has changed
+                selected_tag = null;
+                new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
             }
         });
 
@@ -160,5 +182,29 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
+
+    // Override interface methods for add tag fragment
+    @Override
+    public void onCancelPressed() {
+        selected_tag = null;
+    }
+
+    @Override
+    public void onOkPressed(Tag newTag, Boolean editing) {
+        // is editing a selected expense
+        if (editing){
+            //find the index within ArrayList
+            Integer index = tags.indexOf(selected_tag);
+            // set new expense information to current index
+            tags.set(index, new Tag(newTag.getName()));
+            tagAdapter.notifyDataSetChanged();
+            // adding a new expense
+        } else if (!Objects.equals(newTag.getName(), "default")){
+            tags.add(newTag); // add to ArrayList
+            tagAdapter.notifyDataSetChanged();
+        }
+        selected_tag = null;
+    }
+
 
 }
