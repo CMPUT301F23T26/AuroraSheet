@@ -15,18 +15,25 @@ import java.util.ArrayList;
 public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.ViewHolder> {
     private ArrayList<Tag> tags;
     private Context context;
-    private OnItemClickListener listener;
+    OnItemClickListener onItemClickListener;
+    OnItemLongClickListener onItemLongClickListener;
 
     public interface OnItemClickListener{
         void onItemClick(Tag tag);
+    }
+
+    public interface OnItemLongClickListener {
         void onItemLongClick(Tag tag);
     }
 
 
-    public CustomTagAdapter(ArrayList<Tag> tags, Context context, OnItemClickListener listener) {
-        this.tags = tags;
+    public CustomTagAdapter(ArrayList<Tag> tags, Context context,
+                            CustomTagAdapter.OnItemClickListener onItemClickListener,
+                            CustomTagAdapter.OnItemLongClickListener onItemLongClickListener){
         this.context = context;
-        this.listener = listener;
+        this.tags = tags;
+        this.onItemClickListener = onItemClickListener;
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -35,20 +42,6 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tagName = itemView.findViewById(R.id.tagName);
-
-        }
-
-        public void bind(final Tag tag, final OnItemClickListener listener) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(tag);
-                }
-
-                public void onLongClick(View v) {
-                    listener.onItemLongClick(tag);
-                }
-            });
         }
     }
 
@@ -72,7 +65,19 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
             holder.tagName.setTextColor(Color.BLACK);
             holder.tagName.setBackgroundColor(Color.WHITE);
         }
-        holder.bind(tags.get(position), listener);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClickListener.onItemClick(tag);
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                onItemLongClickListener.onItemLongClick(tag);
+                return false;
+            }
+        });
 
     }
 

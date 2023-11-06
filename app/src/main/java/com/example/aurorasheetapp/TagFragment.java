@@ -20,14 +20,16 @@ public class TagFragment extends DialogFragment {
 
     private String tagName;
     private Boolean editing = false;
+    private Tag old_tag;
     private Tag tag;
     private String name;
 
     private String dialogTitle;
 
     public interface OnFragmentInteractionListener {
-        void onOkPressed(Tag newTag, Boolean editing);
+        void onOkPressed(Tag newTag, Tag old_tag, Boolean editing);
         void onCancelPressed();
+        void onDeletePressed(Tag tag);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class TagFragment extends DialogFragment {
     }
 
     public TagFragment(Tag tag){
-        this.tag = tag;
+        this.old_tag = tag;
     }
 
     @NonNull
@@ -55,12 +57,12 @@ public class TagFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_tag_fragment, null);
         tagNameInput = view.findViewById(R.id.tagName_input);
 
-        if (tag != null){
-            name = tag.getName();
+        if (old_tag != null){
+            name = old_tag.getName();
+            tagName = old_tag.getName();
             dialogTitle = "Edit Tag";
             editing = true;
             tagNameInput.setHint(tagName);
-            tagName = tag.getName();
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -88,9 +90,16 @@ public class TagFragment extends DialogFragment {
                                 }
                             }
                         }
-                        Tag newTag = new Tag(name);
-                        listener.onOkPressed(newTag, editing);
+                        tag = new Tag(name);
+                        listener.onOkPressed(tag, old_tag, editing);
                     }
-                }).create();
+                })
+                .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        listener.onDeletePressed(old_tag);
+                    }
+                })
+                .create();
     }
 }

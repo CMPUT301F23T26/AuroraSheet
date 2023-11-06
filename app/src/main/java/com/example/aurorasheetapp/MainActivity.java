@@ -82,23 +82,25 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
             tags.add(tag);
         }
 
-        tagAdapter = new CustomTagAdapter(tags, this, new CustomTagAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Tag tag) {
-                boolean status = tag.getStatus();
-                if (status){
-                    tag.unselect_tag();
-                } else {
-                    tag.select_tag();
-                }
-                tagAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemLongClick(Tag tag) {
-                new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
-            }
-        });
+        tagAdapter = new CustomTagAdapter(tags, this,
+                new CustomTagAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Tag tag) {
+                        boolean status = tag.getStatus();
+                        if (status){
+                            tag.unselect_tag();
+                        } else {
+                            tag.select_tag();
+                        }
+                        tagAdapter.notifyDataSetChanged();
+                    }
+                },
+                new CustomTagAdapter.OnItemLongClickListener() {
+                    @Override
+                    public void onItemLongClick(Tag tag) {
+                        new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
+                    }
+                });
         tagView.setAdapter(tagAdapter);
         addTag_btn = findViewById(R.id.addTagButton);
         profile_btn = findViewById(R.id.userProfile_btn);
@@ -190,11 +192,11 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
     }
 
     @Override
-    public void onOkPressed(Tag newTag, Boolean editing) {
+    public void onOkPressed(Tag newTag, Tag old_tag, Boolean editing) {
         // is editing a selected expense
         if (editing){
             //find the index within ArrayList
-            Integer index = tags.indexOf(selected_tag);
+            Integer index = tags.indexOf(old_tag);
             // set new expense information to current index
             tags.set(index, new Tag(newTag.getName()));
             tagAdapter.notifyDataSetChanged();
@@ -203,6 +205,13 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
             tags.add(newTag); // add to ArrayList
             tagAdapter.notifyDataSetChanged();
         }
+        selected_tag = null;
+    }
+
+    @Override
+    public void onDeletePressed(Tag tag){
+        tags.remove(tag);
+        tagAdapter.notifyDataSetChanged();
         selected_tag = null;
     }
 
