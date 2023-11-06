@@ -72,7 +72,7 @@
             <EditText
                 android:id="@+id/itemName_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50sp"
                 android:layout_marginTop="8dp"
                 android:hint="Item Name"
                 android:inputType="textPersonName"
@@ -81,7 +81,7 @@
             <EditText
                 android:id="@+id/itemDescription_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50sp"
                 android:layout_marginTop="8dp"
                 android:hint="Description"
                 android:inputType="text"
@@ -96,7 +96,7 @@
                 <EditText
                     android:id="@+id/itemMake_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50sp"
                     android:layout_weight="1"
                     android:hint="Make"
                     android:inputType="textPersonName" />
@@ -104,7 +104,7 @@
                 <EditText
                     android:id="@+id/itemModel_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50sp"
                     android:layout_weight="1"
                     android:hint="Model"
                     android:inputType="textPersonName" />
@@ -120,7 +120,7 @@
                     <EditText
                         android:id="@+id/date_edit"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50sp"
                         android:layout_weight="1"
                         android:hint="Date (dd-mm-yyyy)"
                         android:inputType="textPersonName" />
@@ -137,7 +137,7 @@
                 <EditText
                     android:id="@+id/itemValue_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50sp"
                     android:layout_weight="1"
                     android:hint="Value"
                     android:inputType="numberDecimal" />
@@ -145,7 +145,7 @@
                 <EditText
                     android:id="@+id/itemSerialNumber_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50sp"
                     android:layout_weight="1"
                     android:hint="Serial Number"
                     android:inputType="number" />
@@ -154,8 +154,8 @@
             <EditText
                 android:id="@+id/itemComment_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="56dp"
+                android:layout_height="80sp"
+                android:layout_marginTop="5dp"
                 android:hint="Comment" />
         </LinearLayout>
     </ScrollView>
