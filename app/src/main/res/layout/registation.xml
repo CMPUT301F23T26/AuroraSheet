@@ -54,6 +54,22 @@
                 android:textColorHint="#6C6767"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+            <EditText
+                android:id="@+id/userid"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/specifications"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/baseline_mail_24"
+                android:hint="Username"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/reg_pass"
