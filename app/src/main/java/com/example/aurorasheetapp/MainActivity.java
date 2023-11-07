@@ -4,43 +4,28 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
-public class MainActivity extends AppCompatActivity implements TagFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
-
-    private RecyclerView tagView;
-    private RecyclerView.Adapter tagAdapter;
-    private ArrayList<Tag> tags; // keeps track of all tags
-    private ArrayList<Tag> selected_tags; // keeps track of tags to display items
-    private Tag selected_tag;
-    private FloatingActionButton addTag_btn;
-
-    private ImageButton profile_btn;
-    private ImageButton sort_btn;
-    private ImageButton search_btn;
 
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
@@ -51,15 +36,7 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-
-        tagView = findViewById(R.id.tag_View);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        tagView.setLayoutManager(layoutManager);
         listItems = new ArrayList<>();
-        tags = new ArrayList<>();
-        selected_tags = new ArrayList<>();
-        selected_tag = null;
-
 // just for texting you can delete later
         for (int i=0;i<10;i++){
             Item listItem = new Item(
@@ -77,46 +54,9 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
         adapter = new CustomArrayAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
 
-        for (int i = 1; i < 11; i++){
-            Tag tag = new Tag("Tag"+i);
-            tags.add(tag);
-        }
-
-        tagAdapter = new CustomTagAdapter(tags, this,
-                new CustomTagAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Tag tag) {
-                        boolean status = tag.getStatus();
-                        if (status){
-                            tag.unselect_tag();
-                        } else {
-                            tag.select_tag();
-                        }
-                        tagAdapter.notifyDataSetChanged();
-                    }
-                },
-                new CustomTagAdapter.OnItemLongClickListener() {
-                    @Override
-                    public void onItemLongClick(Tag tag) {
-                        new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
-                    }
-                });
-        tagView.setAdapter(tagAdapter);
-        addTag_btn = findViewById(R.id.addTagButton);
-        profile_btn = findViewById(R.id.userProfile_btn);
-        sort_btn = findViewById(R.id.sortItem_btn);
-        search_btn = findViewById(R.id.searchItem_btn);
-
-        addTag_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selected_tag = null;
-                new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
-            }
-        });
-
         totalAmountTextView = findViewById(R.id.totalValue);
         addButton = findViewById(R.id.buttonAdd);
+
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
         }
     }
 
+
     private final ActivityResultLauncher<Intent> addItemLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -183,36 +124,5 @@ public class MainActivity extends AppCompatActivity implements TagFragment.OnFra
                             }
                         }
                     });
-
-    // Override interface methods for add tag fragment
-    @Override
-    public void onCancelPressed() {
-        selected_tag = null;
-    }
-
-    @Override
-    public void onOkPressed(Tag newTag, Tag old_tag, Boolean editing) {
-        // is editing a selected expense
-        if (editing){
-            //find the index within ArrayList
-            Integer index = tags.indexOf(old_tag);
-            // set new expense information to current index
-            tags.set(index, new Tag(newTag.getName()));
-            tagAdapter.notifyDataSetChanged();
-            // adding a new expense
-        } else if (!Objects.equals(newTag.getName(), "default")){
-            tags.add(newTag); // add to ArrayList
-            tagAdapter.notifyDataSetChanged();
-        }
-        selected_tag = null;
-    }
-
-    @Override
-    public void onDeletePressed(Tag tag){
-        tags.remove(tag);
-        tagAdapter.notifyDataSetChanged();
-        selected_tag = null;
-    }
-
 
 }
