@@ -25,6 +25,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.checkerframework.checker.units.qual.A;
+
 /**
  * This class serves as the main activity and manages a list of Item Records.
  */
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             intent.putExtra("model", itemToEdit.getModel());
             intent.putExtra("serial", itemToEdit.getSerialNumber());
             intent.putExtra("description", itemToEdit.getBriefDescription());
+            intent.putStringArrayListExtra("images", (ArrayList<String>)itemToEdit.getImage());
             intent.putExtra("index", i);
             editItemLauncher.launch(intent);
         }
@@ -172,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 ItemDate date = new ItemDate(data.getStringExtra("time"));
                 Double serial = Double.parseDouble(data.getStringExtra("serial"));
                 int index = data.getIntExtra("index", -1);
+                ArrayList<String> image = data.getStringArrayListExtra("images");
 
                 if (index != -1) {
                     Item item = listItems.get(index);
@@ -183,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     item.setDateOfPurchase(date);
                     item.setBriefDescription(description);
                     item.setSerialNumber(serial);
+                    item.setImage(image);
                 }
                 adapter.notifyDataSetChanged();
                 totalAmountTextView.setText(computeTotal());
