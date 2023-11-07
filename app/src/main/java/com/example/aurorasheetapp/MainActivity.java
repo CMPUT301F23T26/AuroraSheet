@@ -76,8 +76,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
-                launchEditData(intent, itemIndex);
+                if(itemIndex > -1 && !listItems.isEmpty()){
+                    Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                    launchEditData(intent, itemIndex);
+                }
             }
         });
         // display total value for all the items
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (itemIndex > -1) {
+                if (itemIndex > -1 && !listItems.isEmpty()) {
                     listItems.remove(itemIndex);
                     adapter.notifyDataSetChanged();
                 }

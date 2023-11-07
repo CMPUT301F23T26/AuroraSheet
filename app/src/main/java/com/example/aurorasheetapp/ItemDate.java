@@ -22,13 +22,12 @@ public class ItemDate {
      * Constructs ItemDate with the specified attributes, automatically parse formatted string
      * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
      * @param time             the date of the item in string form
-     *
      */
     public ItemDate(String time){
-        String[] splice = time.split( "[\\s-/]+" );
-        this.year = Integer.parseInt(splice[2]);
-        this.month = Integer.parseInt(splice[1]);
-        this.day = Integer.parseInt(splice[0]);
+        int [] dates = ItemDate.parseDate(time);
+        this.year = dates[2];
+        this.month = dates[1];
+        this.day = dates[0];
     }
     /**
      * Set the date of the item and parse the input string
@@ -36,10 +35,10 @@ public class ItemDate {
      * @param time          the date of the item in string form
      */
     public void setDate(String time){
-        String[] splice = time.split( "[\\s-/]+" );
-        this.year = Integer.parseInt(splice[2]);
-        this.month = Integer.parseInt(splice[1]);
-        this.day = Integer.parseInt(splice[0]);
+        int [] dates = ItemDate.parseDate(time);
+        this.year = dates[2];
+        this.month = dates[1];
+        this.day = dates[0];
     }
 
     /**
@@ -99,5 +98,21 @@ public class ItemDate {
     public String toString(){
 
         return day + "-" + month + "-" + year;
+    }
+
+    /**
+     * Takes in a formatted string containing date and returns an int array of length 3
+     * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
+     * returned int array has day, month, year at the 1st, 2nd and 3rd index
+     * @param time             the date of the item in string form
+     * @return dates int array that has day, month, year at 1st, 2nd and 3rd index
+     */
+    public static int[] parseDate(String time){
+        int[] dates = {0, 0, 0};
+        String[] date = time.split( "[\\s-/]+" );
+        dates[2] = Integer.parseInt(date[2]);
+        dates[1] = Integer.parseInt(date[1]);
+        dates[0] = Integer.parseInt(date[0]);
+        return dates;
     }
 }

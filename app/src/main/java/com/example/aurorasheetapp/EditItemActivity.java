@@ -21,6 +21,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 
+/**
+ * This class is responsible for providing the correct behavior for edit activities
+ */
 public class EditItemActivity extends AppCompatActivity {
     private Button chooseImageButton, deleteImageButton, backButton;
     private ImageView itemImage;
@@ -32,6 +35,7 @@ public class EditItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
 
+        //view define block
         chooseImageButton = findViewById(R.id.selectImageButton_edit);
         deleteImageButton = findViewById(R.id.deleteImageButton_edit);
         backButton = findViewById(R.id.backButton_edit);
@@ -49,6 +53,7 @@ public class EditItemActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteItemButton_edit);
 
         //TODO: store / pass in image
+        //get extras from passed in item
         String name, description, make, model, comment, time, serial;
         Double value;
         int index;
@@ -63,6 +68,7 @@ public class EditItemActivity extends AppCompatActivity {
         index = inputIntent.getIntExtra("index", -1);
         serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
 
+        //set the attributes in the view
         itemName.setText(name);
         itemDescription.setText(description);
         itemValue.setText(value.toString());
@@ -72,6 +78,7 @@ public class EditItemActivity extends AppCompatActivity {
         itemDate.setText(time);
         itemSerial.setText(serial);
 
+        //return batton
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +86,7 @@ public class EditItemActivity extends AppCompatActivity {
             }
         });
 
+        //confirm button
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,14 +130,22 @@ public class EditItemActivity extends AppCompatActivity {
                 itemImage.setImageDrawable(null);
             }
         });
-
     }
+
+    /**
+     * launch choose image with intent
+     */
     public void imageChooser() {
         Intent imageIntent = new Intent();
         imageIntent.setType("image/*");
         imageIntent.setAction(Intent.ACTION_GET_CONTENT);
         launchImageChoseActivity.launch(Intent.createChooser(imageIntent, "Select Picture"));
     }
+
+    /**
+     * Validates all input field when called, return false if any of the field is invalid
+     * @return boolean true when all fields are valid, false otherwise
+     */
     public boolean validateInput(){
         if(!ItemValidator.validateItemName(itemName.getText().toString())){
             Toast.makeText(this, "Please enter a valid name", Toast.LENGTH_SHORT).show();
