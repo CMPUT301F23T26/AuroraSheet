@@ -13,6 +13,11 @@ public class Tag {
         this.selected = false;
     }
 
+    public Tag(String name, ArrayList<Item> tagged_items){
+        this.name = name;
+        this.tagged_items = tagged_items;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -47,4 +52,6 @@ public class Tag {
     public boolean getStatus(){
         return selected;
     }
+
+    public ArrayList<Item> getTagged_items(){return tagged_items;}
 }
