@@ -8,7 +8,8 @@
         android:id="@+id/selectImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="select image" />
+        android:text="select image"
+        android:layout_centerHorizontal="true"/>
 
     <ImageView
         android:id="@+id/imageViewItem"
@@ -89,9 +90,10 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="6dp"
-        android:layout_marginEnd="250dp"
+        android:layout_marginEnd="200dp"
         android:background="@drawable/bg_edit_button"
         android:hint="SELECT DATE"
+        android:layout_centerHorizontal="true"
 
         android:inputType="text"
 

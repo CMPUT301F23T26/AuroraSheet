@@ -105,7 +105,7 @@ public class AddItemActivity extends AppCompatActivity {
                 // get all of the user input for adding a new item
                 String name = itemName.getText().toString();
                 String description = itemDescription.getText().toString();
-                String date = itemDate.getText().toString();
+                String date = dateText.getText().toString();
                 String value = itemValue.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String make = itemMake.getText().toString();
