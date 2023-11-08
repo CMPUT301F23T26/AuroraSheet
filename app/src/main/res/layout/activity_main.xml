@@ -18,7 +18,7 @@
             android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:srcCompat="@android:drawable/sym_def_app_icon" />
 
         <ImageButton
             android:id="@+id/sortItem_btn"
@@ -36,34 +36,33 @@
 
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+      <LinearLayout
         android:id="@+id/tagBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/userProfileBar">
+        android:layout_below="@id/userProfileBar"
+        android:orientation="horizontal">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addTagButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="4dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add" />
+          <com.google.android.material.floatingactionbutton.FloatingActionButton
+              android:id="@+id/addTagButton"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="16dp"
+              android:layout_marginBottom="4dp"
+              android:clickable="true"
+              android:focusable="true"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:srcCompat="@android:drawable/ic_input_add" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tag_View"
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/addTagButton" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+          <androidx.recyclerview.widget.RecyclerView
+              android:id="@+id/tag_View"
+              android:layout_width="300dp"
+              android:layout_height="match_parent"
+              android:layout_marginStart="20dp"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/addTagButton" />
+      </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements
         tagView = findViewById(R.id.tag_View);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         tagView.setLayoutManager(layoutManager);
-        listItems = new ArrayList<>();
         tags = new ArrayList<>();
         selected_tags = new ArrayList<>();
         selected_tag = null;
