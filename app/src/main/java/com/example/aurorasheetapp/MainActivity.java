@@ -2,11 +2,13 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
 
+
+    private FloatingActionButton toggleSelectButton;
+    private Boolean multiSelectMode;
+
     private FirebaseFirestore firestore;
 
     private int itemIndex;
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
+        toggleSelectButton = findViewById(R.id.toggleSelectionButton);
+        multiSelectMode = false;
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +88,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 launchEditData(intent, itemIndex);
             }
         });
+        // toggle the selection mode
+        toggleSelectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (multiSelectMode) {
+                    exitMultiSelectMode();
+                } else {
+                    enterMultiSelectMode();
+                }
+            }
+        });
+
+
         // display total value for all the items
         totalAmountTextView = findViewById(R.id.totalValue);
         totalAmountTextView.setText(computeTotal());
@@ -208,16 +229,52 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                             }
                         }
                     });
-
+    /**
+     * When an item in the list is clicked, this is called
+     * @param position the index of the clicked item in the listItems
+     */
     @Override
     public void onItemClick(int position) {
+        Log.w("debug","there was a click after all");
         itemIndex = position;
 
-        //shows two buttons once clicked
-        editButton.setVisibility(View.VISIBLE);
-        deleteButton.setVisibility(View.VISIBLE);
-
+        if (multiSelectMode) {
+            Log.w("debug","item clicked while in select mode");
+            listItems.get(position).toggleSelect();
+            adapter.notifyDataSetChanged();
+        }
+        else {
+            //shows two buttons once clicked
+            Log.w("debug","item clicked while not in select mode");
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+        }
     }
+    /**
+     * Prepare the activity for item selection mode
+     *
+     */
+    public void enterMultiSelectMode() {
+        multiSelectMode = true;
+        // hide the edit button; show the delete button
+        editButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+        toggleSelectButton.setBackgroundColor(Color.argb(255, 200, 200, 255));
+    }
+    /**
+     * Have the activity exit item selection mode and reset to default behaviour
+     *
+     */
+    public void exitMultiSelectMode() {
+        multiSelectMode = false;
+        // hide both buttons. selecting an individual item can bring them back
+        editButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        toggleSelectButton.setBackgroundColor(Color.argb(255, 60, 60, 255));
+    }
+
+
+
         //i added the following to access database and clear lisst of items and only display the ones in the database
         private void loadItemsFromFirestore() {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

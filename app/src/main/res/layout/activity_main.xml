@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="put user icon and filter and sort buttons here" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -76,7 +77,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="184dp"
         android:clickable="true"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_edit" />
@@ -88,10 +89,23 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="184dp"
+        android:layout_marginBottom="110dp"
         android:clickable="true"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/toggleSelectionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="20"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_mylocation"
+        app:backgroundTint="#3C3CFF" />
 
 </RelativeLayout>
 

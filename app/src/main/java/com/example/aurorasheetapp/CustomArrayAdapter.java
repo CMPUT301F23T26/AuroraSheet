@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,14 +76,16 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.w("debug","there is a click in the customarrayadapter");
                     if (recyclerViewInterface != null) {
-                        int position = getAdapterPosition();
+                        int position = getBindingAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             recyclerViewInterface.onItemClick(position);
                         }
                     }
                 }
             });
+
         }
     }
 
