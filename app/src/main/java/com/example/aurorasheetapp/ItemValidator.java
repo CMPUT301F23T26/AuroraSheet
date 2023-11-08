@@ -1,5 +1,10 @@
 package com.example.aurorasheetapp;
 
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * This class is used by the AddItemActivity and ViewItemActivity classes to make sure all the
  * user input is valid and in the correct formats for adding or editing items.
@@ -64,8 +69,11 @@ public class ItemValidator {
      * @return
      */
     public static boolean validateDate(ItemDate itemDate) {
+
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        int[] currentTimes = ItemDate.parseDate(currentDate);
         int month = itemDate.getMonth();
-        boolean checkMonth = (month >= 0) && (month <= 12);
+        boolean checkMonth = (month >= 0) && (month <= currentTimes[1]);
         boolean checkDay = false;
         switch (month){
             case 1:
@@ -79,13 +87,18 @@ public class ItemValidator {
         if (month == 2){
             checkDay = itemDate.getDay() >= 0 && itemDate.getDay() <= 28;
         }
-        switch ( month){
+        switch (month){
             case 4:
             case 6:
             case 9:
             case 11:
                 checkDay = itemDate.getDay() >= 0 && itemDate.getDay() <= 30;}
-        boolean checkYear = itemDate.getYear() >= 1000 && itemDate.getYear() <= 3000;
+        if (month == currentTimes[1] && itemDate.getYear() == currentTimes[2]){
+            if(itemDate.getDay() > currentTimes[0]){
+                checkDay = false;
+            }
+        }
+        boolean checkYear = itemDate.getYear() >= 1000 && itemDate.getYear() <= currentTimes[2];
         return (checkYear && checkMonth && checkDay);
         }
     /**
@@ -94,11 +107,14 @@ public class ItemValidator {
      * @return
      */
     public static boolean validateDate(String date) {
-        String[] splice = date.split( "[\\s-/]+" );
-        int year = Integer.parseInt(splice[2]);
-        int month = Integer.parseInt(splice[1]);
-        int day = Integer.parseInt(splice[0]);
-        boolean checkMonth = (month >= 0) && (month <= 12);
+        int[] inputDates = ItemDate.parseDate(date);
+        int day = inputDates[0];
+        int month = inputDates[1];
+        int year = inputDates[2];
+
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        int[] currentTimes = ItemDate.parseDate(currentDate);
+        boolean checkMonth = (month >= 0) && (month <= currentTimes[1]);
         boolean checkDay = false;
         switch (month){
             case 1:
@@ -112,13 +128,18 @@ public class ItemValidator {
         if (month == 2){
             checkDay = day >= 0 && day <= 28;
         }
-        switch ( month){
+        switch (month){
             case 4:
             case 6:
             case 9:
             case 11:
                 checkDay = day >= 0 && day <= 30;}
-        boolean checkYear = year >= 1000 && year <= 3000;
+        if (month == currentTimes[1] && year == currentTimes[2]){
+            if(day > currentTimes[0]){
+                checkDay = false;
+            }
+        }
+        boolean checkYear = year >= 1000 && year <= currentTimes[2];
         return (checkYear && checkMonth && checkDay);
     }
     }
