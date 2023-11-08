@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
@@ -15,6 +16,7 @@ public class Item {
     private String model;
     private double estimatedValue;
     private String comment;
+    private ArrayList<String> image;
     /**
      * Constructs an Item with the specified attributes.
      *
@@ -37,7 +39,13 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+        image = new ArrayList<String>();
     }
+
+
+    public Item() {
+        }
+
     /**
      * Get the name of the item.
      *
@@ -152,5 +160,13 @@ public class Item {
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public List<String> getImage() {
+        return image;
+    }
+
+    public void setImage(ArrayList<String> image) {
+        this.image = image;
     }
 }
