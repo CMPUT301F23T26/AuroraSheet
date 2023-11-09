@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/MainView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/userProfileBar"
@@ -12,25 +13,56 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="put user icon and filter and sort buttons here" />
+        <ImageButton
+            android:id="@+id/userProfile_btn"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/sym_def_app_icon" />
+
+        <ImageButton
+            android:id="@+id/sortItem_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+
+        <ImageButton
+            android:id="@+id/searchItem_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+
     </LinearLayout>
 
-    <LinearLayout
+      <LinearLayout
         android:id="@+id/tagBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/userProfileBar"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="put tag selection stuff here" />
-    </LinearLayout>
+          <com.google.android.material.floatingactionbutton.FloatingActionButton
+              android:id="@+id/addTagButton"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="16dp"
+              android:layout_marginBottom="4dp"
+              android:clickable="true"
+              android:focusable="true"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:srcCompat="@android:drawable/ic_input_add" />
+
+          <androidx.recyclerview.widget.RecyclerView
+              android:id="@+id/tag_View"
+              android:layout_width="300dp"
+              android:layout_height="match_parent"
+              android:layout_marginStart="20dp"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/addTagButton" />
+      </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -94,7 +126,3 @@
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </RelativeLayout>
-
-
-
-
