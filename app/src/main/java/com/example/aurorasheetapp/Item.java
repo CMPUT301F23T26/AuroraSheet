@@ -1,5 +1,7 @@
 package com.example.aurorasheetapp;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,9 @@ public class Item {
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+
+    private ArrayList<Tag> tags;
+
     /**
      * Constructs an Item with the specified attributes.
      *
@@ -39,6 +44,9 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+
+        this.tags = new ArrayList<Tag>();
+
         image = new ArrayList<String>();
     }
 
@@ -169,4 +177,22 @@ public class Item {
     public void setImage(ArrayList<String> image) {
         this.image = image;
     }
+
+
+    /**
+     * Getter for the full list of the item's tags
+     * @return an ArrayList of Tags
+     */
+    public ArrayList<Tag> getTags() {
+        return this.tags;
+    }
+
+    /**
+     * Add a tag to this item's tags
+     * @param tag the tag to add
+     */
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+    }
 }
+
