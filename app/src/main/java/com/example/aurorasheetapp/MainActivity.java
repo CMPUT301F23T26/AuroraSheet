@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingActionButton addButton;
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
+    private FloatingActionButton deselectAllButton;
 
     private RecyclerView tagView;
     private RecyclerView.Adapter tagAdapter;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton search_btn;
 
     private FirebaseFirestore firestore;
+
+    private Boolean multiSelectMode;
 
     private int itemIndex;
 
@@ -85,12 +90,17 @@ public class MainActivity extends AppCompatActivity implements
         addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
+        deselectAllButton = findViewById(R.id.buttonDeselectAll);
+
 
         tagView = findViewById(R.id.tag_View);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         tagView.setLayoutManager(layoutManager);
         selected_tags = new ArrayList<>();
         selected_tag = null;
+
+        multiSelectMode = true;
+        initialiseAsUnselected();
 
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                itemIndex = getTheOneSelectedItem();
                 if(itemIndex > -1 && !listItems.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
                     launchEditData(intent, itemIndex);
@@ -116,10 +128,29 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (itemIndex > -1 && !listItems.isEmpty()) {
-                    listItems.remove(itemIndex);
-                    adapter.notifyDataSetChanged();
+
+                ArrayList<Integer> selected_items = getListOfSelectedItems();
+
+                // selected_items is from lowest to greatest. if we set it from greatest to lowest, it should prevent errors when deleting
+                Collections.reverse(selected_items);
+
+
+                Log.d("deletion", selected_items.toString());
+
+                for (Integer selectedItemIndex: selected_items) {
+                    if (selectedItemIndex > -1 && !listItems.isEmpty()) {
+                        listItems.remove((int) selectedItemIndex);
+                    }
                 }
+                adapter.notifyDataSetChanged();
+                update_selection();
+
+            }
+        });
+        deselectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deselectAllItems();
             }
         });
 
@@ -277,15 +308,150 @@ public class MainActivity extends AppCompatActivity implements
                         }
                     });
 
+    /**
+     * When an item in the list is clicked, this is called
+     * @param position the index of the clicked item in the listItems
+     */
     @Override
     public void onItemClick(int position) {
+        //Log.w("debug","there was a click after all");
         itemIndex = position;
 
-        //shows two buttons once clicked
-        editButton.setVisibility(View.VISIBLE);
-        deleteButton.setVisibility(View.VISIBLE);
+        if (multiSelectMode) {
+            //Log.w("debug","item clicked while in select mode");
+            listItems.get(position).toggleSelect();
 
+            update_selection();
+        }
+        else {
+            //shows two buttons once clicked
+
+
+            if (countSelectedItems() == 1);
+            //Log.w("debug","item clicked while not in select mode");
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+        }
     }
+    /**
+     * Prepare the activity for item selection mode
+     *
+     */
+    public void enterMultiSelectMode() {
+        multiSelectMode = true;
+        // hide the edit button; show the delete button
+        editButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+        //toggleSelectButton.setBackgroundColor(Color.argb(255, 200, 200, 255));
+    }
+    /**
+     * Have the activity exit item selection mode and reset to default behaviour
+     *
+     */
+    public void exitMultiSelectMode() {
+        multiSelectMode = false;
+        // hide both buttons. selecting an individual item can bring them back
+        editButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        //toggleSelectButton.setBackgroundColor(Color.argb(255, 60, 60, 255));
+    }
+    /**
+     * Calculate how many items are currently selected
+     * @return The number of items that are currently selected
+     *
+     */
+    public int countSelectedItems() {
+        int count = 0;
+        for (Item thisitem:listItems) {
+            if (thisitem.getSelection()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    private void initialiseAsUnselected() {
+        for (Item thisitem:listItems) {
+            thisitem.unselect();
+        }
+    }
+
+    /**
+     * Make all items unselected
+     *
+     */
+    public void deselectAllItems() {
+        for (Item thisitem:listItems) {
+            thisitem.unselect();
+
+        }
+        update_selection();
+    }
+    /**
+     * Update the display, as is appropriate for the current selection of items
+     *
+     */
+    public void update_selection() {
+        int count = countSelectedItems();
+
+        if (count == 0) {
+            addButton.setVisibility(View.VISIBLE);
+            editButton.setVisibility(View.INVISIBLE);
+            deleteButton.setVisibility(View.INVISIBLE);
+            deselectAllButton.setVisibility(View.INVISIBLE);
+        }
+
+        if (count == 1) {
+            addButton.setVisibility(View.INVISIBLE);
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            deselectAllButton.setVisibility(View.VISIBLE);
+        }
+
+        if (count > 1) {
+            addButton.setVisibility(View.INVISIBLE);
+            editButton.setVisibility(View.INVISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            deselectAllButton.setVisibility(View.VISIBLE);
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Get the index of the currently selected item.
+     * @return The index of the item that is selected. If no item is selected, it returns -1
+     *
+     */
+    public int getTheOneSelectedItem() {
+        int listsize = listItems.size();
+        for (int index = 0; index < listsize; index++) {
+            if (listItems.get(index).getSelection()) {
+                return index;
+            }
+        }
+        return -1;
+    }
+    /**
+     * Get a list containing the indices of all currently selected item.
+     * @return The index of the item that is selected. If no item is selected, it returns -1
+     *
+     */
+    private ArrayList<Integer> getListOfSelectedItems() {
+        ArrayList<Integer> selected_items = new ArrayList<Integer>();
+        int listsize = listItems.size();
+        for (int index = 0; index < listsize; index++) {
+            if (listItems.get(index).getSelection()) {
+                selected_items.add(index);
+            }
+        }
+        return selected_items;
+    }
+
+
+
+
+
     //i added the following to access database and clear lisst of items and only display the ones in the database
     private void loadItemsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
