@@ -23,6 +23,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class manages the registration of new users. It gets user input and validates
+ * all the user fields before sending the data to the database.
+ */
 public class Registration extends AppCompatActivity {
     private EditText Email, Password, Username;
     private Button sign_up;

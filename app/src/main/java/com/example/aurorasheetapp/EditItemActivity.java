@@ -268,7 +268,7 @@ public class EditItemActivity extends AppCompatActivity {
             return false;
         }
         if(!ItemValidator.validateDate(itemDate.getText().toString())){
-            Toast.makeText(this, "Cannot enter a future date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

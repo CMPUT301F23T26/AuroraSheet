@@ -2,6 +2,9 @@ package com.example.aurorasheetapp;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents a tag with a name and a list of tagged items.
+ */
 public class Tag {
     private String name;
     private ArrayList<Item> tagged_items;
@@ -26,6 +29,11 @@ public class Tag {
         return name;
     }
 
+    /**
+     * Add an item to the list of tagged items
+     * @param newItem
+     * @return boolean indicating if the item was added
+     */
     public boolean tagItem(Item newItem){
         try {
             tagged_items.add(newItem);

@@ -20,6 +20,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class manages the login of existing users. It gets user input and validates
+ * all the user fields before sending the data to the database.
+ */
 public class Login extends AppCompatActivity {
     private EditText Username, LoginPassword;
     private Button Login;
