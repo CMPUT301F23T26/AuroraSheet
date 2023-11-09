@@ -128,25 +128,20 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ArrayList<Integer> selected_items = getListOfSelectedItems();
-
-                // selected_items is from lowest to greatest. if we set it from greatest to lowest, it should prevent errors when deleting
-                Collections.reverse(selected_items);
-
-
-                Log.d("deletion", selected_items.toString());
-
+                Collections.reverse(selected_items); // Reverse to prevent index out of bounds
                 for (Integer selectedItemIndex: selected_items) {
                     if (selectedItemIndex > -1 && !listItems.isEmpty()) {
-                        listItems.remove((int) selectedItemIndex);
+                        Item itemToDelete = listItems.remove((int) selectedItemIndex);
+                        adapter.notifyDataSetChanged();
+                        deleteItemFromFirestore(itemToDelete.getDocumentId());
                     }
                 }
-                adapter.notifyDataSetChanged();
                 update_selection();
-
             }
         });
+
+
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -477,9 +472,9 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    Double.parseDouble(document.getString("serial")),
+                                    document.getDouble("serial"),
                                     document.getString("model"),
-                                    Double.parseDouble(document.getString("value")),
+                                    document.getDouble("value"),
                                     document.getString("comment")
 
                             );
@@ -646,6 +641,20 @@ public class MainActivity extends AppCompatActivity implements
         db_del_tag(tag);
         selected_tag = null;
     }
+
+    private void deleteItemFromFirestore(String documentId) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && documentId != null) {
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("items")
+                    .document(documentId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully deleted!"))
+                    .addOnFailureListener(e -> Log.w("Firestore", "Error deleting document", e));
+        }
+    }
+
 
 
 }

@@ -160,6 +160,15 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("time", itemDate.getText().toString());
                     itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
 
+                    if (documentId == null) {
+                        // Show a Toast message to the user
+                        Toast.makeText(EditItemActivity.this, "Can't update try again", Toast.LENGTH_LONG).show();
+                        return; // Exit the method to prevent further execution
+                    }
+
+
+
+
                     //trace the exact path of where the items are placed
                     firestore.collection("users").document(userId).collection("items").document(documentId).update(itemUpdate)
                             .addOnSuccessListener(aVoid -> {
