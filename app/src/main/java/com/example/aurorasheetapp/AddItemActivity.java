@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,8 +13,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +38,8 @@ public class AddItemActivity extends AppCompatActivity {
     private ImageView itemImage;
     private EditText itemName;
     private EditText itemDescription;
-    private EditText itemDate;
+    private TextView dateText;
+    private Button itemDate;
     private EditText itemValue;
     private EditText itemSerial;
     private EditText itemMake;
@@ -58,12 +63,35 @@ public class AddItemActivity extends AppCompatActivity {
         itemName = findViewById(R.id.itemName);
         itemDescription = findViewById(R.id.itemDescription);
         itemDate = findViewById(R.id.itemDate);
+        dateText = findViewById(R.id.dateText);
         itemValue = findViewById(R.id.itemValue);
         itemSerial = findViewById(R.id.itemSerialNumber);
         itemMake = findViewById(R.id.itemMake);
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
         addItemButton = findViewById(R.id.addItemButton);
+
+        itemDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        AddItemActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                dateText.setText(dayOfMonth + "-" + (month + 1) + "-" + year);
+                            }
+                        },
+                        year, month, day);
+                datePickerDialog.show();
+            }
+        });
+
 
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +105,7 @@ public class AddItemActivity extends AppCompatActivity {
                 // get all of the user input for adding a new item
                 String name = itemName.getText().toString();
                 String description = itemDescription.getText().toString();
-                String date = itemDate.getText().toString();
+                String date = dateText.getText().toString();
                 String value = itemValue.getText().toString();
                 String serial = itemSerial.getText().toString();
                 String make = itemMake.getText().toString();

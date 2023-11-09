@@ -8,7 +8,8 @@
         android:id="@+id/selectImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="select image" />
+        android:text="select image"
+        android:layout_centerHorizontal="true"/>
 
     <ImageView
         android:id="@+id/imageViewItem"
@@ -40,11 +41,12 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="6dp"
-        android:layout_marginEnd="120dp"
+        android:layout_marginEnd="25dp"
         android:background="@drawable/bg_edit_text"
         android:inputType="textPersonName"
         android:textSize="18sp"
-
+        android:paddingLeft="5dp"
+        android:gravity="top|left"
         />
 
     <TextView
@@ -72,10 +74,13 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="25dp"
         android:background="@drawable/bg_edit_text"
-        android:inputType="text"
-        android:textSize="18sp"/>
+        android:inputType="textMultiLine"
+        android:paddingLeft="5dp"
+        android:textSize="18sp"
+        android:gravity="top|left"
+    />
     <TextView
-        android:id="@+id/itemDateText"
+        android:id="@+id/dateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/itemDescription"
@@ -88,19 +93,25 @@
         android:text="Date"
         android:textColor="#FF0000" />
 
-    <EditText
+    <Button
         android:id="@+id/itemDate"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@id/itemDateText"
+        android:layout_below="@id/dateText"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="200dp"
-        android:background="@drawable/bg_edit_text"
+        android:background="@drawable/bg_edit_button"
+        android:hint="SELECT DATE"
+        android:layout_centerHorizontal="true"
+
         android:inputType="text"
-        android:textSize="18sp"/>
+
+        android:textSize="18sp"
+        />
+
 <LinearLayout
     android:id="@+id/layoutMakeModelText"
         android:layout_width="match_parent"
@@ -151,6 +162,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="25dp"
+            android:paddingLeft="5dp"
             android:layout_marginRight="@android:dimen/app_icon_size"
             android:layout_weight="1"
             android:background="@drawable/bg_edit_text"
@@ -165,6 +177,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="25dp"
+            android:paddingLeft="5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_edit_text"
             android:inputType="textPersonName" />
@@ -220,6 +233,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="25dp"
+            android:paddingLeft="5dp"
             android:layout_marginRight="@android:dimen/app_icon_size"
             android:layout_weight="1"
             android:background="@drawable/bg_edit_text"
@@ -233,6 +247,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="6dp"
+            android:paddingLeft="5dp"
             android:layout_marginEnd="25dp"
             android:layout_weight="1"
             android:background="@drawable/bg_edit_text"
@@ -258,12 +273,15 @@
         android:id="@+id/itemComment"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:paddingLeft="5dp"
+        android:gravity="top|left"
         android:layout_below="@id/commentText"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="25dp"
+        android:inputType="textMultiLine"
         android:layout_marginRight="@android:dimen/app_icon_size"
         android:background="@drawable/bg_edit_text" />
 
@@ -276,13 +294,27 @@
         android:layout_marginEnd="11dp"
         android:layout_marginBottom="12dp"
         app:srcCompat="@android:drawable/checkbox_on_background" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+    <TextView
+        android:id="@+id/addTagsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Add tags"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="1dp"
         android:layout_below="@+id/itemComment"
-        android:layout_marginTop="10dp"
+        android:textColor="#FF0000"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTagsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addTagsText"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="10dp"
         android:clickable="true"
         app:srcCompat="@android:drawable/ic_input_add" />
 
