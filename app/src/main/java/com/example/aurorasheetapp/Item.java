@@ -194,5 +194,9 @@ public class Item {
     public void addTag(Tag tag) {
         this.tags.add(tag);
     }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+    }
 }
 
