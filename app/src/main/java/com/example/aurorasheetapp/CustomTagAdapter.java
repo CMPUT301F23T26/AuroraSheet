@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * This class is the adapter for the recycler view. It takes in a list of tags and displays them
+ * in the recycler view.
+ */
 public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.ViewHolder> {
     private ArrayList<Tag> tags;
     private Context context;
@@ -26,7 +30,14 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
         void onItemLongClick(Tag tag);
     }
 
-
+    /**
+     * This method creates a view holder for the recycler view. It inflates the tag_list layout
+     * and returns a view holder with the inflated layout.
+     * @param tags
+     * @param context
+     * @param onItemClickListener
+     * @param onItemLongClickListener
+     */
     public CustomTagAdapter(ArrayList<Tag> tags, Context context,
                             CustomTagAdapter.OnItemClickListener onItemClickListener,
                             CustomTagAdapter.OnItemLongClickListener onItemLongClickListener){
@@ -36,6 +47,9 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
+    /**
+     * This class is the view holder for the recycler view. It holds the tag name.
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tagName;
 
@@ -47,6 +61,10 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
 
     @NonNull
     @Override
+    /**
+     * This method creates a view holder for the recycler view. It inflates the tag_list layout
+     * and returns a view holder with the inflated layout.
+     */
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.tag_list, parent, false);
         return new CustomTagAdapter.ViewHolder(v);
@@ -54,6 +72,10 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
     }
 
     @Override
+    /**
+     * This method binds the data to the view holder. It takes in the view holder and the position
+     * of the tag in the list and binds the data to the view holder.
+     */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tag tag = tags.get(position);
         boolean status = tag.getStatus();
@@ -82,6 +104,9 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
     }
 
     @Override
+    /**
+     * This method returns the number of tags in the list.
+     */
     public int getItemCount() {
         return tags.size();
     }

@@ -189,8 +189,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
-    // move computeTotal to item list class?
     /**
      * Computes the total value of all the items in the list.
      * @return A string representation of the total value of all the items.
@@ -447,10 +445,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         return selected_items;
     }
-
-
-
-
 
     //i added the following to access database and clear lisst of items and only display the ones in the database
     private void loadItemsFromFirestore() {
