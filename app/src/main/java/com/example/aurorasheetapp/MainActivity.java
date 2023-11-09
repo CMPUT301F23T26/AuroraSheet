@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements
     private void launchEditData(Intent intent, int i) {
         if (intent != null) {
             Item itemToEdit = listItems.get(i);
+            intent.putExtra("documentId", itemToEdit.getDocumentId());
             intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
             intent.putExtra("time", itemToEdit.getDateOfPurchase().toString());
@@ -480,8 +481,9 @@ public class MainActivity extends AppCompatActivity implements
                                     document.getString("model"),
                                     Double.parseDouble(document.getString("value")),
                                     document.getString("comment")
-                            );
 
+                            );
+                            item.setDocumentId(document.getId()); // Save the document ID
                             listItems.add(item);
                         }
                         adapter.notifyDataSetChanged();

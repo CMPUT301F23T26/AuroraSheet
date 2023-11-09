@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +24,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.example.aurorasheetapp.ImageHelpers;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * This class is responsible for providing the correct behavior for edit activities
@@ -39,8 +45,16 @@ public class EditItemActivity extends AppCompatActivity {
     int imageIndex;
     //this is supposed to be a constant path since it doesn't change, will remove after improving the image helper
     String path;
+    //added this so we can reflect edits in firebase
+    private FirebaseFirestore firestore;
+    private String documentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser != null ? currentUser.getUid() : null;
+        firestore = FirebaseFirestore.getInstance();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
 
@@ -79,6 +93,7 @@ public class EditItemActivity extends AppCompatActivity {
         imageIndex = 0;
 
         Intent inputIntent = getIntent();
+        documentId = inputIntent.getStringExtra("documentId");
         name = inputIntent.getStringExtra("name");
         description = inputIntent.getStringExtra("description");
         value = inputIntent.getDoubleExtra("value", -1);
@@ -133,9 +148,32 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putStringArrayListExtra("images", images);
                     outputIntent.putExtra("index", index);
                     setResult(1, outputIntent);
+
+                    //put all updated values in a map
+                    Map<String, Object> itemUpdate = new HashMap<>();
+                    itemUpdate.put("name", itemName.getText().toString());
+                    itemUpdate.put("description", itemDescription.getText().toString());
+                    itemUpdate.put("value", Double.parseDouble(itemValue.getText().toString()));
+                    itemUpdate.put("model", itemModel.getText().toString());
+                    itemUpdate.put("make", itemMake.getText().toString());
+                    itemUpdate.put("comment", itemComment.getText().toString());
+                    itemUpdate.put("time", itemDate.getText().toString());
+                    itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
+
+                    //trace the exact path of where the items are placed
+                    firestore.collection("users").document(userId).collection("items").document(documentId).update(itemUpdate)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(EditItemActivity.this, "Item updated", Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(EditItemActivity.this, "Error updating item: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            });
+                }
+
                     finish();
                 }
-            }
+
         });
         //pass delete signal to main if clicked delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
