@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     make,
                     Integer.parseInt(serial),
                     model,
-                    Integer.parseInt(value),
+                    Double.parseDouble(value),
                     comment
             );
             listItems.add(listItem);
