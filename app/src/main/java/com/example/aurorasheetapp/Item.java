@@ -17,6 +17,7 @@ public class Item {
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+    private String documentID;
 
     private Boolean isSelected;
     /**
@@ -204,6 +205,14 @@ public class Item {
      */
     public void toggleSelect() {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
+    }
+
+    public String getDocumentId() {
+        return documentID;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentID = documentId;
     }
 
 }
