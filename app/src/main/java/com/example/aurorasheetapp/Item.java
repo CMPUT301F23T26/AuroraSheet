@@ -207,6 +207,11 @@ public class Item {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
     }
 
+    /**
+     * need these to traceback items so we can delete and edit
+     * primary key = DocumentID
+     *
+     */
     public String getDocumentId() {
         return documentID;
     }
