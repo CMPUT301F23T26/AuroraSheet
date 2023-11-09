@@ -149,6 +149,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("index", index);
                     setResult(1, outputIntent);
 
+                    //put all updated values in a map
                     Map<String, Object> itemUpdate = new HashMap<>();
                     itemUpdate.put("name", itemName.getText().toString());
                     itemUpdate.put("description", itemDescription.getText().toString());
@@ -159,6 +160,7 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("time", itemDate.getText().toString());
                     itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
 
+                    //trace the exact path of where the items are placed
                     firestore.collection("users").document(userId).collection("items").document(documentId).update(itemUpdate)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(EditItemActivity.this, "Item updated", Toast.LENGTH_SHORT).show();
@@ -168,8 +170,6 @@ public class EditItemActivity extends AppCompatActivity {
                                 Toast.makeText(EditItemActivity.this, "Error updating item: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 }
-
-
 
                     finish();
                 }
