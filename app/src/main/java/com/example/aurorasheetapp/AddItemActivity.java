@@ -156,20 +156,27 @@ public class AddItemActivity extends AppCompatActivity {
                         .document(currentUser.getUid())
                         .collection("items")
                         .add(newItem)
-                        .addOnSuccessListener(documentReference -> Toast.makeText(AddItemActivity.this, "Item added", Toast.LENGTH_SHORT).show())
+                        .addOnSuccessListener(documentReference -> {
+                            String newDocumentId = documentReference.getId(); // Get the new document ID
+
+                            // Create an Intent to send the result back to MainActivity
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("documentId", newDocumentId);
+
+                            intent.putExtra("name", name);
+                            intent.putExtra("description", description);
+                            intent.putExtra("date", date);
+                            intent.putExtra("value", value);
+                            intent.putExtra("serial", serial);
+                            intent.putExtra("make", make);
+                            intent.putExtra("model", model);
+                            intent.putExtra("comment", comment);
+                            setResult(1, intent);
+                            finish();
+                        })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("description", description);
-                intent.putExtra("date", date);
-                intent.putExtra("value", value);
-                intent.putExtra("serial", serial);
-                intent.putExtra("make", make);
-                intent.putExtra("model", model);
-                intent.putExtra("comment", comment);
-                setResult(1, intent);
-                finish();
+
             }
         });
     }

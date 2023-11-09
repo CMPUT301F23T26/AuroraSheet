@@ -22,7 +22,6 @@ public class Item {
     private Boolean isSelected;
     /**
      * Constructs an Item with the specified attributes.
-     *
      * @param name             The name of the item
      * @param dateOfPurchase   The date of purchase or acquisition.
      * @param briefDescription A brief description of the item.
@@ -46,6 +45,24 @@ public class Item {
         this.isSelected = false;
 
         
+        image = new ArrayList<String>();
+    }
+
+    public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
+                double serialNumber, String model, double estimatedValue, String comment, String documentID) {
+        this.name = name;
+        this.dateOfPurchase = dateOfPurchase;
+        this.briefDescription = briefDescription;
+        this.make = make;
+        this.model = model;
+        this.serialNumber = serialNumber;
+        this.estimatedValue = estimatedValue;
+        this.comment = comment;
+        this.documentID = documentID;
+
+        this.isSelected = false;
+
+
         image = new ArrayList<String>();
     }
 

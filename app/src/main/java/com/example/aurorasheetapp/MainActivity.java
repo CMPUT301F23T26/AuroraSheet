@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     private Boolean multiSelectMode;
 
     private int itemIndex;
+    String documentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
                 addItemLauncher.launch(intent);
+
+
             }
         });
 
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 ArrayList<Integer> selected_items = getListOfSelectedItems();
                 Collections.reverse(selected_items); // Reverse to prevent index out of bounds
-                for (Integer selectedItemIndex: selected_items) {
+                for (Integer selectedItemIndex : selected_items) {
                     if (selectedItemIndex > -1 && !listItems.isEmpty()) {
                         Item itemToDelete = listItems.remove((int) selectedItemIndex);
                         adapter.notifyDataSetChanged();
@@ -140,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements
                 update_selection();
             }
         });
+
 
 
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleAddItemResult(Intent data) {
         if (data != null) {
+            String documentId = data.getStringExtra("documentId");
+            // Display a Toast message to show the documentId
+
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             ItemDate date = new ItemDate(data.getStringExtra("date"));
@@ -235,7 +242,9 @@ public class MainActivity extends AppCompatActivity implements
                     Integer.parseInt(serial),
                     model,
                     Double.parseDouble(value),
-                    comment
+                    comment,
+                    documentId
+
             );
             listItems.add(listItem);
             adapter.notifyDataSetChanged();
@@ -299,6 +308,8 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
+
+
                                 EditItemResult(data);
                             }
                         }
@@ -493,6 +504,7 @@ public class MainActivity extends AppCompatActivity implements
                 .collection("tags")
                 .get()
                 .addOnCompleteListener(task -> {
+
                     if (task.isSuccessful()) {
                         tags.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -654,6 +666,10 @@ public class MainActivity extends AppCompatActivity implements
                     .addOnFailureListener(e -> Log.w("Firestore", "Error deleting document", e));
         }
     }
+
+
+
+
 
 
 
