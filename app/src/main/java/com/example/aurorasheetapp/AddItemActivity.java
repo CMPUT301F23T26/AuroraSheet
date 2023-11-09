@@ -116,7 +116,7 @@ public class AddItemActivity extends AppCompatActivity {
                     return;
                 }
 
-                //info bout current user
+                //info about current user
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser == null) {
                     Toast.makeText(AddItemActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
@@ -142,6 +142,7 @@ public class AddItemActivity extends AppCompatActivity {
                         .addOnSuccessListener(documentReference -> Toast.makeText(AddItemActivity.this, "Item added", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
 
+                // send the new item data back to the main activity
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("description", description);

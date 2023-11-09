@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class is the fragment for the dialog box that pops up when the user wants to add a new tag
+ */
 public class TagFragment extends DialogFragment {
     private EditText tagNameInput;
     private OnFragmentInteractionListener listener;
@@ -49,6 +52,9 @@ public class TagFragment extends DialogFragment {
 
     @NonNull
     @Override
+    /**
+     * This method creates the dialog box that pops up when the user wants to add a new tag
+     */
     public Dialog onCreateDialog (@Nullable Bundle savedInstanceState){
         tagName = "default";
         name = null;
