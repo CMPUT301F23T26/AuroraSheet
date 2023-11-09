@@ -1,11 +1,15 @@
 package com.example.aurorasheetapp;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,12 +49,21 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         holder.comment.setText(listItem.getComment());
         holder.model.setText(listItem.getModel());
 
+        //Log.d("customArrayAdapter","the binding thing got activated");
+        if (listItem.getSelection()) {
+            holder.background.setBackgroundColor(Color.argb(255, 255, 240, 255));
+        } else {
+            holder.background.setBackgroundColor(Color.argb(255,225,240,255));
+        }
+
     }
 
     @Override
     public int getItemCount() {
         return listItems.size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView name;
@@ -62,6 +75,8 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         public TextView estimatedvalue;
         public TextView make;
 
+        public LinearLayout background;
+
         public ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
@@ -72,6 +87,11 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             serialnumber = (TextView) itemView.findViewById(R.id.serialnumber);
             estimatedvalue = (TextView) itemView.findViewById(R.id.estimatedvalue);
             make = (TextView) itemView.findViewById(R.id.make);
+
+            background = (LinearLayout) itemView.findViewById(R.id.Background);
+
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

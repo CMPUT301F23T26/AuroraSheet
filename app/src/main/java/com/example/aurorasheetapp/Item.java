@@ -17,6 +17,8 @@ public class Item {
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+
+    private Boolean isSelected;
     /**
      * Constructs an Item with the specified attributes.
      *
@@ -39,6 +41,10 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+
+        this.isSelected = false;
+
+        
         image = new ArrayList<String>();
     }
 
@@ -169,4 +175,37 @@ public class Item {
     public void setImage(ArrayList<String> image) {
         this.image = image;
     }
+
+
+    /**
+     * For use in the multiselect.
+     * @return Whether this item is selected
+     */
+    public Boolean getSelection() {
+        return this.isSelected;
+    }
+    /**
+     * Set the item's isSelected to true. for use in multiselect
+     *
+     */
+    public void select() {
+        this.isSelected = true;
+    }
+    /**
+     * Set the item's isSelected to false. for use in multiselect
+     *
+     */
+    public void unselect() {
+        this.isSelected = false;
+    }
+    /**
+     * Toggle the item's selection. for use in multiselect
+     *
+     */
+    public void toggleSelect() {
+        if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
+    }
+
 }
+
+

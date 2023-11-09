@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
-    <LinearLayout
-        android:padding="10dp"
+    android:layout_margin="2dp"
+    android:orientation="vertical"
+    android:padding="1dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:backgroundTint="@color/light_cardbackground"
+
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/name"
@@ -18,49 +29,62 @@
             android:layout_height="wrap_content"
             android:text="name" />
 
+        <ImageView
+            android:id="@+id/picture"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/table_item_icon"
+            tools:srcCompat="@drawable/table_item_icon" />
+
         <TextView
             android:id="@+id/dateofpurchase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date of purchase" />
+            android:text="Date of purchase"
+            android:visibility="gone" />
 
         <TextView
-                android:id="@+id/briefdescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Brief description" />
+            android:id="@+id/briefdescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brief description"
+            android:visibility="gone" />
 
         <TextView
-                android:id="@+id/make"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Make" />
+            android:id="@+id/make"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Make"
+            android:visibility="gone" />
 
         <TextView
-                android:id="@+id/serialnumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Serial Number" />
+            android:id="@+id/serialnumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Serial Number"
+            android:visibility="gone" />
 
         <TextView
-                android:id="@+id/model"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Model" />
+            android:id="@+id/model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Model"
+            android:visibility="gone" />
 
         <TextView
-                android:id="@+id/estimatedvalue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Estimated Value" />
+            android:id="@+id/estimatedvalue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Estimated Value"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="comment" />
+            android:text="comment"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>
 
-        
