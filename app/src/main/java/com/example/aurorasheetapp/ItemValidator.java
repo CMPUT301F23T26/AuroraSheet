@@ -66,15 +66,23 @@ public class ItemValidator {
     /**
      * This method validates the item date by ensuring it is within acceptable range.
      * @param itemDate                   date of the item as ItemDate structure
-     * @return
+     * @return boolean false the date is invalid, true otherwise
      */
     public static boolean validateDate(ItemDate itemDate) {
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         int[] currentTimes = ItemDate.parseDate(currentDate);
         int month = itemDate.getMonth();
-        boolean checkMonth = (month >= 0) && (month <= currentTimes[1]);
+        boolean checkMonth;
         boolean checkDay = false;
+
+        if(itemDate.getYear() == currentTimes[2]){
+             checkMonth = (month > 0) && (month <= currentTimes[1]);
+        }
+        else{
+            checkMonth = (month > 0) && (month <= 12);
+        }
+
         switch (month){
             case 1:
             case 3:
@@ -104,18 +112,25 @@ public class ItemValidator {
     /**
      * This method validates the item date by ensuring it is within acceptable range.
      * @param date                       date of the item in string structure
-     * @return
+     * @return boolean false the date is invalid, true otherwise
      */
     public static boolean validateDate(String date) {
         int[] inputDates = ItemDate.parseDate(date);
         int day = inputDates[0];
         int month = inputDates[1];
         int year = inputDates[2];
+        boolean checkMonth;
+        boolean checkDay = false;
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         int[] currentTimes = ItemDate.parseDate(currentDate);
-        boolean checkMonth = (month >= 0) && (month <= currentTimes[1]);
-        boolean checkDay = false;
+
+        if(year == currentTimes[2]){
+            checkMonth = (month > 0) && (month <= currentTimes[1]);
+        }
+        else{
+            checkMonth = (month > 0) && (month <= 12);
+        }
         switch (month){
             case 1:
             case 3:

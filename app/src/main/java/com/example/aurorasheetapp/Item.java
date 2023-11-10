@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
  */
+// I changed the date to integer for testing so feel free to change its type
 public class Item {
     private String name;
     private ItemDate dateOfPurchase;
@@ -16,11 +17,11 @@ public class Item {
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+    private String documentID;
 
     private Boolean isSelected;
     /**
      * Constructs an Item with the specified attributes.
-     *
      * @param name             The name of the item
      * @param dateOfPurchase   The date of purchase or acquisition.
      * @param briefDescription A brief description of the item.
@@ -46,6 +47,28 @@ public class Item {
         
         image = new ArrayList<String>();
     }
+
+    public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
+                double serialNumber, String model, double estimatedValue, String comment, String documentID) {
+        this.name = name;
+        this.dateOfPurchase = dateOfPurchase;
+        this.briefDescription = briefDescription;
+        this.make = make;
+        this.model = model;
+        this.serialNumber = serialNumber;
+        this.estimatedValue = estimatedValue;
+        this.comment = comment;
+        this.documentID = documentID;
+
+        this.isSelected = false;
+
+
+        image = new ArrayList<String>();
+    }
+
+
+    public Item() {
+        }
 
     /**
      * Get the name of the item.
@@ -199,6 +222,14 @@ public class Item {
      */
     public void toggleSelect() {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
+    }
+
+    public String getDocumentId() {
+        return documentID;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentID = documentId;
     }
 
 }
