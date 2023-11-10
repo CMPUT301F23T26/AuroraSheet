@@ -29,8 +29,8 @@ public class MainActivityTest {
     @Test
     public void testAddItemAfterLogin() {
         // Login to app
-        onView(withId(R.id.user_login)).perform(ViewActions.typeText("bonobo"));
-        onView(withId(R.id.password_login)).perform(ViewActions.typeText("cmput301"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.user_login)).perform(ViewActions.typeText("jey"));
+        onView(withId(R.id.password_login)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
 
         try {
             Thread.sleep(1000);
