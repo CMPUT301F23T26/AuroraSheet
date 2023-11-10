@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     private Boolean multiSelectMode;
 
     private int itemIndex;
+    String documentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,25 +129,22 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ArrayList<Integer> selected_items = getListOfSelectedItems();
-
-                // selected_items is from lowest to greatest. if we set it from greatest to lowest, it should prevent errors when deleting
-                Collections.reverse(selected_items);
-
-
-                Log.d("deletion", selected_items.toString());
-
-                for (Integer selectedItemIndex: selected_items) {
+                Collections.reverse(selected_items); // Reverse to prevent index out of bounds
+                for (Integer selectedItemIndex : selected_items) {
                     if (selectedItemIndex > -1 && !listItems.isEmpty()) {
-                        listItems.remove((int) selectedItemIndex);
+                        Item itemToDelete = listItems.remove((int) selectedItemIndex);
+                        adapter.notifyDataSetChanged();
+                        deleteItemFromFirestore(itemToDelete.getDocumentId());
                     }
                 }
-                adapter.notifyDataSetChanged();
                 update_selection();
-
+                totalAmountTextView.setText(computeTotal());
             }
         });
+
+
+
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements
     private void launchEditData(Intent intent, int i) {
         if (intent != null) {
             Item itemToEdit = listItems.get(i);
+            intent.putExtra("documentId", itemToEdit.getDocumentId());
             intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
             intent.putExtra("time", itemToEdit.getDateOfPurchase().toString());
@@ -220,6 +219,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleAddItemResult(Intent data) {
         if (data != null) {
+            String documentId = data.getStringExtra("documentId");
+            // Display a Toast message to show the documentId
+
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             ItemDate date = new ItemDate(data.getStringExtra("date"));
@@ -237,7 +239,9 @@ public class MainActivity extends AppCompatActivity implements
                     Integer.parseInt(serial),
                     model,
                     Double.parseDouble(value),
-                    comment
+                    comment,
+                    documentId
+
             );
             listItems.add(listItem);
             adapter.notifyDataSetChanged();
@@ -251,8 +255,9 @@ public class MainActivity extends AppCompatActivity implements
             if (isDelete) {
                 int index = data.getIntExtra("index", -1);
                 if (index > -1) {
-                    listItems.remove(index);
+                    Item itemToDelete = listItems.remove(index);
                     adapter.notifyDataSetChanged();
+                    deleteItemFromFirestore( itemToDelete.getDocumentId());
                     totalAmountTextView.setText(computeTotal());
                 }
             } else {
@@ -301,6 +306,8 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
+
+
                                 EditItemResult(data);
                             }
                         }
@@ -470,12 +477,13 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    Double.parseDouble(document.getString("serial")),
+                                    document.getDouble("serial"),
                                     document.getString("model"),
-                                    Double.parseDouble(document.getString("value")),
+                                    document.getDouble("value"),
                                     document.getString("comment")
-                            );
 
+                            );
+                            item.setDocumentId(document.getId()); // Save the document ID
                             listItems.add(item);
                         }
                         adapter.notifyDataSetChanged();
@@ -490,6 +498,7 @@ public class MainActivity extends AppCompatActivity implements
                 .collection("tags")
                 .get()
                 .addOnCompleteListener(task -> {
+
                     if (task.isSuccessful()) {
                         tags.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -638,6 +647,24 @@ public class MainActivity extends AppCompatActivity implements
         db_del_tag(tag);
         selected_tag = null;
     }
+
+    private void deleteItemFromFirestore(String documentId) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && documentId != null) {
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("items")
+                    .document(documentId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully deleted!"))
+                    .addOnFailureListener(e -> Log.w("Firestore", "Error deleting document", e));
+        }
+    }
+
+
+
+
+
 
 
 }

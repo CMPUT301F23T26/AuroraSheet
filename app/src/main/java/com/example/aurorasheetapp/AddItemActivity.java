@@ -116,7 +116,24 @@ public class AddItemActivity extends AppCompatActivity {
                     return;
                 }
 
-                //info about current user
+                double newvalue = 0.0;
+                long newserial = 0;
+
+                try {
+                    newvalue = Double.parseDouble(value);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(AddItemActivity.this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    newserial = Long.parseLong(serial);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(AddItemActivity.this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //info bout current user
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser == null) {
                     Toast.makeText(AddItemActivity.this, "User not signed in", Toast.LENGTH_SHORT).show();
@@ -128,8 +145,8 @@ public class AddItemActivity extends AppCompatActivity {
                 newItem.put("name", name);
                 newItem.put("description", description);
                 newItem.put("date", date);
-                newItem.put("value", value);
-                newItem.put("serial", serial);
+                newItem.put("value", newvalue);
+                newItem.put("serial", newserial);
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
@@ -139,21 +156,27 @@ public class AddItemActivity extends AppCompatActivity {
                         .document(currentUser.getUid())
                         .collection("items")
                         .add(newItem)
-                        .addOnSuccessListener(documentReference -> Toast.makeText(AddItemActivity.this, "Item added", Toast.LENGTH_SHORT).show())
+                        .addOnSuccessListener(documentReference -> {
+                            String newDocumentId = documentReference.getId(); // Get the new document ID
+
+                            // Create an Intent to send the result back to MainActivity
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("documentId", newDocumentId);
+
+                            intent.putExtra("name", name);
+                            intent.putExtra("description", description);
+                            intent.putExtra("date", date);
+                            intent.putExtra("value", value);
+                            intent.putExtra("serial", serial);
+                            intent.putExtra("make", make);
+                            intent.putExtra("model", model);
+                            intent.putExtra("comment", comment);
+                            setResult(1, intent);
+                            finish();
+                        })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
 
-                // send the new item data back to the main activity
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("description", description);
-                intent.putExtra("date", date);
-                intent.putExtra("value", value);
-                intent.putExtra("serial", serial);
-                intent.putExtra("make", make);
-                intent.putExtra("model", model);
-                intent.putExtra("comment", comment);
-                setResult(1, intent);
-                finish();
+
             }
         });
     }
