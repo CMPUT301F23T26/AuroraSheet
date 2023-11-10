@@ -109,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
                 addItemLauncher.launch(intent);
-
-
             }
         });
 
@@ -141,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
                 update_selection();
+                totalAmountTextView.setText(computeTotal());
             }
         });
 
@@ -256,8 +255,9 @@ public class MainActivity extends AppCompatActivity implements
             if (isDelete) {
                 int index = data.getIntExtra("index", -1);
                 if (index > -1) {
-                    listItems.remove(index);
+                    Item itemToDelete = listItems.remove(index);
                     adapter.notifyDataSetChanged();
+                    deleteItemFromFirestore( itemToDelete.getDocumentId());
                     totalAmountTextView.setText(computeTotal());
                 }
             } else {
