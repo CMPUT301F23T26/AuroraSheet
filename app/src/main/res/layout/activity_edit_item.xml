@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient">
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -39,7 +40,7 @@
     <ScrollView
         android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="436dp">
+        android:layout_height="390dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,20 +82,33 @@
             <EditText
                 android:id="@+id/itemName_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="25dp"
+                android:background="@drawable/bg_edit_text"
+                android:gravity="center_vertical"
                 android:hint="Item Name"
                 android:inputType="textPersonName"
+                android:paddingLeft="5dp"
                 android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/itemDescription_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="25dp"
+                android:background="@drawable/bg_edit_text"
                 android:hint="Description"
-                android:inputType="text"
-                android:textSize="16sp" />
+                android:inputType="textMultiLine"
+                android:paddingLeft="5dp"
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:id="@+id/layoutMakeModel_edit"
@@ -105,37 +119,79 @@
                 <EditText
                     android:id="@+id/itemMake_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
                     android:hint="Make"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:paddingLeft="5dp" />
 
                 <EditText
                     android:id="@+id/itemModel_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
                     android:hint="Model"
-                    android:inputType="textPersonName" />
-
-                <LinearLayout
-                    android:id="@+id/dateLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="53dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="6dp"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/date_edit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Date (dd-mm-yyyy)"
-                        android:inputType="textPersonName" />
-
-                </LinearLayout>
+                    android:inputType="textPersonName"
+                    android:paddingLeft="5dp" />
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/dateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="6dp"
+                android:orientation="horizontal"
+                android:layout_below="@+id/layoutMakeModel_edit">
+
+
+                <Button
+                    android:id="@+id/date_edit_btn"
+                    android:layout_width="130dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="200dp"
+                    android:background="@drawable/bg_edit_button"
+                    android:hint="SELECT DATE"
+                    android:layout_centerHorizontal="true"
+
+                    android:inputType="text"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/date_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/date_edit_btn"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="2dp"
+
+                    android:hint="Date"
+                    android:textColor="#FF0000"
+                    android:textColorHint="#000000"
+                    android:textSize="16dp" />
+
+
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:id="@+id/layoutValueSerial_edit"
@@ -146,16 +202,32 @@
                 <EditText
                     android:id="@+id/itemValue_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Value"
+                    android:layout_height="35dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:paddingLeft="5dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:background="@drawable/bg_edit_text"
                     android:inputType="numberDecimal" />
 
                 <EditText
                     android:id="@+id/itemSerialNumber_edit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+
+                    android:layout_height="35dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:paddingLeft="5dp"
+                    android:layout_marginEnd="25dp"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
                     android:hint="Serial Number"
                     android:inputType="number" />
             </LinearLayout>
@@ -163,9 +235,20 @@
             <EditText
                 android:id="@+id/itemComment_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="56dp"
-                android:hint="Comment" />
+                android:layout_marginTop="6dp"
+                android:hint="Comment"
+                android:layout_height="60dp"
+                android:paddingLeft="5dp"
+                android:gravity="top|left"
+                android:layout_below="@id/commentText"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+
+                android:layout_marginEnd="25dp"
+                android:inputType="textMultiLine"
+                android:layout_marginRight="@android:dimen/app_icon_size"
+                android:background="@drawable/bg_edit_text"/>
         </LinearLayout>
     </ScrollView>
 
