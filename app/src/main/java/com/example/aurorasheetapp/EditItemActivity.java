@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -10,8 +11,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.example.aurorasheetapp.ImageHelpers;
 
@@ -30,10 +34,11 @@ import com.example.aurorasheetapp.ImageHelpers;
  * This class is responsible for providing the correct behavior for edit activities
  */
 public class EditItemActivity extends AppCompatActivity {
-    private Button chooseImageButton, deleteImageButton, backButton;
+    private Button chooseImageButton, deleteImageButton, backButton, dateEditButton;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
-                        itemDate, itemSerial;
+                         itemSerial;
+    private TextView itemDate;
     private FloatingActionButton confirmButton, deleteButton;
     private ArrayList<String> images;
     int imageIndex;
@@ -58,6 +63,7 @@ public class EditItemActivity extends AppCompatActivity {
         itemName = findViewById(R.id.itemName_edit);
         itemDescription = findViewById(R.id.itemDescription_edit);
         itemValue = findViewById(R.id.itemValue_edit);
+        dateEditButton = findViewById(R.id.date_edit_btn);
         itemMake = findViewById(R.id.itemMake_edit);
         itemModel = findViewById(R.id.itemModel_edit);
         itemComment = findViewById(R.id.itemComment_edit);
@@ -109,6 +115,26 @@ public class EditItemActivity extends AppCompatActivity {
 
 
         //return button
+        dateEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        EditItemActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                itemDate.setText(dayOfMonth + "-" + (month + 1) + "-" + year);
+                            }
+                        },
+                        year, month, day);
+                datePickerDialog.show();
+            }
+        });
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
