@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
  */
-// I changed the date to integer for testing so feel free to change its type
 public class Item {
     private String name;
     private ItemDate dateOfPurchase;
@@ -48,10 +47,6 @@ public class Item {
         
         image = new ArrayList<String>();
     }
-
-
-    public Item() {
-        }
 
     /**
      * Get the name of the item.

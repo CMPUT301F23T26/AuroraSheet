@@ -15,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * This class is the adapter for the recycler view. It takes in a list of items and
+ * displays them in the recycler view.
+ */
 public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.ViewHolder> {
     private List<Item> listItems;
     private Context context;
@@ -27,6 +31,10 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
 
     @NonNull
     @Override
+    /**
+     * This method creates a view holder for the recycler view. It inflates the list_item layout
+     * and returns a view holder with the inflated layout.
+     */
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -38,6 +46,10 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
     }
 
     @Override
+    /**
+     * This method binds the data to the view holder. It takes in the view holder and the position
+     * of the item in the list and binds the data to the view holder.
+     */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item listItem = listItems.get(position);
         holder.name.setText(String.valueOf(listItem.getName()));
@@ -59,12 +71,17 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
     }
 
     @Override
+    /**
+     * This method returns the number of items in the list.
+     */
     public int getItemCount() {
         return listItems.size();
     }
 
-
-
+    /**
+     * This class is the view holder for the recycler view. It holds the views for the list_item
+     * layout.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView name;
         public TextView dateofpurchase;
@@ -77,6 +94,12 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
 
         public LinearLayout background;
 
+        /**
+         * This constructor takes in a view and a recycler view interface. It sets the views to the
+         * views in the list_item layout.
+         * @param itemView
+         * @param recyclerViewInterface
+         */
         public ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
@@ -87,10 +110,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             serialnumber = (TextView) itemView.findViewById(R.id.serialnumber);
             estimatedvalue = (TextView) itemView.findViewById(R.id.estimatedvalue);
             make = (TextView) itemView.findViewById(R.id.make);
-
             background = (LinearLayout) itemView.findViewById(R.id.Background);
-
-
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
