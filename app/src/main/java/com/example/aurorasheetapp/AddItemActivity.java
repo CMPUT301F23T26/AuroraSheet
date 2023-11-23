@@ -42,6 +42,7 @@ public class AddItemActivity extends AppCompatActivity {
     private Button itemDate;
     private EditText itemValue;
     private EditText itemSerial;
+    private Button scanSerialButton;
     private EditText itemMake;
     private EditText itemModel;
     private EditText itemComment;
@@ -66,6 +67,7 @@ public class AddItemActivity extends AppCompatActivity {
         dateText = findViewById(R.id.dateText);
         itemValue = findViewById(R.id.itemValue);
         itemSerial = findViewById(R.id.itemSerialNumber);
+        scanSerialButton = findViewById(R.id.scanSerialButton);
         itemMake = findViewById(R.id.itemMake);
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
@@ -92,11 +94,19 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
-
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageChooser();
+            }
+        });
+
+        scanSerialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the camera to scan the serial number
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                launchCameraActivity.launch(intent);
             }
         });
         addItemButton.setOnClickListener(new View.OnClickListener() {
@@ -241,4 +251,13 @@ public class AddItemActivity extends AppCompatActivity {
                 }
             }
         });
+
+    ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    //TODO handle the image
+                }
+            });
 }

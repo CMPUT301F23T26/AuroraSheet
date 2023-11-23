@@ -254,11 +254,19 @@
             android:inputType="number" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/scanSerialButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutValueSerial"
+        android:layout_marginTop="7dp"
+        android:text="SCAN" />
+
     <TextView
         android:id="@+id/commentText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutValueSerial"
+        android:layout_below="@+id/scanSerialButton"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="18dp"
