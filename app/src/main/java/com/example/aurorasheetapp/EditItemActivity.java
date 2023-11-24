@@ -178,6 +178,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putStringArrayListExtra("images", images);
                     outputIntent.putExtra("index", index);
                     outputIntent.putExtra("imageIndex", imageIndex);
+                    outputIntent.putExtra("path", path);
                     setResult(1, outputIntent);
 
                     //put all updated values in a map

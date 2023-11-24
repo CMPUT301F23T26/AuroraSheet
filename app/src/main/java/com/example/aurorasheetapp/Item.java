@@ -19,6 +19,7 @@ public class Item {
     private ArrayList<String> image;
     private int topImageIndex;
     private String documentID;
+    private String path;
 
     private Boolean isSelected;
     /**
@@ -46,6 +47,7 @@ public class Item {
 
         //image array initialization
         this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
@@ -65,12 +67,21 @@ public class Item {
 
         //image array initialization
         this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
 
     public Item() {
         }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 
     /**
      * Get the name of the item.

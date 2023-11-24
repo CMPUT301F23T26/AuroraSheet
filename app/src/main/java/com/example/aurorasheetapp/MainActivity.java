@@ -273,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements
                 int index = data.getIntExtra("index", -1);
                 ArrayList<String> image = data.getStringArrayListExtra("images");
                 int imageTopIndex = data.getIntExtra("imageIndex", -1);
+                String path = data.getStringExtra("path");
 
                 if (index != -1) {
                     Item item = listItems.get(index);
@@ -286,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements
                     item.setSerialNumber(serial);
                     item.setImage(image);
                     item.setTopImageIndex(imageTopIndex);
+                    item.setPath(path);
                 }
                 adapter.notifyDataSetChanged();
                 totalAmountTextView.setText(computeTotal());
