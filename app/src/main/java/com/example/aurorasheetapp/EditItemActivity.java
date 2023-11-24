@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.example.aurorasheetapp.ImageHelpers;
 import com.google.firebase.auth.FirebaseAuth;
@@ -337,8 +338,9 @@ public class EditItemActivity extends AppCompatActivity {
                             //save to local storage, and add to the record to Item as String ArrayList
                             itemImage.setImageBitmap(selectedImageBitmap);
                             imageIndex++;
-                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, "Image" + imageIndex);
-                            images.add("Image" + imageIndex);
+                            String uniqueID = UUID.randomUUID().toString();
+                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
+                            images.add(uniqueID);
                             //index for correctly selecting image, no need to implement in Add
                         }
                         catch (IOException e) {
