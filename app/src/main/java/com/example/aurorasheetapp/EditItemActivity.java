@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -40,7 +41,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * This class is responsible for providing the correct behavior for edit activities
  */
 public class EditItemActivity extends AppCompatActivity {
-    private Button chooseImageButton, deleteImageButton, backButton, dateEditButton;
+    private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
+            , imageLeft, imageRight;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -85,6 +87,8 @@ public class EditItemActivity extends AppCompatActivity {
         itemSerial = findViewById(R.id.itemSerialNumber_edit);
         confirmButton = findViewById(R.id.confirmButton_edit);
         deleteButton = findViewById(R.id.deleteItemButton_edit);
+        imageLeft = findViewById(R.id.imageLeft_edit);
+        imageRight = findViewById(R.id.imageRight_edit);
 
 
         //TODO: store / pass in image
@@ -109,10 +113,10 @@ public class EditItemActivity extends AppCompatActivity {
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
         serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
+        imageIndex = inputIntent.getIntExtra("imageIndex", 0);
         //if the item already contains the image, initialize
-         if(inputIntent.getStringArrayListExtra("images").size() != 0){
+         if(imageIndex != -1){
             images = inputIntent.getStringArrayListExtra("images");
-            imageIndex = images.size() - 1;
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
             itemImage.setImageBitmap(bitmap);
         }
@@ -126,7 +130,6 @@ public class EditItemActivity extends AppCompatActivity {
         itemComment.setText(comment);
         itemDate.setText(time);
         itemSerial.setText(serial);
-
 
 
         //return button
@@ -173,6 +176,7 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("serial", itemSerial.getText().toString());
                     outputIntent.putStringArrayListExtra("images", images);
                     outputIntent.putExtra("index", index);
+                    outputIntent.putExtra("imageIndex", imageIndex);
                     setResult(1, outputIntent);
 
                     //put all updated values in a map
@@ -231,24 +235,42 @@ public class EditItemActivity extends AppCompatActivity {
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO wacky logic here, need to fix imageIndex
-                //if only one image
-                if(imageIndex == 1){
-                    images.remove(imageIndex - 1);
-                    itemImage.setImageDrawable(null);
-                    imageIndex--;
-                }
                 //if only one image and coming from input
-                else if(imageIndex == 0){
+                if(images.size() == 1){
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
+                    imageIndex--;
                 }
+                else if(images.size() == 0){
+                }
+                //TODO need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
-                    images.remove(imageIndex - 1);
-                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, "TestImage" + imageIndex);
+                    images.remove(imageIndex);
+                    imageIndex = 0;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex + 1 < images.size()){
+                    imageIndex++;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+
+        imageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex > 0){
                     imageIndex--;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
                 }
             }
         });
@@ -314,10 +336,10 @@ public class EditItemActivity extends AppCompatActivity {
                             selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                             //save to local storage, and add to the record to Item as String ArrayList
                             itemImage.setImageBitmap(selectedImageBitmap);
-                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, "TestImage" + imageIndex);
-                            images.add("TestImage" + imageIndex);
-                            //index for correctly selecting image, no need to implement in Add
                             imageIndex++;
+                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, "Image" + imageIndex);
+                            images.add("Image" + imageIndex);
+                            //index for correctly selecting image, no need to implement in Add
                         }
                         catch (IOException e) {
                             e.printStackTrace();

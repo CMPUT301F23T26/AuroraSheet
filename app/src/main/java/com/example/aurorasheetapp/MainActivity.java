@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements
             intent.putExtra("description", itemToEdit.getBriefDescription());
             intent.putStringArrayListExtra("images", (ArrayList<String>)itemToEdit.getImage());
             intent.putExtra("index", i);
+            intent.putExtra("imageIndex", itemToEdit.getTopImageIndex());
             editItemLauncher.launch(intent);
         }
     }
@@ -271,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements
                 Double serial = Double.parseDouble(data.getStringExtra("serial"));
                 int index = data.getIntExtra("index", -1);
                 ArrayList<String> image = data.getStringArrayListExtra("images");
+                int imageTopIndex = data.getIntExtra("imageIndex", -1);
 
                 if (index != -1) {
                     Item item = listItems.get(index);
@@ -283,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements
                     item.setBriefDescription(description);
                     item.setSerialNumber(serial);
                     item.setImage(image);
+                    item.setTopImageIndex(imageTopIndex);
                 }
                 adapter.notifyDataSetChanged();
                 totalAmountTextView.setText(computeTotal());

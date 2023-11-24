@@ -59,10 +59,24 @@
                     android:layout_marginTop="0dp"
                     android:text="select image" />
 
+                <Button
+                    android:id="@+id/imageLeft_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="left" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/imageRight_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="right" />
 
                 <Button
                     android:id="@+id/deleteImageButton_edit"
