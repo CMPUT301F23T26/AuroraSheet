@@ -192,16 +192,6 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * This method launches the image chooser activity for adding an image to the item.
-     */
-    public void imageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
-    }
-
-    /**
      * This method validates all of the user input for adding a new item.
      */
     public boolean validateInput(){
@@ -231,6 +221,23 @@ public class AddItemActivity extends AppCompatActivity {
         }
         return true;
     }
+    /**
+     * This method launches the image chooser activity for adding an image to the item.
+     */
+    public void imageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
+    }
+
+
+    private String extractSerialNumberFromImage(Bitmap imageBitmap) {
+        // TODO: Implement your logic to process the image and extract the serial number
+        // For simplicity, let's assume you have a placeholder implementation
+        return "123456";
+    }
+
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
@@ -257,7 +264,12 @@ public class AddItemActivity extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    //TODO handle the image
+                    // get the image bitmap from the camera activity and extract the serial number
+                    if (data != null && data.getExtras() != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        String serialNumber = extractSerialNumberFromImage(imageBitmap);
+                        itemSerial.setText(serialNumber);
+                    }
                 }
             });
 }
