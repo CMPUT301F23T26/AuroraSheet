@@ -231,6 +231,9 @@ public class MainActivity extends AppCompatActivity implements
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
+            ArrayList<String> images = data.getStringArrayListExtra("images");
+            int topIndex = data.getIntExtra("imageIndex", -1);
+            String path = data.getStringExtra("path");
 
             Item listItem = new Item(
                     name,
@@ -244,6 +247,9 @@ public class MainActivity extends AppCompatActivity implements
                     documentId
 
             );
+            listItem.setPath(path);
+            listItem.setImage(images);
+            listItem.setTopImageIndex(topIndex);
             listItems.add(listItem);
             adapter.notifyDataSetChanged();
             totalAmountTextView.setText(computeTotal());

@@ -25,9 +25,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class manages adding new items to the item list. It gets user input and validates
@@ -40,12 +42,18 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText itemDescription;
     private TextView dateText;
     private Button itemDate;
+    private Button imageDelete;
+    private Button imageLeft;
+    private Button imageRight;
     private EditText itemValue;
     private EditText itemSerial;
     private EditText itemMake;
     private EditText itemModel;
     private EditText itemComment;
     private FloatingActionButton addItemButton;
+    ArrayList<String> images;
+    int imageIndex;
+    String path;
 
     //created instance
     private FirebaseFirestore firestore;
@@ -70,6 +78,12 @@ public class AddItemActivity extends AppCompatActivity {
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
         addItemButton = findViewById(R.id.addItemButton);
+        imageDelete = findViewById(R.id.deleteImageButton_add);
+        imageLeft = findViewById(R.id.imageLeft_add);
+        imageRight = findViewById(R.id.imageRight_add);
+
+        imageIndex = -1;
+        images = new ArrayList<>();
 
         itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,12 +185,56 @@ public class AddItemActivity extends AppCompatActivity {
                             intent.putExtra("make", make);
                             intent.putExtra("model", model);
                             intent.putExtra("comment", comment);
+                            intent.putExtra("images", images);
+                            intent.putExtra("imageIndex", imageIndex);
+                            intent.putExtra("path", path);
                             setResult(1, intent);
                             finish();
                         })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
 
 
+            }
+        });
+        imageDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //if only one image and coming from input
+                if(images.size() == 1){
+                    images.remove(imageIndex);
+                    itemImage.setImageDrawable(null);
+                    imageIndex--;
+                }
+                else if(images.size() == 0){
+                }
+                //TODO might need to delete from local repository, as well
+                //if multiple, set to the next one on the stack
+                else{
+                    images.remove(imageIndex);
+                    imageIndex = 0;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex > 0){
+                    imageIndex--;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex + 1 < images.size()){
+                    imageIndex++;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
             }
         });
     }
@@ -234,6 +292,10 @@ public class AddItemActivity extends AppCompatActivity {
                     try {
                         selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         itemImage.setImageBitmap(selectedImageBitmap);
+                        imageIndex++;
+                        String uniqueID = UUID.randomUUID().toString();
+                        path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
+                        images.add(uniqueID);
                     }
                     catch (IOException e) {
                         e.printStackTrace();

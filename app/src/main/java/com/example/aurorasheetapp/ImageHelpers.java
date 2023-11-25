@@ -25,7 +25,6 @@ public class ImageHelpers {
      * @return the path to the saved image directory as String
      */
 
-    //TODO improve this to return more meaningful data since the default location for app is constant.
     public static String saveToInternalStorage(Context context, Bitmap bitmapImage, String imageName){
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir

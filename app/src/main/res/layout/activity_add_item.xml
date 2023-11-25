@@ -5,11 +5,38 @@
     android:background="@drawable/gradient">
 
     <Button
+        android:id="@+id/imageLeft_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="213dp"
+        android:layout_weight="1"
+        android:text="left" />
+
+    <Button
+        android:id="@+id/imageRight_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="111dp"
+        android:layout_weight="1"
+        android:text="right" />
+
+    <Button
+        android:id="@+id/deleteImageButton_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="11dp"
+        android:text="delete image" />
+
+    <Button
         android:id="@+id/selectImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="select image"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="304dp"
+        android:text="select image" />
 
     <ImageView
         android:id="@+id/imageViewItem"

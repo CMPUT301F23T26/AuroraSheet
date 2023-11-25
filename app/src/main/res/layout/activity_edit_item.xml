@@ -40,7 +40,7 @@
     <ScrollView
         android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="390dp">
+        android:layout_height="527dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -166,10 +166,10 @@
                 android:id="@+id/dateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:layout_below="@+id/layoutMakeModel_edit"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="6dp"
-                android:orientation="horizontal"
-                android:layout_below="@+id/layoutMakeModel_edit">
+                android:orientation="horizontal">
 
 
                 <Button
@@ -178,12 +178,12 @@
                     android:layout_height="30dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="200dp"
                     android:background="@drawable/bg_edit_button"
                     android:hint="SELECT DATE"
-                    android:layout_centerHorizontal="true"
 
                     android:inputType="text"
                     android:textSize="15sp" />
@@ -216,18 +216,18 @@
                 <EditText
                     android:id="@+id/itemValue_edit"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:hint="Value"
                     android:layout_height="35dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="25dp"
-                    android:paddingLeft="5dp"
                     android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:layout_weight="1"
                     android:background="@drawable/bg_edit_text"
-                    android:inputType="numberDecimal" />
+                    android:hint="Value"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="5dp" />
 
                 <EditText
                     android:id="@+id/itemSerialNumber_edit"
@@ -238,31 +238,31 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
-                    android:paddingLeft="5dp"
                     android:layout_marginEnd="25dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_edit_text"
                     android:hint="Serial Number"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:paddingLeft="5dp" />
             </LinearLayout>
 
             <EditText
                 android:id="@+id/itemComment_edit"
                 android:layout_width="match_parent"
-                android:layout_marginTop="6dp"
-                android:hint="Comment"
                 android:layout_height="60dp"
-                android:paddingLeft="5dp"
-                android:gravity="top|left"
                 android:layout_below="@id/commentText"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="10dp"
-
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="25dp"
-                android:inputType="textMultiLine"
                 android:layout_marginRight="@android:dimen/app_icon_size"
-                android:background="@drawable/bg_edit_text"/>
+                android:background="@drawable/bg_edit_text"
+
+                android:gravity="top|left"
+                android:hint="Comment"
+                android:inputType="textMultiLine"
+                android:paddingLeft="5dp" />
         </LinearLayout>
     </ScrollView>
 
