@@ -7,6 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * This class handles the result of the add item activity and the edit item activity to update the
+ * list of items.
+ */
 public class ItemResultHandler {
 
     private final MainActivity mainActivity;
@@ -15,6 +19,12 @@ public class ItemResultHandler {
         this.mainActivity = mainActivity;
     }
 
+    /**
+     * This method takes in the intent data from the add item activity and updates the list of items
+     * @param data
+     * @param itemManager
+     * @param adapter
+     */
     public void addItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
         if (data != null) {
             String documentId = data.getStringExtra("documentId");
@@ -46,6 +56,12 @@ public class ItemResultHandler {
         }
     }
 
+    /**
+     * This method takes in the intent data from the edit item activity and updates the list of items
+     * @param data
+     * @param itemManager
+     * @param adapter
+     */
     public void editItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
         if (data != null) {
             Boolean isDelete = data.getBooleanExtra("isDelete", false);
