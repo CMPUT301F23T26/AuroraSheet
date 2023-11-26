@@ -2,12 +2,14 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,11 +21,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -232,10 +244,28 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
 
-    private String extractSerialNumberFromImage(Bitmap imageBitmap) {
-        // TODO: Implement your logic to process the image and extract the serial number
-        // For simplicity, let's assume you have a placeholder implementation
-        return "123456";
+    private void extractSerialNumberFromImage(Bitmap imageBitmap, Integer rotationDegree) {
+
+        // Get an instance of FirebaseVisionTextRecognizer
+        TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+        InputImage image = InputImage.fromBitmap(imageBitmap, rotationDegree);
+
+        Task<Text> result = recognizer.process(image)
+                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                    @Override
+                    public void onSuccess(Text visionText) {
+                        // Use visionText to get the recognized text
+                        String resultText = visionText.getText();
+                        itemSerial.setText(resultText);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure
+
+                    }
+                });
     }
 
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
@@ -267,9 +297,39 @@ public class AddItemActivity extends AppCompatActivity {
                     // get the image bitmap from the camera activity and extract the serial number
                     if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                        String serialNumber = extractSerialNumberFromImage(imageBitmap);
-                        itemSerial.setText(serialNumber);
+                        Uri imageUri = getImageUriFromBitmap(imageBitmap);
+                        int rotationDegree = getRotationDegree(imageUri);
+                        extractSerialNumberFromImage(imageBitmap, rotationDegree);
+
                     }
                 }
             });
+
+    private Uri getImageUriFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
+    private int getRotationDegree(Uri imageUri) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(imageUri.getPath());
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0; // Default to 0 degree if an error occurs
+        }
+    }
 }
