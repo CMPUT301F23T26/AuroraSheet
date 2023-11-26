@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
-
+    private ItemManager itemManager;
+    private ItemResultHandler itemResultHandler;
     private TextView totalAmountTextView;
     private FloatingActionButton addButton;
     private FloatingActionButton editButton;
@@ -82,9 +83,11 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        listItems = new ArrayList<>();
 
-        adapter = new CustomArrayAdapter(listItems, this);
+        itemManager = new ItemManager();
+        itemResultHandler = new ItemResultHandler(this);
+
+        adapter = new CustomArrayAdapter(itemManager.getItems(), this);
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
-
+        updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -117,34 +120,29 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
 
                 itemIndex = getTheOneSelectedItem();
-                if(itemIndex > -1 && !listItems.isEmpty()){
+                if(itemIndex > -1 && !itemManager.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
                     launchEditData(intent, itemIndex);
                 }
             }
         });
-        // display total value for all the items
-        totalAmountTextView = findViewById(R.id.totalValue);
-        totalAmountTextView.setText(computeTotal());
+
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<Integer> selected_items = getListOfSelectedItems();
                 Collections.reverse(selected_items); // Reverse to prevent index out of bounds
                 for (Integer selectedItemIndex : selected_items) {
-                    if (selectedItemIndex > -1 && !listItems.isEmpty()) {
-                        Item itemToDelete = listItems.remove((int) selectedItemIndex);
+                    if (selectedItemIndex > -1 && !itemManager.isEmpty()) {
+                        Item itemToDelete = itemManager.remove(selectedItemIndex);
                         adapter.notifyDataSetChanged();
                         deleteItemFromFirestore(itemToDelete.getDocumentId());
                     }
                 }
                 update_selection();
-                totalAmountTextView.setText(computeTotal());
+                updateTotalValue();
             }
         });
-
-
-
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,22 +184,9 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-
-    /**
-     * Computes the total value of all the items in the list.
-     * @return A string representation of the total value of all the items.
-     */
-    public String computeTotal() {
-        double total = 0;
-        for (Item item : listItems) {
-            total += item.getEstimatedValue();
-        }
-        return String.format("%.2f", total);
-    }
-
     private void launchEditData(Intent intent, int i) {
         if (intent != null) {
-            Item itemToEdit = listItems.get(i);
+            Item itemToEdit = itemManager.getItem(i);
             intent.putExtra("documentId", itemToEdit.getDocumentId());
             intent.putExtra("name", itemToEdit.getName());
             intent.putExtra("value", itemToEdit.getEstimatedValue());
@@ -218,96 +203,14 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleAddItemResult(Intent data) {
-        if (data != null) {
-            String documentId = data.getStringExtra("documentId");
-            // Display a Toast message to show the documentId
-
-            String name = data.getStringExtra("name");
-            String description = data.getStringExtra("description");
-            ItemDate date = new ItemDate(data.getStringExtra("date"));
-            String value = data.getStringExtra("value");
-            String serial = data.getStringExtra("serial");
-            String make = data.getStringExtra("make");
-            String model = data.getStringExtra("model");
-            String comment = data.getStringExtra("comment");
-            ArrayList<String> images = data.getStringArrayListExtra("images");
-            int topIndex = data.getIntExtra("imageIndex", -1);
-            String path = data.getStringExtra("path");
-
-            Item listItem = new Item(
-                    name,
-                    date,
-                    description,
-                    make,
-                    Integer.parseInt(serial),
-                    model,
-                    Double.parseDouble(value),
-                    comment,
-                    documentId
-
-            );
-            listItem.setPath(path);
-            listItem.setImage(images);
-            listItem.setTopImageIndex(topIndex);
-            listItems.add(listItem);
-            adapter.notifyDataSetChanged();
-            totalAmountTextView.setText(computeTotal());
-        }
-    }
-
-    private void EditItemResult(Intent data) {
-        if (data != null) {
-            Boolean isDelete = data.getBooleanExtra("isDelete", false);
-            if (isDelete) {
-                int index = data.getIntExtra("index", -1);
-                if (index > -1) {
-                    Item itemToDelete = listItems.remove(index);
-                    adapter.notifyDataSetChanged();
-                    deleteItemFromFirestore( itemToDelete.getDocumentId());
-                    totalAmountTextView.setText(computeTotal());
-                }
-            } else {
-                String name = data.getStringExtra("name");
-                String description = data.getStringExtra("description");
-                String value = data.getStringExtra("value");
-                String make = data.getStringExtra("make");
-                String model = data.getStringExtra("model");
-                String comment = data.getStringExtra("comment");
-                ItemDate date = new ItemDate(data.getStringExtra("time"));
-                Double serial = Double.parseDouble(data.getStringExtra("serial"));
-                int index = data.getIntExtra("index", -1);
-                ArrayList<String> image = data.getStringArrayListExtra("images");
-                int imageTopIndex = data.getIntExtra("imageIndex", -1);
-                String path = data.getStringExtra("path");
-
-                if (index != -1) {
-                    Item item = listItems.get(index);
-                    item.setMake(make);
-                    item.setComment(comment);
-                    item.setName(name);
-                    item.setEstimatedValue(Double.parseDouble(value));
-                    item.setModel(model);
-                    item.setDateOfPurchase(date);
-                    item.setBriefDescription(description);
-                    item.setSerialNumber(serial);
-                    item.setImage(image);
-                    item.setTopImageIndex(imageTopIndex);
-                    item.setPath(path);
-                }
-                adapter.notifyDataSetChanged();
-                totalAmountTextView.setText(computeTotal());
-            }
-        }
-    }
-
     private final ActivityResultLauncher<Intent> addItemLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-                                handleAddItemResult(data);
+                                itemResultHandler.addItemResult(data, itemManager, adapter);
+                                updateTotalValue();
                             }
                         }
                     });
@@ -317,9 +220,8 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-
-
-                                EditItemResult(data);
+                                itemResultHandler.editItemResult(data, itemManager, adapter);
+                                updateTotalValue();
                             }
                         }
                     });
@@ -335,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (multiSelectMode) {
             //Log.w("debug","item clicked while in select mode");
-            listItems.get(position).toggleSelect();
+            itemManager.getItems().get(position).toggleSelect();
 
             update_selection();
         }
@@ -378,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     public int countSelectedItems() {
         int count = 0;
-        for (Item thisitem:listItems) {
+        for (Item thisitem:itemManager.getItems()) {
             if (thisitem.getSelection()) {
                 count += 1;
             }
@@ -387,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initialiseAsUnselected() {
-        for (Item thisitem:listItems) {
+        for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
         }
     }
@@ -397,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements
      *
      */
     public void deselectAllItems() {
-        for (Item thisitem:listItems) {
+        for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
 
         }
@@ -440,9 +342,9 @@ public class MainActivity extends AppCompatActivity implements
      *
      */
     public int getTheOneSelectedItem() {
-        int listsize = listItems.size();
+        int listsize = itemManager.getItems().size();
         for (int index = 0; index < listsize; index++) {
-            if (listItems.get(index).getSelection()) {
+            if (itemManager.getItems().get(index).getSelection()) {
                 return index;
             }
         }
@@ -455,9 +357,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     private ArrayList<Integer> getListOfSelectedItems() {
         ArrayList<Integer> selected_items = new ArrayList<Integer>();
-        int listsize = listItems.size();
+        int listsize = itemManager.getItems().size();
         for (int index = 0; index < listsize; index++) {
-            if (listItems.get(index).getSelection()) {
+            if (itemManager.getItems().get(index).getSelection()) {
                 selected_items.add(index);
             }
         }
@@ -479,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        listItems.clear();
+                        itemManager.getItems().clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d("Firestore", document.getId() + " => " + document.getData());
 
@@ -495,10 +397,10 @@ public class MainActivity extends AppCompatActivity implements
 
                             );
                             item.setDocumentId(document.getId()); // Save the document ID
-                            listItems.add(item);
+                            itemManager.getItems().add(item);
                         }
                         adapter.notifyDataSetChanged();
-                        totalAmountTextView.setText(computeTotal());
+                        totalAmountTextView.setText(itemManager.computeTotal());
                     } else {
                         Log.w("Firestore", "Error getting documents.", task.getException());
                         Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
@@ -659,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements
         selected_tag = null;
     }
 
-    private void deleteItemFromFirestore(String documentId) {
+    public void deleteItemFromFirestore(String documentId) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null && documentId != null) {
             firestore.collection("users")
@@ -672,10 +574,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
-
-
-
-
+    public void updateTotalValue() {
+        totalAmountTextView.setText(itemManager.computeTotal());
+    }
 
 }
