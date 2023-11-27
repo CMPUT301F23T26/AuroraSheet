@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient">
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmButton_edit"
 
@@ -43,7 +42,7 @@
     <ScrollView
         android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="603dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,7 +91,8 @@
             <ImageView
                 android:id="@+id/imageViewItem_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
+                android:visibility="gone"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop" />
 

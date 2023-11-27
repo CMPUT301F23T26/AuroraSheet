@@ -204,6 +204,7 @@ public class AddItemActivity extends AppCompatActivity {
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
                     imageIndex--;
+                    itemImage.setVisibility(View.GONE);
                 }
                 else if(images.size() == 0){
                 }
@@ -296,6 +297,7 @@ public class AddItemActivity extends AppCompatActivity {
                         String uniqueID = UUID.randomUUID().toString();
                         path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                         images.add(uniqueID);
+                        itemImage.setVisibility(View.VISIBLE);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
