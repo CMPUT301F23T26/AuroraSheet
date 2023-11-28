@@ -9,6 +9,7 @@ public class Tag {
     private String name;
     private ArrayList<Item> tagged_items;
     private boolean selected;
+    private String documentID;
 
     public Tag(String name){
         this.name = name;
@@ -62,4 +63,12 @@ public class Tag {
     }
 
     public ArrayList<Item> getTagged_items(){return tagged_items;}
+
+    public void setDocumentID(String ID){
+        this.documentID = ID;
+    }
+
+    public String getDocumentID(){
+        return documentID;
+    }
 }

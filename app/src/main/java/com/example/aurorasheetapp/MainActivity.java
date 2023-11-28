@@ -479,8 +479,9 @@ public class MainActivity extends AppCompatActivity implements
                 .document(currentUser.getUid())
                 .collection("tags")
                 .add(newTag)
-                .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag added", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(documentReference -> tag.setDocumentID(documentReference.getId()));
+
         ArrayList<Item> tagged_items = tag.getTagged_items();
         for (Item item: tagged_items){
             String name = item.getName();
@@ -521,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements
         firestore.collection("users")
                 .document(currentUser.getUid())
                 .collection("tags")
-                .document(tag.getName())
+                .document(tag.getDocumentID())
                 .delete()
                 .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
