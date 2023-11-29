@@ -185,6 +185,13 @@ public class MainActivity extends AppCompatActivity implements
                 new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
             }
         });
+
+        tagItemButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                new TagItemsFragment(tags, (ArrayList) itemManager.getItems()).show(getSupportFragmentManager(), "tag_item");
+            }
+        });
     }
 
     private void launchEditData(Intent intent, int i) {

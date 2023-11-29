@@ -99,9 +99,11 @@ public class TagItemsFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        }
-                        listener.onOK_Pressed(this.original_selected_tags);
+
+                        listener.onOK_Pressed(original_selected_tags);
                     }
-                );
+                })
+                .create();
+
     }
 }
