@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.example.aurorasheetapp.ImageHelpers;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +42,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * This class is responsible for providing the correct behavior for edit activities
  */
 public class EditItemActivity extends AppCompatActivity {
-    private Button chooseImageButton, deleteImageButton, backButton, dateEditButton;
+    private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
+            , imageLeft, imageRight, camera;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -85,6 +88,9 @@ public class EditItemActivity extends AppCompatActivity {
         itemSerial = findViewById(R.id.itemSerialNumber_edit);
         confirmButton = findViewById(R.id.confirmButton_edit);
         deleteButton = findViewById(R.id.deleteItemButton_edit);
+        imageLeft = findViewById(R.id.imageLeft_edit);
+        imageRight = findViewById(R.id.imageRight_edit);
+        camera = findViewById(R.id.cameraButton_edit);
 
 
         //TODO: store / pass in image
@@ -109,10 +115,10 @@ public class EditItemActivity extends AppCompatActivity {
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
         serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
+        imageIndex = inputIntent.getIntExtra("imageIndex", 0);
         //if the item already contains the image, initialize
-         if(inputIntent.getStringArrayListExtra("images").size() != 0){
+         if(imageIndex != -1){
             images = inputIntent.getStringArrayListExtra("images");
-            imageIndex = images.size() - 1;
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
             itemImage.setImageBitmap(bitmap);
         }
@@ -126,7 +132,6 @@ public class EditItemActivity extends AppCompatActivity {
         itemComment.setText(comment);
         itemDate.setText(time);
         itemSerial.setText(serial);
-
 
 
         //return button
@@ -156,7 +161,13 @@ public class EditItemActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                cameraActivity.launch(imageIntent);
+            }
+        });
         //confirm button
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +184,8 @@ public class EditItemActivity extends AppCompatActivity {
                     outputIntent.putExtra("serial", itemSerial.getText().toString());
                     outputIntent.putStringArrayListExtra("images", images);
                     outputIntent.putExtra("index", index);
+                    outputIntent.putExtra("imageIndex", imageIndex);
+                    outputIntent.putExtra("path", path);
                     setResult(1, outputIntent);
 
                     //put all updated values in a map
@@ -231,24 +244,43 @@ public class EditItemActivity extends AppCompatActivity {
         deleteImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO wacky logic here, need to fix imageIndex
-                //if only one image
-                if(imageIndex == 1){
-                    images.remove(imageIndex - 1);
-                    itemImage.setImageDrawable(null);
-                    imageIndex--;
-                }
                 //if only one image and coming from input
-                else if(imageIndex == 0){
+                if(images.size() == 1){
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
+                    imageIndex--;
+                    itemImage.setVisibility(View.GONE);
                 }
+                else if(images.size() == 0){
+                }
+                //TODO need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
-                    images.remove(imageIndex - 1);
-                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, "TestImage" + imageIndex);
+                    images.remove(imageIndex);
+                    imageIndex = 0;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex + 1 < images.size()){
+                    imageIndex++;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+
+        imageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex > 0){
                     imageIndex--;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
                 }
             }
         });
@@ -314,15 +346,33 @@ public class EditItemActivity extends AppCompatActivity {
                             selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                             //save to local storage, and add to the record to Item as String ArrayList
                             itemImage.setImageBitmap(selectedImageBitmap);
-                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, "TestImage" + imageIndex);
-                            images.add("TestImage" + imageIndex);
-                            //index for correctly selecting image, no need to implement in Add
                             imageIndex++;
+                            String uniqueID = UUID.randomUUID().toString();
+                            path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
+                            images.add(uniqueID);
+                            itemImage.setVisibility(View.VISIBLE);
+                            //index for correctly selecting image, no need to implement in Add
                         }
                         catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+            });
+    ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+               if(result.getResultCode() == Activity.RESULT_OK){
+                   Intent data = result.getData();
+                   if (data != null && data.getExtras() != null){
+                       Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                       itemImage.setImageBitmap(imageBitmap);
+                       imageIndex++;
+                       String uniqueID = UUID.randomUUID().toString();
+                       path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
+                       images.add(uniqueID);
+                       itemImage.setVisibility(View.VISIBLE);
+                   }
+               }
             });
 }

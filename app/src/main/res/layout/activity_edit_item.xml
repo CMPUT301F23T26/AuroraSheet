@@ -4,43 +4,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient">
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmButton_edit"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/scrollMenu"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginBottom="9dp"
         app:srcCompat="@android:drawable/checkbox_on_background" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/deleteItemButton_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/scrollMenu"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
-        android:layout_marginLeft="328dp"
-        android:layout_marginEnd="27dp"
+        android:layout_marginLeft="327dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="6dp"
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <Button
         android:id="@+id/backButton_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/scrollMenu"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="163dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="165dp"
+        android:layout_marginBottom="11dp"
         android:text="back" />
 
     <ScrollView
         android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="390dp">
+        android:layout_height="669dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,10 +61,24 @@
                     android:layout_marginTop="0dp"
                     android:text="select image" />
 
+                <Button
+                    android:id="@+id/imageLeft_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="left" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/imageRight_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="right" />
 
                 <Button
                     android:id="@+id/deleteImageButton_edit"
@@ -70,14 +86,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:text="delete image" />
+
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/imageViewItem_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/default_image" />
+
+            <Button
+                android:id="@+id/cameraButton_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Camera" />
 
             <EditText
                 android:id="@+id/itemName_edit"
@@ -152,10 +178,10 @@
                 android:id="@+id/dateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:layout_below="@+id/layoutMakeModel_edit"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="6dp"
-                android:orientation="horizontal"
-                android:layout_below="@+id/layoutMakeModel_edit">
+                android:orientation="horizontal">
 
 
                 <Button
@@ -164,12 +190,12 @@
                     android:layout_height="30dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="200dp"
                     android:background="@drawable/bg_edit_button"
                     android:hint="SELECT DATE"
-                    android:layout_centerHorizontal="true"
 
                     android:inputType="text"
                     android:textSize="15sp" />
@@ -202,18 +228,18 @@
                 <EditText
                     android:id="@+id/itemValue_edit"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:hint="Value"
                     android:layout_height="35dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="25dp"
-                    android:paddingLeft="5dp"
                     android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:layout_weight="1"
                     android:background="@drawable/bg_edit_text"
-                    android:inputType="numberDecimal" />
+                    android:hint="Value"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="5dp" />
 
                 <EditText
                     android:id="@+id/itemSerialNumber_edit"
@@ -224,31 +250,31 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
-                    android:paddingLeft="5dp"
                     android:layout_marginEnd="25dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_edit_text"
                     android:hint="Serial Number"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:paddingLeft="5dp" />
             </LinearLayout>
 
             <EditText
                 android:id="@+id/itemComment_edit"
                 android:layout_width="match_parent"
-                android:layout_marginTop="6dp"
-                android:hint="Comment"
                 android:layout_height="60dp"
-                android:paddingLeft="5dp"
-                android:gravity="top|left"
                 android:layout_below="@id/commentText"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="10dp"
-
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="25dp"
-                android:inputType="textMultiLine"
                 android:layout_marginRight="@android:dimen/app_icon_size"
-                android:background="@drawable/bg_edit_text"/>
+                android:background="@drawable/bg_edit_text"
+
+                android:gravity="top|left"
+                android:hint="Comment"
+                android:inputType="textMultiLine"
+                android:paddingLeft="5dp" />
         </LinearLayout>
     </ScrollView>
 

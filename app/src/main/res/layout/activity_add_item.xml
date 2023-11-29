@@ -4,286 +4,377 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient">
 
-    <Button
-        android:id="@+id/selectImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="select image"
-        android:layout_centerHorizontal="true"/>
-
-    <ImageView
-        android:id="@+id/imageViewItem"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/selectImageButton"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/itemNameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageViewItem"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="322dp"
-        android:text="Item Name"
-        android:textColor="#FF0000" />
-
-    <EditText
-        android:id="@+id/itemName"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/itemNameText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="25dp"
-        android:background="@drawable/bg_edit_text"
-        android:inputType="textPersonName"
-        android:textSize="18sp"
-        android:paddingLeft="5dp"
-        android:gravity="top|left"
-        />
-
-    <TextView
-        android:id="@+id/desciptionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/itemName"
-
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="319dp"
-        android:text="Description"
-        android:textColor="#FF0000" />
-
-<EditText
-    android:id="@+id/itemDescription"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_below="@id/desciptionText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="25dp"
-        android:background="@drawable/bg_edit_text"
-        android:inputType="textMultiLine"
-        android:paddingLeft="5dp"
-        android:textSize="18sp"
-        android:gravity="top|left"
-    />
-    <TextView
-        android:id="@+id/dateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/itemDescription"
-
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="319dp"
-        android:text="Date"
-        android:textColor="#FF0000" />
-
-    <Button
-        android:id="@+id/itemDate"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/dateText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="200dp"
-        android:background="@drawable/bg_edit_button"
-        android:hint="SELECT DATE"
-        android:layout_centerHorizontal="true"
-
-        android:inputType="text"
-
-        android:textSize="18sp"
-        />
-
-<LinearLayout
-    android:id="@+id/layoutMakeModelText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/itemDate"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/itemMakeText"
-            android:layout_width="203dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="@android:dimen/app_icon_size"
-            android:text="Make"
-            android:textColor="#FF0000">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="67dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/selectImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="select image" />
+
+                <Button
+                    android:id="@+id/imageLeft_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:layout_weight="1"
+                    android:text="left" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/imageRight_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:layout_weight="1"
+                    android:text="right" />
+
+                <Button
+                    android:id="@+id/deleteImageButton_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="delete image" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageViewItem"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/default_image" />
+
+            <Button
+                android:id="@+id/cameraButton_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/desciptionText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="319dp"
+                        android:text="Description"
+                        android:textColor="#FF0000" />
+
+                    <EditText
+                        android:id="@+id/itemDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="25dp"
+                        android:background="@drawable/bg_edit_text"
+                        android:gravity="top|left"
+                        android:inputType="textMultiLine"
+                        android:paddingLeft="5dp"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/itemNameText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="322dp"
+                        android:text="Item Name"
+                        android:textColor="#FF0000" />
+
+                    <EditText
+                        android:id="@+id/itemName"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="25dp"
+                        android:background="@drawable/bg_edit_text"
+                        android:gravity="top|left"
+                        android:inputType="textPersonName"
+                        android:paddingLeft="5dp"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/dateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="319dp"
+                        android:text="Date"
+                        android:textColor="#FF0000" />
+
+                    <Button
+                        android:id="@+id/itemDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="200dp"
+                        android:background="@drawable/bg_edit_button"
+                        android:hint="SELECT DATE"
+
+                        android:inputType="text"
+
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutMakeModelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/itemMakeText"
+                    android:layout_width="203dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:text="Make"
+                    android:textColor="#FF0000">
 
 
-        </TextView>
+                </TextView>
 
-        <TextView
-            android:id="@+id/itemModelText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Model"
-            android:textColor="#FF0000">
+                <TextView
+                    android:id="@+id/itemModelText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Model"
+                    android:textColor="#FF0000">
 
-        </TextView>
-    </LinearLayout>
+                </TextView>
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutMakeModel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutMakeModelText"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/layoutValueSerial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/itemMake"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="25dp"
-            android:paddingLeft="5dp"
-            android:layout_marginRight="@android:dimen/app_icon_size"
-            android:layout_weight="1"
-            android:background="@drawable/bg_edit_text"
-            android:inputType="textPersonName" />
+                <EditText
+                    android:id="@+id/itemValue"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="5dp" />
 
-        <EditText
-            android:id="@+id/itemModel"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="25dp"
-            android:paddingLeft="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_edit_text"
-            android:inputType="textPersonName" />
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/itemSerialNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
+                    android:inputType="number"
+                    android:paddingLeft="5dp" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutValueSerialText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutMakeModel"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/layoutValueSerialText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/itemValueText"
-            android:layout_width="203dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="@android:dimen/app_icon_size"
-            android:text="Value"
-            android:textColor="#FF0000">
+                <TextView
+                    android:id="@+id/itemValueText"
+                    android:layout_width="203dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:text="Value"
+                    android:textColor="#FF0000">
 
 
-        </TextView>
+                </TextView>
 
-        <TextView
-            android:id="@+id/itemSerialText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Serial"
-            android:textColor="#FF0000">
+                <TextView
+                    android:id="@+id/itemSerialText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Serial"
+                    android:textColor="#FF0000">
 
-        </TextView>
-    </LinearLayout>
+                </TextView>
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutValueSerial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutValueSerialText"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/layoutMakeModel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/itemValue"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="25dp"
-            android:paddingLeft="5dp"
-            android:layout_marginRight="@android:dimen/app_icon_size"
-            android:layout_weight="1"
-            android:background="@drawable/bg_edit_text"
-            android:inputType="numberDecimal" />
+                <EditText
+                    android:id="@+id/itemMake"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="5dp" />
 
-        <EditText
-            android:id="@+id/itemSerialNumber"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="6dp"
-            android:paddingLeft="5dp"
-            android:layout_marginEnd="25dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_edit_text"
-            android:inputType="number" />
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/itemModel"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="5dp" />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/commentText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutValueSerial"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="1dp"
-        android:text="Comment"
-        android:textColor="#FF0000">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-    </TextView>
+                <TextView
+                    android:id="@+id/commentText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:text="Comment"
+                    android:textColor="#FF0000">
 
-    <EditText
-        android:id="@+id/itemComment"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:paddingLeft="5dp"
-        android:gravity="top|left"
-        android:layout_below="@id/commentText"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="25dp"
-        android:inputType="textMultiLine"
-        android:layout_marginRight="@android:dimen/app_icon_size"
-        android:background="@drawable/bg_edit_text" />
+                </TextView>
+
+                <EditText
+                    android:id="@+id/itemComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:background="@drawable/bg_edit_text"
+                    android:gravity="top|left"
+                    android:inputType="textMultiLine"
+                    android:paddingLeft="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addTagsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:text="Add tags"
+                    android:textColor="#FF0000" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/addTagsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="3dp"
+                    android:clickable="true"
+                    app:srcCompat="@android:drawable/ic_input_add" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addItemButton"
@@ -294,28 +385,5 @@
         android:layout_marginEnd="11dp"
         android:layout_marginBottom="12dp"
         app:srcCompat="@android:drawable/checkbox_on_background" />
-    <TextView
-        android:id="@+id/addTagsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add tags"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="1dp"
-        android:layout_below="@+id/itemComment"
-        android:textColor="#FF0000"
-        />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addTagsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addTagsText"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="10dp"
-        android:clickable="true"
-        app:srcCompat="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
