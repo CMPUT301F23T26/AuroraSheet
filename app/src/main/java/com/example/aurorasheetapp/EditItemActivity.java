@@ -43,7 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class EditItemActivity extends AppCompatActivity {
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
-            , imageLeft, imageRight;
+            , imageLeft, imageRight, camera;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -90,6 +90,7 @@ public class EditItemActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteItemButton_edit);
         imageLeft = findViewById(R.id.imageLeft_edit);
         imageRight = findViewById(R.id.imageRight_edit);
+        camera = findViewById(R.id.cameraButton_edit);
 
 
         //TODO: store / pass in image
@@ -160,7 +161,13 @@ public class EditItemActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent imageIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                cameraActivity.launch(imageIntent);
+            }
+        });
         //confirm button
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -351,5 +358,21 @@ public class EditItemActivity extends AppCompatActivity {
                         }
                     }
                 }
+            });
+    ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+               if(result.getResultCode() == Activity.RESULT_OK){
+                   Intent data = result.getData();
+                   if (data != null && data.getExtras() != null){
+                       Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                       itemImage.setImageBitmap(imageBitmap);
+                       imageIndex++;
+                       String uniqueID = UUID.randomUUID().toString();
+                       path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
+                       images.add(uniqueID);
+                       itemImage.setVisibility(View.VISIBLE);
+                   }
+               }
             });
 }

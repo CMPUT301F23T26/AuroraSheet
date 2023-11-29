@@ -42,7 +42,7 @@
     <ScrollView
         android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="669dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,15 +86,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:text="delete image" />
+
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/imageViewItem_edit"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:visibility="gone"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/default_image" />
+
+            <Button
+                android:id="@+id/cameraButton_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Camera" />
 
             <EditText
                 android:id="@+id/itemName_edit"

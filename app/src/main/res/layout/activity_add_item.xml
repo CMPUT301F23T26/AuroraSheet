@@ -59,9 +59,16 @@
                 android:id="@+id/imageViewItem"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:visibility="gone"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/default_image" />
+
+            <Button
+                android:id="@+id/cameraButton_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
 
             <LinearLayout
                 android:layout_width="match_parent"

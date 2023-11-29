@@ -45,6 +45,7 @@ public class AddItemActivity extends AppCompatActivity {
     private Button imageDelete;
     private Button imageLeft;
     private Button imageRight;
+    private Button cameraImage;
     private EditText itemValue;
     private EditText itemSerial;
     private EditText itemMake;
@@ -81,6 +82,7 @@ public class AddItemActivity extends AppCompatActivity {
         imageDelete = findViewById(R.id.deleteImageButton_add);
         imageLeft = findViewById(R.id.imageLeft_add);
         imageRight = findViewById(R.id.imageRight_add);
+        cameraImage = findViewById(R.id.cameraButton_add);
 
         imageIndex = -1;
         images = new ArrayList<>();
@@ -238,6 +240,13 @@ public class AddItemActivity extends AppCompatActivity {
                 }
             }
         });
+        cameraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                cameraActivity.launch(cameraIntent);
+            }
+        });
     }
 
     /**
@@ -305,4 +314,20 @@ public class AddItemActivity extends AppCompatActivity {
                 }
             }
         });
+    ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if(result.getResultCode() == Activity.RESULT_OK){
+                    Intent data = result.getData();
+                    if (data != null && data.getExtras() != null){
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        itemImage.setImageBitmap(imageBitmap);
+                        imageIndex++;
+                        String uniqueID = UUID.randomUUID().toString();
+                        path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
+                        images.add(uniqueID);
+                        itemImage.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 }
