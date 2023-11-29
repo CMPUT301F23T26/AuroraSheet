@@ -5,37 +5,41 @@ package com.example.aurorasheetapp;
  */
 public class ItemDate {
     int year, month, day;
+
     /**
      * Constructs ItemDate with the specified attributes.
      *
-     * @param day             the date of the item in integer
-     * @param month           the month of the item in integer
-     * @param year            the year of the item in integer
-     *
+     * @param day   the date of the item in integer
+     * @param month the month of the item in integer
+     * @param year  the year of the item in integer
      */
-    public ItemDate(int day, int month, int year){
+    public ItemDate(int day, int month, int year) {
         this.year = year;
         this.month = month;
         this.day = day;
     }
+
     /**
      * Constructs ItemDate with the specified attributes, automatically parse formatted string
      * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
-     * @param time             the date of the item in string form
+     *
+     * @param time the date of the item in string form
      */
-    public ItemDate(String time){
-        int [] dates = ItemDate.parseDate(time);
+    public ItemDate(String time) {
+        int[] dates = ItemDate.parseDate(time);
         this.year = dates[2];
         this.month = dates[1];
         this.day = dates[0];
     }
+
     /**
      * Set the date of the item and parse the input string
      * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
-     * @param time          the date of the item in string form
+     *
+     * @param time the date of the item in string form
      */
-    public void setDate(String time){
-        int [] dates = ItemDate.parseDate(time);
+    public void setDate(String time) {
+        int[] dates = ItemDate.parseDate(time);
         this.year = dates[2];
         this.month = dates[1];
         this.day = dates[0];
@@ -43,7 +47,8 @@ public class ItemDate {
 
     /**
      * Set the year of the date
-     * @param year          the year of the item in int form
+     *
+     * @param year the year of the item in int form
      */
     public void setYear(int year) {
         this.year = year;
@@ -51,7 +56,8 @@ public class ItemDate {
 
     /**
      * Set the month of the date
-     * @param month          the month of the item in int form
+     *
+     * @param month the month of the item in int form
      */
 
     public void setMonth(int month) {
@@ -60,7 +66,8 @@ public class ItemDate {
 
     /**
      * Set the day of the date
-     * @param day          the day of the item in int form
+     *
+     * @param day the day of the item in int form
      */
     public void setDay(int day) {
         this.day = day;
@@ -74,6 +81,7 @@ public class ItemDate {
     public int getYear() {
         return year;
     }
+
     /**
      * Get the month of the item date
      *
@@ -82,6 +90,7 @@ public class ItemDate {
     public int getMonth() {
         return month;
     }
+
     /**
      * Get the day of the item date
      *
@@ -90,12 +99,13 @@ public class ItemDate {
     public int getDay() {
         return day;
     }
+
     /**
      * Output as string form when prompted the string representation of this object
      *
      * @return the date of item in a string with format "dd-mm-yyyy".
      */
-    public String toString(){
+    public String toString() {
 
         return day + "-" + month + "-" + year;
     }
@@ -104,15 +114,17 @@ public class ItemDate {
      * Takes in a formatted string containing date and returns an int array of length 3
      * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
      * returned int array has day, month, year at the 1st, 2nd and 3rd index
-     * @param time             the date of the item in string form
+     *
+     * @param time the date of the item in string form
      * @return dates int array that has day, month, year at 1st, 2nd and 3rd index
      */
-    public static int[] parseDate(String time){
+    public static int[] parseDate(String time) {
         int[] dates = {0, 0, 0};
-        String[] date = time.split( "[\\s-/]+" );
+        String[] date = time.split("[\\s-/]+");
         dates[2] = Integer.parseInt(date[2]);
         dates[1] = Integer.parseInt(date[1]);
         dates[0] = Integer.parseInt(date[0]);
         return dates;
     }
 }
+

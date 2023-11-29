@@ -20,6 +20,9 @@ public class Item {
     private String documentID;
 
     private Boolean isSelected;
+
+    private Boolean isHidden;
+
     /**
      * Constructs an Item with the specified attributes.
      * @param name             The name of the item
@@ -43,6 +46,7 @@ public class Item {
         this.comment = comment;
 
         this.isSelected = false;
+        this.isHidden = false;
 
         
         image = new ArrayList<String>();
@@ -223,6 +227,36 @@ public class Item {
     public void toggleSelect() {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
     }
+
+    /**
+     * For use in sorting and filtering.
+     * @return Whether this item is hidden
+     */
+    public Boolean getHiddenness() {
+        return this.isHidden;
+    }
+    /**
+     * Set the item's isHidden to true. for use in filtering
+     *
+     */
+    public void hide() {
+        this.isHidden = true;
+    }
+    /**
+     * Set the item's isHidden to false. for use in filtering
+     *
+     */
+    public void unhide() {
+        this.isHidden = false;
+    }
+    /**
+     * Toggle the item's hiddenness. for use in filtering
+     *
+     */
+    public void toggleHidden() {
+        if (this.isSelected) { this.isHidden = false; } else { this.isHidden = true; }
+    }
+
 
     public String getDocumentId() {
         return documentID;
