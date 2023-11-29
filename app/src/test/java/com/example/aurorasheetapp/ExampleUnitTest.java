@@ -25,7 +25,7 @@ public class ExampleUnitTest {
         assertTrue(ItemValidator.validateDate(currentDate));
         assertFalse(ItemValidator.validateDate("12-12-2023"));
         assertFalse(ItemValidator.validateDate("31-11-2023"));
-        assertFalse(ItemValidator.validateDate("28-11-2023"));
+        assertTrue(ItemValidator.validateDate("28-11-2023"));
         assertFalse(ItemValidator.validateDate("12-12-2024"));
         assertTrue(ItemValidator.validateDate("12-12-2022"));
     }
