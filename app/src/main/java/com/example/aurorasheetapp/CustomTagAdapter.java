@@ -78,9 +78,10 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
      */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tag tag = tags.get(position);
-        boolean status = tag.getStatus();
+        boolean main_status = tag.getStatus();
+
         holder.tagName.setText(tag.getName());
-        if (status) {
+        if (main_status) {
             holder.tagName.setTextColor(Color.WHITE);
             holder.tagName.setBackgroundColor(Color.GREEN);
         } else {

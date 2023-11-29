@@ -40,7 +40,8 @@ import org.checkerframework.checker.units.qual.A;
  */
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
-        TagFragment.OnFragmentInteractionListener {
+        TagFragment.OnFragmentInteractionListener,
+        TagItemsFragment.OnFragmentInteractionListener{
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
     private FloatingActionButton deselectAllButton;
+    private FloatingActionButton tagItemButton;
 
     private RecyclerView tagView;
     private RecyclerView.Adapter tagAdapter;
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
+        tagItemButton = findViewById(R.id.buttonTagItem);
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -248,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements
             //Log.w("debug","item clicked while not in select mode");
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
     }
     /**
@@ -259,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements
         // hide the edit button; show the delete button
         editButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.VISIBLE);
+        tagItemButton.setVisibility(View.VISIBLE);
         //toggleSelectButton.setBackgroundColor(Color.argb(255, 200, 200, 255));
     }
     /**
@@ -270,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements
         // hide both buttons. selecting an individual item can bring them back
         editButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
+        tagItemButton.setVisibility(View.INVISIBLE);
         //toggleSelectButton.setBackgroundColor(Color.argb(255, 60, 60, 255));
     }
     /**
@@ -316,6 +322,8 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.INVISIBLE);
             deselectAllButton.setVisibility(View.INVISIBLE);
+            tagItemButton.setVisibility(View.INVISIBLE);
+
         }
 
         if (count == 1) {
@@ -323,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             deselectAllButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
 
         if (count > 1) {
@@ -330,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             deselectAllButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
 
         adapter.notifyDataSetChanged();
@@ -527,6 +537,7 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
     }
+
     // Override interface methods for add tag fragment
     @Override
     public void onCancelPressed() {
@@ -578,4 +589,13 @@ public class MainActivity extends AppCompatActivity implements
         totalAmountTextView.setText(itemManager.computeTotal());
     }
 
+    @Override
+    public void onOK_Pressed(ArrayList<Tag> original_selected_tags) {
+
+    }
+
+    @Override
+    public void onCancel_Pressed() {
+
+    }
 }

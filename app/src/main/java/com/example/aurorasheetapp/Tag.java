@@ -8,18 +8,14 @@ import java.util.ArrayList;
 public class Tag {
     private String name;
     private ArrayList<Item> tagged_items;
-    private boolean selected;
+    private boolean main_selected;
+
     private String documentID;
 
     public Tag(String name){
         this.name = name;
         this.tagged_items = new ArrayList<>();
-        this.selected = false;
-    }
-
-    public Tag(String name, ArrayList<Item> tagged_items){
-        this.name = name;
-        this.tagged_items = tagged_items;
+        this.main_selected = false;
     }
 
     public void setName(String name) {
@@ -51,15 +47,15 @@ public class Tag {
     }
 
     public void select_tag(){
-        selected = true;
+        main_selected = true;
     }
 
     public void unselect_tag(){
-        selected = false;
+        main_selected = false;
     }
 
     public boolean getStatus(){
-        return selected;
+        return main_selected;
     }
 
     public ArrayList<Item> getTagged_items(){return tagged_items;}
@@ -71,4 +67,5 @@ public class Tag {
     public String getDocumentID(){
         return documentID;
     }
+
 }
