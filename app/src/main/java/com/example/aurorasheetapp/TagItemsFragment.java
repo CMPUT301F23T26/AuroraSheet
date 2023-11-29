@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class TagItemsFragment extends DialogFragment {
-    private TagFragment.OnFragmentInteractionListener listener;
+    private OnFragmentInteractionListener listener;
 
 
     private ArrayList<Tag> tags;
@@ -41,7 +41,7 @@ public class TagItemsFragment extends DialogFragment {
     public void onAttach(@NonNull Context context){
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener){
-            listener = (TagFragment.OnFragmentInteractionListener) context;
+            listener = (OnFragmentInteractionListener) context;
         } else{
             throw new RuntimeException(context
                     + "must implement OnFragmentInteractionListener");
@@ -65,7 +65,7 @@ public class TagItemsFragment extends DialogFragment {
         for (Tag tag : tags){
             if (tag.getStatus()) {
                 selected_tags.add(tag);
-                original_selected_tags.add(tag);
+                this.original_selected_tags.add(tag);
             }
         }
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.tag_items_fragment, null);
@@ -100,7 +100,7 @@ public class TagItemsFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         }
-                        listener.onOk_Pressed();
+                        listener.onOK_Pressed(this.original_selected_tags);
                     }
                 );
     }

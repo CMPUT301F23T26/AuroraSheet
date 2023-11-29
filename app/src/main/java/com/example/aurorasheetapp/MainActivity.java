@@ -590,8 +590,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onOK_Pressed(ArrayList<Tag> original_selected_tags) {
-
+    public void onOK_Pressed(ArrayList<Tag> selected_tags) {
+        this.selected_tags = selected_tags;
     }
 
     @Override
