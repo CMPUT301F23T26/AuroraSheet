@@ -13,6 +13,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -36,7 +37,7 @@ import java.util.Map;
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
-public class AddItemActivity extends AppCompatActivity {
+public class AddItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback {
     private Button chooseImageButton;
     private ImageView itemImage;
     private EditText itemName;
@@ -261,15 +262,28 @@ public class AddItemActivity extends AppCompatActivity {
                     // get the image bitmap from the camera activity and extract the serial number
                     if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-
+                        Log.d("AddItemActivity", "HELLO");
                         ImageHelpers imageHelpers = new ImageHelpers();
                         Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver());
                         int rotationDegree = imageHelpers.getRotationDegree(imageUri);
 
                         SerialNumberExtractor serialNumberExtractor = new SerialNumberExtractor();
-                        String serialNumber = serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree);
-                        itemSerial.setText(serialNumber);
+                        serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree, AddItemActivity.this);
                     }
                 }
             });
+
+    /**
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
+     */
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
+        }
+    }
 }

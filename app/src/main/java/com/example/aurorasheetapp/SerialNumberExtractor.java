@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -18,9 +19,13 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
  * to extract the text from the image and then searches for the serial number in the text.
  */
 public class SerialNumberExtractor {
-    public String extractSerialNumberFromImage(Bitmap imageBitmap, Integer rotationDegree) {
-        String serialNumber = null;
-
+    /**
+     * Extracts the serial number from the image and calls the callback function with the result.
+     * @param imageBitmap
+     * @param rotationDegree
+     * @param callback
+     */
+    public void extractSerialNumberFromImage(Bitmap imageBitmap, Integer rotationDegree, SerialNumberCallback callback) {
         TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
         InputImage image = InputImage.fromBitmap(imageBitmap, rotationDegree);
         Task<Text> result = recognizer.process(image)
@@ -30,6 +35,7 @@ public class SerialNumberExtractor {
                         // Use visionText to get the recognized text
                         String resultText = visionText.getText();
                         String serialNumber = findSerialNumber(resultText);
+                        callback.onSerialNumberExtracted(serialNumber);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -38,22 +44,40 @@ public class SerialNumberExtractor {
 
                     }
                 });
-        return serialNumber;
     }
+
+    /**
+     * Callback interface for the serial number extraction.
+     */
+    public interface SerialNumberCallback {
+        void onSerialNumberExtracted(String serialNumber);
+    }
+
+    /**
+     * Searches for the serial number in the text.
+     * @param text
+     * @return The serial number if found, null otherwise.
+     */
     public String findSerialNumber(String text) {
-        String[] keywords = {"Serial", "SN", "S/N"};
+        String[] keywords = {"Serial No", "SN", "S/N", "Serlal No"};
 
         for (String keyword : keywords) {
             int index = text.indexOf(keyword);
             if (index != -1) {
-                String substring = text.substring(index + keyword.length()).trim();
-                String serialNumber = substring.replaceAll("[^a-zA-Z0-9]", "");
+                // Check if the keyword is followed by a colon and a space
+                int endIndex = text.indexOf(":", index + keyword.length());
+                if (endIndex != -1) {
+                    String serialNumber = text.substring(endIndex + 1).trim();
+                    Log.d("SerialNumberExtractor", "Substring: " + serialNumber);
+                    serialNumber = serialNumber.replaceAll("[^a-zA-Z0-9]", "");
 
-                if (!serialNumber.isEmpty()) {
-                    return serialNumber;
+                    if (!serialNumber.isEmpty()) {
+                        return serialNumber;
+                    }
                 }
             }
         }
         return null;
     }
+
 }
