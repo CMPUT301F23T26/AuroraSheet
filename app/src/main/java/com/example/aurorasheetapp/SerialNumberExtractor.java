@@ -34,6 +34,7 @@ public class SerialNumberExtractor {
                     public void onSuccess(Text visionText) {
                         // Use visionText to get the recognized text
                         String resultText = visionText.getText();
+                        Log.d("SerialNumberExtractor", "Text: " + resultText);
                         String serialNumber = findSerialNumber(resultText);
                         callback.onSerialNumberExtracted(serialNumber);
                     }
@@ -60,25 +61,32 @@ public class SerialNumberExtractor {
      */
     public String findSerialNumber(String text) {
         text = text.toLowerCase();
-        String[] keywords = {"serial no", "sn", "s/n", "serlal no"};
+        String[] keywords = {"sn", "serlal no", "serial no", "s/n"};
 
         for (String keyword : keywords) {
             int index = text.indexOf(keyword);
             if (index != -1) {
-                // Check if the keyword is followed by a colon and a space
-                int endIndex = text.indexOf(":", index + keyword.length());
-                if (endIndex != -1) {
-                    String serialNumber = text.substring(endIndex + 1).trim();
-                    Log.d("SerialNumberExtractor", "Substring: " + serialNumber);
-                    serialNumber = serialNumber.replaceAll("[^a-zA-Z0-9]", "");
-
-                    if (!serialNumber.isEmpty()) {
-                        return serialNumber;
+                // Find the first character after the keyword until a new line is encountered
+                StringBuilder serialNumberBuilder = new StringBuilder();
+                for (int i = index + keyword.length(); i < text.length(); i++) {
+                    char c = text.charAt(i);
+                    if (c == '\n' || c == '\r') {
+                        break; // Stop when a new line is encountered
+                    } else if (Character.isLetterOrDigit(c)) {
+                        serialNumberBuilder.append(c);
                     }
+                }
+
+                String serialNumber = serialNumberBuilder.toString().trim();
+                if (!serialNumber.isEmpty()) {
+                    return serialNumber;
                 }
             }
         }
         return null;
     }
+
+
+
 
 }

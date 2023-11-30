@@ -156,13 +156,6 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     return;
                 }
 
-                try {
-                    newserial = Long.parseLong(serial);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(AddItemActivity.this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 //info bout current user
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser == null) {
@@ -176,7 +169,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 newItem.put("description", description);
                 newItem.put("date", date);
                 newItem.put("value", newvalue);
-                newItem.put("serial", newserial);
+                newItem.put("serial", serial);
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
@@ -277,6 +270,10 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
             Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
+            Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
             Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
             return false;
@@ -299,6 +296,19 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
+    }
+    /**
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
+     */
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
+        }
     }
 
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
@@ -346,20 +356,6 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     }
                 }
             });
-
-    /**
-     * This method is called when the serial number is extracted from the image.
-     * @param serialNumber
-     */
-    @Override
-    public void onSerialNumberExtracted(String serialNumber) {
-        if (serialNumber != null) {
-            runOnUiThread(() -> itemSerial.setText(serialNumber));
-        } else {
-            // Handle the case when serial number extraction fails
-            runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
-        }
-    }
 
     ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),

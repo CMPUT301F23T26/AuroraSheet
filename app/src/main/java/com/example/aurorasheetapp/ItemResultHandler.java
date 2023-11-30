@@ -47,7 +47,7 @@ public class ItemResultHandler {
                     date,
                     description,
                     make,
-                    Integer.parseInt(serial),
+                    serial,
                     model,
                     Double.parseDouble(value),
                     comment,
@@ -86,7 +86,7 @@ public class ItemResultHandler {
                 String model = data.getStringExtra("model");
                 String comment = data.getStringExtra("comment");
                 ItemDate date = new ItemDate(data.getStringExtra("time"));
-                Double serial = Double.parseDouble(data.getStringExtra("serial"));
+                String serial = data.getStringExtra("serial");
                 int index = data.getIntExtra("index", -1);
                 ArrayList<String> image = data.getStringArrayListExtra("images");
                 int imageTopIndex = data.getIntExtra("imageIndex", -1);
