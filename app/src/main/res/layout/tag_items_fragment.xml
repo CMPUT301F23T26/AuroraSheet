@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.recyclerview.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ListView
-
-        android:id="@+id/tag_View"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
-            <TextView
-                android:id="@+id/tagName"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"/>
-    </ListView>
-</LinearLayout>
+    android:id="@+id/tagItem_View"
+    android:layout_width="300dp"
+    android:layout_height="200dp"
+    android:layout_gravity="center"
+    android:background="@color/black">
+</androidx.recyclerview.widget.RecyclerView>

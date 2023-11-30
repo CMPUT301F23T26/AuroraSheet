@@ -160,8 +160,10 @@ public class MainActivity extends AppCompatActivity implements
                         boolean status = tag.getStatus();
                         if (status){
                             tag.unselect_tag();
+                            selected_tags.remove(tag);
                         } else {
                             tag.select_tag();
+                            selected_tags.add(tag);
                         }
                         tagAdapter.notifyDataSetChanged();
                     }
@@ -481,6 +483,15 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void viewTaggedItems(ArrayList<Tag> selected_tags){
+        List<Item> tagged_items = new ArrayList<>();
+        for (Tag tag : selected_tags){
+            tagged_items.addAll(tag.getTagged_items());
+        }
+        itemManager.setTagged_Items(tagged_items);
+        adapter.notifyDataSetChanged();
+    }
+
     private void db_add_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -569,14 +580,17 @@ public class MainActivity extends AppCompatActivity implements
             db_add_tag(newTag);
         }
         selected_tag = null;
+        viewTaggedItems(selected_tags);
     }
 
     @Override
     public void onDeletePressed(Tag tag){
         tags.remove(tag);
+        selected_tags.remove(tag);
         tagAdapter.notifyDataSetChanged();
         db_del_tag(tag);
         selected_tag = null;
+        viewTaggedItems(selected_tags);
     }
 
     public void deleteItemFromFirestore(String documentId) {
@@ -599,10 +613,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onOK_Pressed(ArrayList<Tag> selected_tags) {
         this.selected_tags = selected_tags;
+        viewTaggedItems(selected_tags);
     }
 
     @Override
     public void onCancel_Pressed() {
-
     }
 }

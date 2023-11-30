@@ -16,18 +16,13 @@ import java.util.ArrayList;
  * This class is the adapter for the recycler view. It takes in a list of tags and displays them
  * in the recycler view.
  */
-public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.ViewHolder> {
+public class CustomTagItemAdapter extends RecyclerView.Adapter<CustomTagItemAdapter.ViewHolder> {
     private ArrayList<Tag> tags;
     private Context context;
     OnItemClickListener onItemClickListener;
-    OnItemLongClickListener onItemLongClickListener;
 
     public interface OnItemClickListener{
         void onItemClick(Tag tag);
-    }
-
-    public interface OnItemLongClickListener {
-        void onItemLongClick(Tag tag);
     }
 
     /**
@@ -36,15 +31,12 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
      * @param tags
      * @param context
      * @param onItemClickListener
-     * @param onItemLongClickListener
      */
-    public CustomTagAdapter(ArrayList<Tag> tags, Context context,
-                            CustomTagAdapter.OnItemClickListener onItemClickListener,
-                            CustomTagAdapter.OnItemLongClickListener onItemLongClickListener){
+    public CustomTagItemAdapter(ArrayList<Tag> tags, Context context,
+                            CustomTagItemAdapter.OnItemClickListener onItemClickListener){
         this.context = context;
         this.tags = tags;
-        this.onItemClickListener = onItemClickListener;
-        this.onItemLongClickListener = onItemLongClickListener;
+        this.onItemClickListener = onItemClickListener;;
     }
 
     /**
@@ -55,7 +47,7 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tagName = itemView.findViewById(R.id.tagName);
+            tagName = itemView.findViewById(R.id.tag_Name);
         }
     }
 
@@ -66,8 +58,8 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
      * and returns a view holder with the inflated layout.
      */
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.tag_list, parent, false);
-        return new CustomTagAdapter.ViewHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.tag_item_list, parent, false);
+        return new CustomTagItemAdapter.ViewHolder(v);
 
     }
 
@@ -78,10 +70,10 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
      */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tag tag = tags.get(position);
-        boolean main_status = tag.getStatus();
+        boolean status = tag.getSelect_tagItem();
 
         holder.tagName.setText(tag.getName());
-        if (main_status) {
+        if (status) {
             holder.tagName.setTextColor(Color.WHITE);
             holder.tagName.setBackgroundColor(Color.GREEN);
         } else {
@@ -94,17 +86,6 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
                 onItemClickListener.onItemClick(tag);
             }
         });
-
-        if (onItemLongClickListener != null){
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    onItemLongClickListener.onItemLongClick(tag);
-                    return false;
-                }
-            });
-        }
-
     }
 
     @Override

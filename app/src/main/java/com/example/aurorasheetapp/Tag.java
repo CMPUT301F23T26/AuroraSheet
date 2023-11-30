@@ -9,6 +9,7 @@ public class Tag {
     private String name;
     private ArrayList<Item> tagged_items;
     private boolean main_selected;
+    private boolean select_tagItem;
 
     private String documentID;
 
@@ -16,6 +17,7 @@ public class Tag {
         this.name = name;
         this.tagged_items = new ArrayList<>();
         this.main_selected = false;
+        this.select_tagItem = false;
     }
 
     public void setName(String name) {
@@ -57,6 +59,14 @@ public class Tag {
     public boolean getStatus(){
         return main_selected;
     }
+
+    public void setStatus(boolean status) {main_selected = status;}
+
+    public void select_tagItem() {select_tagItem = true;}
+
+    public void unselect_tagItem() {select_tagItem = false;}
+
+    public boolean getSelect_tagItem() {return select_tagItem;}
 
     public ArrayList<Item> getTagged_items(){return tagged_items;}
 
