@@ -22,13 +22,10 @@ public class TagItemsFragment extends DialogFragment {
 
     private ArrayList<Tag> tags;
     private ArrayList<Item> items;
-    private Tag tag;
-    private Item item;
-    private String name;
     private ArrayList<Tag> selected_tags;
 
     private RecyclerView tagView;
-    private CustomTagItemAdapter tagAdapter;
+    private CustomTagAdapter tagAdapter;
 
     private String dialogTitle;
 
@@ -70,11 +67,11 @@ public class TagItemsFragment extends DialogFragment {
         }
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.tag_items_fragment, null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        tagView = view.findViewById(R.id.tagItem_View);
+        tagView = view.findViewById(R.id.tag_Item_View);
         tagView.setLayoutManager(layoutManager);
         tagView.setHasFixedSize(true);
-        tagAdapter = new CustomTagItemAdapter(tags, getContext(),
-                new CustomTagItemAdapter.OnItemClickListener() {
+        tagAdapter = new CustomTagAdapter(tags, getContext(),
+                new CustomTagAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Tag tag) {
                         if (selected_tags.contains(tag)){
@@ -86,7 +83,7 @@ public class TagItemsFragment extends DialogFragment {
                         }
                         tagAdapter.notifyDataSetChanged();
                     }
-                });
+                }, null);
         tagView.setAdapter(tagAdapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
