@@ -13,10 +13,11 @@ public class ItemManager {
     }
 
     public List<Item> getItems() {
-        if (tagged_Items.size() == 0)
-            return listItems;
-        else
-            return tagged_Items;
+        return tagged_Items;
+    }
+
+    public List<Item> getItems(Boolean showTagItem){
+        return listItems;
     }
 
     public Item getItem(int index) {

@@ -166,12 +166,26 @@ public class MainActivity extends AppCompatActivity implements
                             selected_tags.add(tag);
                         }
                         tagAdapter.notifyDataSetChanged();
+                        if (selected_tags.size() != 0){
+                            Tag first_tag = selected_tags.get(0);
+                            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+                            for (Tag one_tag : selected_tags){
+                                tagged_items.retainAll(one_tag.getTagged_items());
+                            }
+                            itemManager.setTagged_Items(tagged_items);
+                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext());
+                            recyclerView.setAdapter(adapter);
+                        } else {
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext());
+                            recyclerView.setAdapter(adapter);
+
+                        }
                     }
                 },
                 new CustomTagAdapter.OnItemLongClickListener() {
                     @Override
                     public void onItemLongClick(Tag tag) {
-                        new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
+                        new TagFragment(tag, tags).show(getSupportFragmentManager(), "edit_tag");
                     }
                 });
         tagView.setAdapter(tagAdapter);
@@ -184,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 selected_tag = null;
-                new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
+                new TagFragment(selected_tag, tags).show(getSupportFragmentManager(), "add_tag");
             }
         });
 
@@ -384,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements
         return selected_items;
     }
 
-    //i added the following to access database and clear lisst of items and only display the ones in the database
+    //i added the following to access database and clear list of items and only display the ones in the database
     private void loadItemsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -483,13 +497,17 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void viewTaggedItems(ArrayList<Tag> selected_tags){
-        List<Item> tagged_items = new ArrayList<>();
-        for (Tag tag : selected_tags){
-            tagged_items.addAll(tag.getTagged_items());
+    public void viewTaggedItems(ArrayList<Tag> selected_tags){
+        if (selected_tags.size() > 0){
+            Tag first_tag = selected_tags.get(0);
+            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+            for (Tag tag : selected_tags){
+                tagged_items.retainAll(tag.getTagged_items());
+            }
+            itemManager.setTagged_Items(tagged_items);
+            adapter = new CustomArrayAdapter(itemManager.getItems(true), this);
+            recyclerView.setAdapter(adapter);
         }
-        itemManager.setTagged_Items(tagged_items);
-        adapter.notifyDataSetChanged();
     }
 
     private void db_add_tag(Tag tag){
@@ -546,19 +564,20 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        firestore.collection("users")
-                .document(currentUser.getUid())
-                .collection("tags")
-                .document(tag.getDocumentID())
-                .delete()
-                .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+        if (tag.getDocumentID() != null) {
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("tags")
+                    .document(tag.getDocumentID())
+                    .delete()
+                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+        }
     }
 
     // Override interface methods for add tag fragment
     @Override
-    public void onCancelPressed() {
+    public void onCancelPressed()  {
         selected_tag = null;
     }
 

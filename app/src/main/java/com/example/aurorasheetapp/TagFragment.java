@@ -9,10 +9,14 @@ import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class is the fragment for the dialog box that pops up when the user wants to add a new tag
@@ -26,6 +30,7 @@ public class TagFragment extends DialogFragment {
     private Tag old_tag;
     private Tag tag;
     private String name;
+    private ArrayList<Tag> tags;
 
     private String dialogTitle;
 
@@ -46,8 +51,9 @@ public class TagFragment extends DialogFragment {
         }
     }
 
-    public TagFragment(Tag tag){
+    public TagFragment(Tag tag, ArrayList<Tag> tags){
         this.old_tag = tag;
+        this.tags = tags;
     }
 
     @NonNull
@@ -84,16 +90,28 @@ public class TagFragment extends DialogFragment {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        boolean proceed = true;
                         while (true){
                             name = tagNameInput.getText().toString();
-                            if (editing){
-                                if (!name.equals(tagName) && !name.isEmpty()){
-                                    break;
+                            for (Tag tag : tags){
+                                if (Objects.equals(tag.getName(), name)){
+                                    Toast.makeText(getContext(), "Tag Already Exists", Toast.LENGTH_SHORT).show();
+                                    proceed = false;
+                                }
+                            }
+                            if (proceed) {
+                                if (editing) {
+                                    if (!name.equals(tagName) && !name.isEmpty()) {
+                                        break;
+                                    }
+                                } else {
+                                    if (!name.isEmpty()) {
+                                        break;
+                                    }
                                 }
                             } else {
-                                if (!name.isEmpty()){
-                                    break;
-                                }
+                                listener.onCancelPressed();
+                                return;
                             }
                         }
                         tag = new Tag(name);
