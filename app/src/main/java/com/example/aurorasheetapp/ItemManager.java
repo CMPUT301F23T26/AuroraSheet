@@ -108,9 +108,27 @@ public class ItemManager {
 
         Collections.sort(listItems,combined);
 
-
-
-
     }
 
+    // ADD FILTER FUNCTIONS HERE
+    /**
+     * Any item with a date before the provided one will become hidden
+     *
+     */
+    public void FilterDatesBefore(ItemDate providedDate) {
+        for(Item item:listItems) {
+            if (item.getDateOfPurchase().compareTo(providedDate) < 0) {
+                item.hide();
+            }
+        }
+    }
+
+    /**
+     * shows all items
+     */
+    public void clearFilters() {
+        for(Item item:listItems) {
+            item.unhide();
+        }
+    }
 }
