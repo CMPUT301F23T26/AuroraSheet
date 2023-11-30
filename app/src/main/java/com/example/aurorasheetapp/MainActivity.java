@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements
         multiSelectMode = true;
         initialiseAsUnselected();
 
+
         // navigate to the add item activity on click of the add button
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements
                         new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
                     }
                 });
+
+
         tagView.setAdapter(tagAdapter);
         addTag_btn = findViewById(R.id.addTagButton);
         profile_btn = findViewById(R.id.userProfile_btn);
@@ -180,6 +183,14 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 selected_tag = null;
                 new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
+            }
+        });
+
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, sortingActivity.class);
+                startActivity(intent);
             }
         });
     }

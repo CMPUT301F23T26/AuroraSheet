@@ -9,8 +9,15 @@ import java.util.List;
 public class ItemManager {
     private List<Item> listItems;
 
+    public ArrayList<Integer> sortingStatus;
+
+    public List<Item> shownItems;
+
+
     public ItemManager() {
         listItems = new ArrayList<>();
+        shownItems = new ArrayList<>();
+        sortingStatus = new ArrayList<Integer>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0));
     }
 
     public List<Item> getItems() {
@@ -37,8 +44,10 @@ public class ItemManager {
         return listItems.size();
     }
 
+
     /**
      * Computes the total value of all the items in the list.
+     *
      * @return A string representation of the total value of all the items.
      */
     public String computeTotal() {
@@ -50,56 +59,58 @@ public class ItemManager {
     }
 
 
-    /* name;
-    private ItemDate dateOfPurchase;
-    private String briefDescription;
-    private String make;
-    private double serialNumber;
-    private String model;
-    private double estimatedValue;
-    private String comment;
-    private ArrayList<String> image;
-    private int topImageIndex;
-    private String documentID;
-    private String path;
-
-    private Boolean isSelected;
-
-    private Boolean isHidden;*/
+    /**
+     * With a correct sortingStatus list in place, sort the list of items as specified
+     *
+     *
+     */
+    public void doSorting() {
 
 
-    // I am going to really overhaul this. there will be a getShownItems replacing most of the GetItems we see in mainactivity
-    public void sortby(String query, Boolean reverse) {
-        if (query.equals("name")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getName));
+        ArrayList<Comparator> comparators = new ArrayList<>();
+        ArrayList<Comparator> activeComparators = new ArrayList<>();
+
+        // to make iteration easier, we will iterate through all these comparators
+        comparators.add(Comparator.comparing(Item::getName));
+        comparators.add(Comparator.comparing(Item::getDateOfPurchase));
+        comparators.add(Comparator.comparing(Item::getMake));
+        comparators.add(Comparator.comparing(Item::getSerialNumber));
+        comparators.add(Comparator.comparing(Item::getModel));
+        comparators.add(Comparator.comparing(Item::getEstimatedValue));
+        comparators.add(Comparator.comparing(Item::getComment));
+        comparators.add(Comparator.comparing(Item::getBriefDescription));
+
+        activeComparators.add(Comparator.comparing(Item::getHiddenness));
+
+
+
+        for (int i = 0; i < 8; i++) {
+            if (sortingStatus.get(i) == 2) {
+                activeComparators.add(comparators.get(i).reversed());
+            } else if (sortingStatus.get(i) == 1) {
+                activeComparators.add(comparators.get(i));
+            }
         }
-        if (query.equals("dateOfPurchase")) {
-            // NOT IMPLEMENTED
-            // TODO
-            // listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getDateOfPurchase));
-        }
-        if (query.equals("briefDescription")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getBriefDescription));
-        }
-        if (query.equals("make")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getMake));
-        }
-        if (query.equals("serialNumber")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getSerialNumber));
-        }
-        if (query.equals("model")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getModel));
-        }
-        if (query.equals("estimatedValue")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getEstimatedValue));
-        }
-        if (query.equals("comment")) {
-            listItems.sort(Comparator.comparing(Item::getHiddenness).thenComparing(Item::getComment));
-        }
-        if (reverse) {
-            Collections.reverse(listItems);
-            Comparator.comparing(Item::getHiddenness);
-        }
+
+        // Thank you to Radiodef on StackExchange (2014 Jan 23): "Efficient way to sort a list by several comparators in Java"
+        // https://stackoverflow.com/questions/21319128/efficient-way-to-sort-a-list-by-several-comparators-in-java
+
+        final Comparator<Item> combined = (e1, e2) -> {
+            for(Comparator<Item> thiscomparator:activeComparators) {
+
+                int result = thiscomparator.compare(e1, e2);
+
+                if(result != 0)
+                    return result;
+            }
+            return 0;
+        };
+
+        Collections.sort(listItems,combined);
+
+
+
+
     }
 
 }

@@ -45,6 +45,11 @@
         <activity
             android:name=".EditItemActivity"
             android:exported="false" />
+
+        <!-- Sort Item activity-->
+        <activity
+            android:name=".sortingActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_cardbackground"
+    android:backgroundTint="@color/light_cardbackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/PageTitle"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Sorting"
+        android:textAlignment="center"
+        android:textSize="40sp" />
+
+    <RadioGroup
+        android:id="@+id/namegroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/namelabel"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.4"
+            android:paddingStart="13sp"
+            android:paddingTop="3sp"
+            android:paddingEnd="3sp"
+            android:text="Name"
+            android:textSize="30sp" />
+
+        <RadioButton
+            android:id="@+id/offname"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/ascendingname"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬆️ " />
+
+        <RadioButton
+            android:id="@+id/descendingname"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬇️" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/dategroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/datelabel"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.4"
+            android:paddingStart="13sp"
+            android:paddingTop="3sp"
+            android:paddingEnd="3sp"
+            android:text="Date"
+            android:textSize="30sp" />
+
+        <RadioButton
+            android:id="@+id/offdate"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/ascendingdate"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬆️ " />
+
+        <RadioButton
+            android:id="@+id/descendingdate"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬇️" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/valuegroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/valuelabel"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.4"
+            android:paddingStart="13sp"
+            android:paddingTop="3sp"
+            android:paddingEnd="3sp"
+            android:text="Value"
+            android:textSize="30sp" />
+
+        <RadioButton
+            android:id="@+id/offvalue"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/ascendingvalue"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬆️ " />
+
+        <RadioButton
+            android:id="@+id/descendingvalue"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬇️" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/makegroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/makelabel"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.4"
+            android:paddingStart="13sp"
+            android:paddingTop="3sp"
+            android:paddingEnd="3sp"
+            android:text="Make"
+            android:textSize="30sp" />
+
+        <RadioButton
+            android:id="@+id/offmake"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/ascendingmake"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬆️ " />
+
+        <RadioButton
+            android:id="@+id/descendingmake"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬇️" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/descgroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/descriptionlabel"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.4"
+            android:paddingStart="13sp"
+            android:paddingTop="3sp"
+            android:paddingEnd="3sp"
+            android:text="Description"
+            android:textSize="19dp" />
+
+        <RadioButton
+            android:id="@+id/offdescription"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/ascendingdescription"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬆️ " />
+
+        <RadioButton
+            android:id="@+id/descendingdescription"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:minHeight="48dp"
+            android:text="⬇️" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/spacefiller"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+</LinearLayout>
