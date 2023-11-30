@@ -1,11 +1,14 @@
 package com.example.aurorasheetapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,6 +54,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
      * of the item in the list and binds the data to the view holder.
      */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         Item listItem = listItems.get(position);
         holder.name.setText(String.valueOf(listItem.getName()));
         holder.dateofpurchase.setText(String.valueOf(listItem.getDateOfPurchase()));
@@ -60,6 +64,11 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         holder.make.setText(listItem.getMake());
         holder.comment.setText(listItem.getComment());
         holder.model.setText(listItem.getModel());
+        if(listItem.getPath() != null){
+            Bitmap bitmap = ImageHelpers.loadImageFromStorage(listItem.getPath(), listItem.getImage().get(listItem.getTopImageIndex()));
+            holder.picture.setImageBitmap(bitmap);
+        }
+
 
         //Log.d("customArrayAdapter","the binding thing got activated");
         if (listItem.getSelection()) {
@@ -91,6 +100,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         public TextView serialnumber;
         public TextView estimatedvalue;
         public TextView make;
+        public ImageView picture;
 
         public LinearLayout background;
 
@@ -111,6 +121,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             estimatedvalue = (TextView) itemView.findViewById(R.id.estimatedvalue);
             make = (TextView) itemView.findViewById(R.id.make);
             background = (LinearLayout) itemView.findViewById(R.id.Background);
+            picture = (ImageView) itemView.findViewById(R.id.picture);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

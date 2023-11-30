@@ -17,7 +17,9 @@ public class Item {
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+    private int topImageIndex;
     private String documentID;
+    private String path;
 
     private Boolean isSelected;
     /**
@@ -41,10 +43,11 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
-
         this.isSelected = false;
 
-        
+        //image array initialization
+        this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
@@ -62,13 +65,23 @@ public class Item {
 
         this.isSelected = false;
 
-
+        //image array initialization
+        this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
 
     public Item() {
         }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 
     /**
      * Get the name of the item.
@@ -194,6 +207,13 @@ public class Item {
         this.image = image;
     }
 
+    public int getTopImageIndex() {
+        return topImageIndex;
+    }
+
+    public void setTopImageIndex(int topImageIndex) {
+        this.topImageIndex = topImageIndex;
+    }
 
     /**
      * For use in the multiselect.

@@ -59,7 +59,8 @@ public class SerialNumberExtractor {
      * @return The serial number if found, null otherwise.
      */
     public String findSerialNumber(String text) {
-        String[] keywords = {"Serial No", "SN", "S/N", "Serlal No"};
+        text = text.toLowerCase();
+        String[] keywords = {"serial no", "sn", "s/n", "serlal no"};
 
         for (String keyword : keywords) {
             int index = text.indexOf(keyword);

@@ -38,6 +38,9 @@ public class ItemResultHandler {
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
+            ArrayList<String> images = data.getStringArrayListExtra("images");
+            int topIndex = data.getIntExtra("imageIndex", -1);
+            String path = data.getStringExtra("path");
 
             Item listItem = new Item(
                     name,
@@ -51,6 +54,9 @@ public class ItemResultHandler {
                     documentId
 
             );
+            listItem.setPath(path);
+            listItem.setImage(images);
+            listItem.setTopImageIndex(topIndex);
             itemManager.add(listItem);
             adapter.notifyDataSetChanged();
         }
@@ -83,6 +89,8 @@ public class ItemResultHandler {
                 Double serial = Double.parseDouble(data.getStringExtra("serial"));
                 int index = data.getIntExtra("index", -1);
                 ArrayList<String> image = data.getStringArrayListExtra("images");
+                int imageTopIndex = data.getIntExtra("imageIndex", -1);
+                String path = data.getStringExtra("path");
 
                 if (index != -1) {
                     Item item = itemManager.getItem(index);
@@ -95,6 +103,8 @@ public class ItemResultHandler {
                     item.setBriefDescription(description);
                     item.setSerialNumber(serial);
                     item.setImage(image);
+                    item.setTopImageIndex(imageTopIndex);
+                    item.setPath(path);
                 }
                 adapter.notifyDataSetChanged();
             }

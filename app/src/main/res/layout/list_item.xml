@@ -31,10 +31,11 @@
 
         <ImageView
             android:id="@+id/picture"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/table_item_icon"
-            tools:srcCompat="@drawable/table_item_icon" />
+            android:layout_width="156dp"
+            android:layout_height="104dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/default_image"
+            tools:srcCompat="@drawable/default_image" />
 
         <TextView
             android:id="@+id/dateofpurchase"

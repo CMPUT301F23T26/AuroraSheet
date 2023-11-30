@@ -29,9 +29,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class manages adding new items to the item list. It gets user input and validates
@@ -44,6 +46,10 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     private EditText itemDescription;
     private TextView dateText;
     private Button itemDate;
+    private Button imageDelete;
+    private Button imageLeft;
+    private Button imageRight;
+    private Button cameraImage;
     private EditText itemValue;
     private EditText itemSerial;
     private Button scanSerialButton;
@@ -51,6 +57,9 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     private EditText itemModel;
     private EditText itemComment;
     private FloatingActionButton addItemButton;
+    ArrayList<String> images;
+    int imageIndex;
+    String path;
 
     //created instance
     private FirebaseFirestore firestore;
@@ -76,6 +85,13 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
         addItemButton = findViewById(R.id.addItemButton);
+        imageDelete = findViewById(R.id.deleteImageButton_add);
+        imageLeft = findViewById(R.id.imageLeft_add);
+        imageRight = findViewById(R.id.imageRight_add);
+        cameraImage = findViewById(R.id.cameraButton_add);
+
+        imageIndex = -1;
+        images = new ArrayList<>();
 
         itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,10 +201,62 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                             intent.putExtra("make", make);
                             intent.putExtra("model", model);
                             intent.putExtra("comment", comment);
+                            intent.putExtra("images", images);
+                            intent.putExtra("imageIndex", imageIndex);
+                            intent.putExtra("path", path);
                             setResult(1, intent);
                             finish();
                         })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
+            }
+        });
+        imageDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //if only one image and coming from input
+                if(images.size() == 1){
+                    images.remove(imageIndex);
+                    itemImage.setImageDrawable(null);
+                    imageIndex--;
+                    itemImage.setVisibility(View.GONE);
+                }
+                else if(images.size() == 0){
+                }
+                //TODO might need to delete from local repository, as well
+                //if multiple, set to the next one on the stack
+                else{
+                    images.remove(imageIndex);
+                    imageIndex = 0;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex > 0){
+                    imageIndex--;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        imageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageIndex + 1 < images.size()){
+                    imageIndex++;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
+                }
+            }
+        });
+        cameraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                cameraActivity.launch(cameraIntent);
             }
         });
     }
@@ -246,6 +314,11 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     try {
                         selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                         itemImage.setImageBitmap(selectedImageBitmap);
+                        imageIndex++;
+                        String uniqueID = UUID.randomUUID().toString();
+                        path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
+                        images.add(uniqueID);
+                        itemImage.setVisibility(View.VISIBLE);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -253,6 +326,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 }
             }
         });
+
 
     ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -286,4 +360,22 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
             runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
         }
     }
+
+    ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if(result.getResultCode() == Activity.RESULT_OK){
+                    Intent data = result.getData();
+                    if (data != null && data.getExtras() != null){
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        itemImage.setImageBitmap(imageBitmap);
+                        imageIndex++;
+                        String uniqueID = UUID.randomUUID().toString();
+                        path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
+                        images.add(uniqueID);
+                        itemImage.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
 }

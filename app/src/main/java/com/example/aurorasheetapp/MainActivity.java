@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements
             intent.putExtra("description", itemToEdit.getBriefDescription());
             intent.putStringArrayListExtra("images", (ArrayList<String>)itemToEdit.getImage());
             intent.putExtra("index", i);
+            intent.putExtra("imageIndex", itemToEdit.getTopImageIndex());
             editItemLauncher.launch(intent);
         }
     }
