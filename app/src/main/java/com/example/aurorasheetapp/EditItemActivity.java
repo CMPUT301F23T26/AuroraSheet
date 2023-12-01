@@ -266,7 +266,7 @@ public class EditItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
-                    ImageHelpers.deleteFromStorage(getApplicationContext(), images.get(imageIndex));
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
                     imageIndex--;
@@ -276,7 +276,7 @@ public class EditItemActivity extends AppCompatActivity {
                 }
                 //if multiple, set to the next one on the stack
                 else{
-                    ImageHelpers.deleteFromStorage(getApplicationContext(), images.get(imageIndex));
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     imageIndex = 0;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));

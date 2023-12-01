@@ -79,13 +79,21 @@ public class ImageHelpers {
         //returns null on error!
         return null;
     }
-    public static boolean deleteFromStorage(Context context, String name){
+    public static boolean deleteFromStorage(StorageReference storageReference, Context context, String name){
+        final boolean[] remoteDeleteSuccess = new boolean[1];
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         // Create imageDir
         File myPath=new File(directory, name);
-        return myPath.delete();
+        StorageReference reference = storageReference.child("images/" + name);
+        reference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                remoteDeleteSuccess[0] = true;
+            }
+        });
+        return myPath.delete() && remoteDeleteSuccess[0];
     }
     public static void uploadImage(StorageReference storageReference, Context context, Bitmap bitmap, String name){
         StorageReference reference = storageReference.child("images/" + name);

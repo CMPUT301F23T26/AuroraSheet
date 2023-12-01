@@ -224,6 +224,7 @@ public class AddItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
                     imageIndex--;
@@ -231,9 +232,9 @@ public class AddItemActivity extends AppCompatActivity {
                 }
                 else if(images.size() == 0){
                 }
-                //TODO might need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     imageIndex = 0;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
