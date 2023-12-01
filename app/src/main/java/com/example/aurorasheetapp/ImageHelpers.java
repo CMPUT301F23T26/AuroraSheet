@@ -81,6 +81,14 @@ public class ImageHelpers {
         //returns null on error!
         return null;
     }
+    /**
+     * takes item name, storageReference and application context to delete an image from both local
+     * and remote repositories
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param name the name of the image to be loaded
+     * @return true if deletion successful
+     */
     public static boolean deleteFromStorage(StorageReference storageReference, Context context, String name){
         final boolean[] remoteDeleteSuccess = new boolean[1];
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
@@ -97,6 +105,14 @@ public class ImageHelpers {
         });
         return myPath.delete() && remoteDeleteSuccess[0];
     }
+    /**
+     * takes in an bitmap of image, compress and convert it to byte stream and upload to firebase
+     * with provided name
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param bitmap the bitmap of the image to be uploaded
+     * @param name the name of the image to be loaded
+     */
     public static void uploadImage(StorageReference storageReference, Context context, Bitmap bitmap, String name){
         StorageReference reference = storageReference.child("images/" + name);
         ByteArrayOutputStream baos  = new ByteArrayOutputStream();
@@ -126,6 +142,12 @@ public class ImageHelpers {
             }
         });
     }
+    /**
+     * download the image to local storage space with given storageReference, context and image name
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param name the name of the image to be loaded
+     */
     public static void downloadImage(StorageReference storageReference, Context context, String name){
         StorageReference imageRef = storageReference.child("images/" + name);
         final long ONE_MB = 1024 * 1024;
@@ -142,6 +164,11 @@ public class ImageHelpers {
             }
         });
     }
+    /**
+     * This is a method specifically for retrieving the default image in the application resources
+     * @param context the context for the application
+     * @return Drawable object of the default image in this app
+     */
     public static Drawable getDefaultDrawable(Context context) {
         return ResourcesCompat.getDrawable(context.getResources(), R.drawable.default_image, null);
     }
