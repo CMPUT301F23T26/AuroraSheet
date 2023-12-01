@@ -7,6 +7,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -268,7 +269,9 @@ public class EditItemActivity extends AppCompatActivity {
                 if(images.size() == 1){
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    itemImage.setImageDrawable(null);
+
+                    Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
+                    itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
                 }

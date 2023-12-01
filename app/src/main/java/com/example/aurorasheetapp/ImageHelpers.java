@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -139,5 +141,8 @@ public class ImageHelpers {
                 Toast.makeText(context, "Download failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    public static Drawable getDefaultDrawable(Context context) {
+        return ResourcesCompat.getDrawable(context.getResources(), R.drawable.default_image, null);
     }
 }

@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
         itemManager = new ItemManager();
         itemResultHandler = new ItemResultHandler(this);
 
-        adapter = new CustomArrayAdapter(itemManager.getItems(), this);
+        adapter = new CustomArrayAdapter(itemManager.getItems(), this, getApplicationContext());
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);

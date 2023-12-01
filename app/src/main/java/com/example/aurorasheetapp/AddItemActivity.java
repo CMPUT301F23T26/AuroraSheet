@@ -10,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -226,7 +227,9 @@ public class AddItemActivity extends AppCompatActivity {
                 if(images.size() == 1){
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    itemImage.setImageDrawable(null);
+
+                    Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
+                    itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
                 }
