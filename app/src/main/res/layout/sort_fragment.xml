@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="20dp"
+        android:background="@drawable/specifications"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/specifications"
+            android:orientation="vertical"
+            android:padding="24dp"
+            >
+            <EditText
+                android:id="@+id/filter_date"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/specifications"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/baseline_person_2_24"
+                android:hint="Date filter"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+
+            <Button
+                android:id="@+id/d_filter"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_blue_button"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="Filter by date"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+
+
+
+
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+
+</LinearLayout>
