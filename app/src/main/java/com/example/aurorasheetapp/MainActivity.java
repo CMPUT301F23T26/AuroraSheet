@@ -21,7 +21,9 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,8 @@ import org.checkerframework.checker.units.qual.A;
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener {
+    private ItemDate startDate, endDate;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private Boolean multiSelectMode;
 
     private int itemIndex;
+
     String documentId;
 
     @Override
@@ -91,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);
-        addButton = findViewById(R.id.buttonAdd);
+        addButton = findViewById(R.
+                id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
@@ -182,7 +188,18 @@ public class MainActivity extends AppCompatActivity implements
                 new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
             }
         });
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortFragment sortFragment = new SortFragment();
+                sortFragment.show(getSupportFragmentManager(), "sort_fragment");
+            }
+        });
     }
+
+
+
 
     private void launchEditData(Intent intent, int i) {
         if (intent != null) {
@@ -251,6 +268,30 @@ public class MainActivity extends AppCompatActivity implements
             deleteButton.setVisibility(View.VISIBLE);
         }
     }
+    public void filterItemsByDate(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
+        Calendar startDate = Calendar.getInstance();
+        startDate.set(startYear, startMonth, startDay);
+        Calendar endDate = Calendar.getInstance();
+        endDate.set(endYear, endMonth, endDay);
+
+        List<Item> filteredItems = new ArrayList<>();
+        for (Item item : itemManager.getItems()) {
+            ItemDate itemDate = item.getDateOfPurchase(); // Assuming this returns a Date object
+            Calendar itemCalendar = Calendar.getInstance();
+            itemCalendar.setTime(itemDate);
+
+            if (itemCalendar.after(startDate) && itemCalendar.before(endDate)) {
+                filteredItems.add(item);
+            }
+        }
+
+        // Update the adapter with filtered items
+        adapter = new CustomArrayAdapter(filteredItems, this);
+        recyclerView.setAdapter(adapter);
+    }
+
+
+
     /**
      * Prepare the activity for item selection mode
      *
