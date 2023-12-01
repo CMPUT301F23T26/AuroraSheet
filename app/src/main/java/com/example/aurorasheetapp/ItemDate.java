@@ -1,9 +1,12 @@
 package com.example.aurorasheetapp;
+
+import java.util.Date;
+
 /**
  * A data structure that holds three integers as the date for the item
  * Added parsing support for string dates
  */
-public class ItemDate {
+public class ItemDate extends Date {
     int year, month, day;
     /**
      * Constructs ItemDate with the specified attributes.
