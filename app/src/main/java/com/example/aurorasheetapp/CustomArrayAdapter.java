@@ -64,7 +64,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         holder.make.setText(listItem.getMake());
         holder.comment.setText(listItem.getComment());
         holder.model.setText(listItem.getModel());
-        if(listItem.getPath() != null){
+        if(listItem.getPath() != null && listItem.getTopImageIndex() != -1) {
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(listItem.getPath(), listItem.getImage().get(listItem.getTopImageIndex()));
             holder.picture.setImageBitmap(bitmap);
         }

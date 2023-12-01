@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,10 +22,16 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,12 +43,19 @@ import java.util.UUID;
 import com.example.aurorasheetapp.ImageHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firestore.v1.Document;
 
 /**
  * This class is responsible for providing the correct behavior for edit activities
  */
 public class EditItemActivity extends AppCompatActivity {
+    private StorageReference storageReference;
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
             , imageLeft, imageRight, camera;
     private ImageView itemImage;
@@ -56,11 +70,13 @@ public class EditItemActivity extends AppCompatActivity {
     //added this so we can reflect edits in firebase
     private FirebaseFirestore firestore;
     private String documentId;
-
+    private String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        storageReference = FirebaseStorage.getInstance().getReference();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = currentUser != null ? currentUser.getUid() : null;
+        userId = currentUser != null ? currentUser.getUid() : null;
         firestore = FirebaseFirestore.getInstance();
 
         super.onCreate(savedInstanceState);
@@ -116,12 +132,16 @@ public class EditItemActivity extends AppCompatActivity {
         index = inputIntent.getIntExtra("index", -1);
         serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
         imageIndex = inputIntent.getIntExtra("imageIndex", 0);
+
+
         //if the item already contains the image, initialize
          if(imageIndex != -1){
             images = inputIntent.getStringArrayListExtra("images");
+
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
             itemImage.setImageBitmap(bitmap);
         }
+
 
         //set the attributes in the view
         itemName.setText(name);
@@ -198,15 +218,15 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("comment", itemComment.getText().toString());
                     itemUpdate.put("time", itemDate.getText().toString());
                     itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
+                    itemUpdate.put("path", path);
+                    itemUpdate.put("images", images);
+                    itemUpdate.put("imageIndex", imageIndex);
 
                     if (documentId == null) {
                         // Show a Toast message to the user
                         Toast.makeText(EditItemActivity.this, "Can't update try again", Toast.LENGTH_LONG).show();
                         return; // Exit the method to prevent further execution
                     }
-
-
-
 
                     //trace the exact path of where the items are placed
                     firestore.collection("users").document(userId).collection("items").document(documentId).update(itemUpdate)
@@ -246,6 +266,7 @@ public class EditItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
+                    ImageHelpers.deleteFromStorage(getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     itemImage.setImageDrawable(null);
                     imageIndex--;
@@ -253,9 +274,9 @@ public class EditItemActivity extends AppCompatActivity {
                 }
                 else if(images.size() == 0){
                 }
-                //TODO need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
+                    ImageHelpers.deleteFromStorage(getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     imageIndex = 0;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
@@ -351,6 +372,7 @@ public class EditItemActivity extends AppCompatActivity {
                             path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                             images.add(uniqueID);
                             itemImage.setVisibility(View.VISIBLE);
+                            ImageHelpers.uploadImage(storageReference, getApplicationContext(), selectedImageBitmap, uniqueID);
                             //index for correctly selecting image, no need to implement in Add
                         }
                         catch (IOException e) {
@@ -372,7 +394,9 @@ public class EditItemActivity extends AppCompatActivity {
                        path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                        images.add(uniqueID);
                        itemImage.setVisibility(View.VISIBLE);
+                       ImageHelpers.uploadImage(storageReference, getApplicationContext(), imageBitmap, uniqueID);
                    }
                }
             });
+
 }

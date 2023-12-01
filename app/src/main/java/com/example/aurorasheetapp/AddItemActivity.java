@@ -2,12 +2,14 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,11 +21,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,11 +41,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.grpc.Compressor;
+import io.grpc.Context;
+
 /**
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
 public class AddItemActivity extends AppCompatActivity {
+    private StorageReference storageReference;
+    private LinearProgressIndicator progress;
+
     private Button chooseImageButton;
     private ImageView itemImage;
     private EditText itemName;
@@ -66,6 +82,8 @@ public class AddItemActivity extends AppCompatActivity {
 
         //init a firebase
         firestore = FirebaseFirestore.getInstance();
+        FirebaseApp.initializeApp(AddItemActivity.this);
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         chooseImageButton = findViewById(R.id.selectImageButton);
         itemImage = findViewById(R.id.imageViewItem);
@@ -327,7 +345,41 @@ public class AddItemActivity extends AppCompatActivity {
                         path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        uploadImage(imageBitmap, uniqueID, path);
                     }
                 }
             });
+    private void uploadImage(Bitmap bitmap, String name, String path){
+        StorageReference reference = storageReference.child(path + '\\' + name);
+        ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = reference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                storageReference.child(path + '\\' + name).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(getBaseContext(), "Upload Failed - Duplicate image", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getBaseContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(getBaseContext(), "Upload successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void checkCloudForImage(String path, String name){
+
+    }
 }
