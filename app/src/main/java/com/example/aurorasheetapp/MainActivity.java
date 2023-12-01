@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements
         firestore = FirebaseFirestore.getInstance();
         tags = new ArrayList<>();
         loadItemsFromFirestore();
+        tags = loadTagsFromFireStore(tags);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements
         tagItemButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                new TagItemsFragment(tags, (ArrayList) itemManager.getItems()).show(getSupportFragmentManager(), "tag_item");
+                new TagItemsFragment(tags, (ArrayList) itemManager.getItems(true)).show(getSupportFragmentManager(), "tag_item");
             }
         });
     }
@@ -262,7 +263,13 @@ public class MainActivity extends AppCompatActivity implements
 
         if (multiSelectMode) {
             //Log.w("debug","item clicked while in select mode");
-            itemManager.getItems().get(position).toggleSelect();
+            Item item = itemManager.getItems().get(position);
+            item.toggleSelect();
+            if (item.getSelection()){
+                itemManager.addTagged_Items(item);
+            } else {
+                itemManager.delTagged_Items(item);
+            }
 
             update_selection();
         }
@@ -329,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements
     public void deselectAllItems() {
         for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
-
+            itemManager.delTagged_Items(thisitem);
         }
         update_selection();
     }
@@ -401,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements
     //i added the following to access database and clear list of items and only display the ones in the database
     private void loadItemsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        ArrayList<Tag> loaded_tags = new ArrayList<>();
 
         if (currentUser == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
@@ -429,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements
 
                             );
                             item.setDocumentId(document.getId()); // Save the document ID
-                            itemManager.getItems().add(item);
+                            itemManager.add(item);
                         }
                         adapter.notifyDataSetChanged();
                         totalAmountTextView.setText(itemManager.computeTotal());
@@ -438,6 +446,15 @@ public class MainActivity extends AppCompatActivity implements
                         Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public ArrayList<Tag> loadTagsFromFireStore(ArrayList<Tag> o_tags){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         firestore.collection("users")
                 .document(currentUser.getUid())
                 .collection("tags")
@@ -445,15 +462,15 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful()) {
-                        tags.clear();
+                        o_tags.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d("Firestore", document.getId() + " => " + document.getData());
 
                             Tag tag = new Tag(
                                     document.getString("name")
                             );
-
-                            tags.add(tag);
+                            tag.setDocumentID(document.getId());
+                            o_tags.add(tag);
                         }
                         tagAdapter.notifyDataSetChanged();
                     } else {
@@ -461,32 +478,41 @@ public class MainActivity extends AppCompatActivity implements
                         Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
                     }
                 });
-        for (Tag tag: tags) {
+        for (Tag tag: o_tags) {
+            Log.d("tag", tag.getName());
             ArrayList<Item> taggedItems = new ArrayList<>();
             firestore.collection("users")
                     .document(currentUser.getUid())
                     .collection("tags")
-                    .document(tag.getName())
+                    .document(tag.getDocumentID())
                     .collection("tagged_items")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            tags.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("Firestore", document.getId() + " => " + document.getData());
-
                                 Item newItem = new Item(
                                         document.getString("name"),
                                         new ItemDate(document.getString("date")),
                                         document.getString("description"),
                                         document.getString("make"),
-                                        Double.parseDouble(document.getString("serial")),
+                                        document.getDouble("serial"),
                                         document.getString("model"),
-                                        Double.parseDouble(document.getString("value")),
+                                        document.getDouble("value"),
                                         document.getString("comment")
                                 );
-
-                                tag.tagItem(newItem);
+                                for (Item item : itemManager.getItems()){
+                                    Log.d("checkItem", item.getName());
+                                    if (item.equals(newItem)){
+                                        Log.d("poo", "Item equals");
+                                        item.setTaggedDocumentId(document.getId());
+                                        tag.tagItem(item);
+                                    } else {
+                                        Log.d("poo", "Items not equal");
+                                        tag.tagItem(newItem);
+                                        newItem.setTaggedDocumentId(document.getId());
+                                    }
+                                }
                             }
                             tagAdapter.notifyDataSetChanged();
                         } else {
@@ -495,6 +521,7 @@ public class MainActivity extends AppCompatActivity implements
                         }
                     });
         }
+        return o_tags;
     }
 
     public void viewTaggedItems(ArrayList<Tag> selected_tags){
@@ -509,6 +536,7 @@ public class MainActivity extends AppCompatActivity implements
             recyclerView.setAdapter(adapter);
         }
     }
+
 
     private void db_add_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -527,35 +555,6 @@ public class MainActivity extends AppCompatActivity implements
                 .add(newTag)
                 .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show())
                 .addOnSuccessListener(documentReference -> tag.setDocumentID(documentReference.getId()));
-
-        ArrayList<Item> tagged_items = tag.getTagged_items();
-        for (Item item: tagged_items){
-            String name = item.getName();
-            String description = item.getBriefDescription();
-            String date = item.getDateOfPurchase().toString();
-            String value = String.valueOf(item.getEstimatedValue());
-            String serial = String.valueOf(item.getSerialNumber());
-            String make = item.getMake();
-            String model = item.getModel();
-            String comment = item.getComment();
-            Map<String, Object> newItem = new HashMap<>();
-            newItem.put("name", name);
-            newItem.put("description", description);
-            newItem.put("date", date);
-            newItem.put("value", value);
-            newItem.put("serial", serial);
-            newItem.put("make", make);
-            newItem.put("model", model);
-            newItem.put("comment", comment);
-            firestore.collection("users")
-                    .document(currentUser.getUid())
-                    .collection("tag")
-                    .document(tag.getName())
-                    .collection("tagged_items")
-                    .add(newItem)
-                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag added", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show());
-        }
     }
 
     private void db_del_tag(Tag tag){
@@ -633,9 +632,11 @@ public class MainActivity extends AppCompatActivity implements
     public void onOK_Pressed(ArrayList<Tag> selected_tags) {
         this.selected_tags = selected_tags;
         viewTaggedItems(selected_tags);
+        deselectAllItems();
     }
 
     @Override
     public void onCancel_Pressed() {
+        deselectAllItems();
     }
 }

@@ -13,16 +13,20 @@ public class ItemManager {
     }
 
     public List<Item> getItems() {
-        return tagged_Items;
+        return listItems;
     }
 
     public List<Item> getItems(Boolean showTagItem){
-        return listItems;
+        return tagged_Items;
     }
 
     public Item getItem(int index) {
         return listItems.get(index);
     }
+
+    public void addTagged_Items(Item item) {this.tagged_Items.add(item);}
+
+    public void delTagged_Items(Item item) {this.tagged_Items.remove(item);}
 
     public void setTagged_Items(List<Item> tagged_Items){
         this.tagged_Items = tagged_Items;

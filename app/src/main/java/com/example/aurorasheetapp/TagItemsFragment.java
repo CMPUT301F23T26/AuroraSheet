@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +15,13 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TagItemsFragment extends DialogFragment {
     private OnFragmentInteractionListener listener;
@@ -28,6 +35,9 @@ public class TagItemsFragment extends DialogFragment {
     private CustomTagAdapter tagAdapter;
 
     private String dialogTitle;
+    private Context context;
+
+    private FirebaseFirestore firestore;
 
 
     public interface OnFragmentInteractionListener {
@@ -37,11 +47,64 @@ public class TagItemsFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context){
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnFragmentInteractionListener){
             listener = (OnFragmentInteractionListener) context;
         } else{
             throw new RuntimeException(context
                     + "must implement OnFragmentInteractionListener");
+        }
+    }
+
+    private void db_add_tagItem(Tag tag, Item item){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(context, "User not signed in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String name = item.getName();
+        String description = item.getBriefDescription();
+        String date = item.getDateOfPurchase().toString();
+        Double value = item.getEstimatedValue();
+        Double serial = item.getSerialNumber();
+        String make = item.getMake();
+        String model = item.getModel();
+        String comment = item.getComment();
+        Map<String, Object> newItem = new HashMap<>();
+        newItem.put("name", name);
+        newItem.put("description", description);
+        newItem.put("date", date);
+        newItem.put("value", value);
+        newItem.put("serial", serial);
+        newItem.put("make", make);
+        newItem.put("model", model);
+        newItem.put("comment", comment);
+        firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("tags")
+                .document(tag.getDocumentID())
+                .collection("tagged_items")
+                .add(newItem)
+                .addOnSuccessListener(documentReference -> item.setTaggedDocumentId(documentReference.getId()))
+                .addOnFailureListener(e -> Toast.makeText(context, "Error adding tagged item", Toast.LENGTH_SHORT).show());
+    }
+
+    private void db_delete_tagItem(Tag tag, Item item){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "User not signed in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tag.getDocumentID() != null) {
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("tags")
+                    .document(tag.getDocumentID())
+                    .collection("tagged_items")
+                    .document(item.getTaggedDocumentId())
+                    .delete()
+                    .addOnSuccessListener(documentReference -> Toast.makeText(context, "Tagged item deleted", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(context, "Error deleting tagged item", Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -56,6 +119,7 @@ public class TagItemsFragment extends DialogFragment {
      * This method creates the dialog box that pops up when the user wants to add a new tag
      */
     public Dialog onCreateDialog (@Nullable Bundle savedInstanceState){
+        firestore = FirebaseFirestore.getInstance();
         dialogTitle = "Select Tags:";
 
         selected_tags = new ArrayList<>();
@@ -104,13 +168,19 @@ public class TagItemsFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         for (Tag tag : selected_tags){
                             for (Item item : items){
-                                tag.tagItem(item);
+                                if (!tag.getTagged_items().contains(item)) {
+                                    tag.tagItem(item);
+                                    db_add_tagItem(tag, item);
+                                }
                             }
                         }
                         for (Tag tag : tags){
                             if (!selected_tags.contains(tag)){
-                                for (Item item : items){
-                                    tag.untagItem(item);
+                                for (Item item : items) {
+                                    if (tag.getTagged_items().contains(item)){
+                                        tag.untagItem(item);
+                                        db_delete_tagItem(tag, item);
+                                    }
                                 }
                             }
                         }

@@ -2,6 +2,7 @@ package com.example.aurorasheetapp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
@@ -18,6 +19,7 @@ public class Item {
     private String comment;
     private ArrayList<String> image;
     private String documentID;
+    private String taggedDocumentID;
 
     private Boolean isSelected;
     /**
@@ -230,6 +232,25 @@ public class Item {
 
     public void setDocumentId(String documentId) {
         this.documentID = documentId;
+    }
+
+    public String getTaggedDocumentId() {return taggedDocumentID;}
+
+    public void setTaggedDocumentId(String id) {taggedDocumentID = id;}
+
+
+    public boolean equals(Item otherItem){
+        if (Objects.equals(this.name, otherItem.name)
+                && Objects.equals(this.dateOfPurchase, otherItem.dateOfPurchase)
+                && Objects.equals(this.briefDescription, otherItem.briefDescription)
+                && Objects.equals(this.estimatedValue, otherItem.estimatedValue)
+                && Objects.equals(this.comment, otherItem.comment)
+                && Objects.equals(this.model, otherItem.model)
+                && Objects.equals(this.make, otherItem.make)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

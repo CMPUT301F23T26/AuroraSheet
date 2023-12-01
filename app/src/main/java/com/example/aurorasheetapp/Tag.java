@@ -33,15 +33,8 @@ public class Tag {
      * @param newItem
      * @return boolean indicating if the item was added
      */
-    public boolean tagItem(Item newItem){
-        try {
-            tagged_items.add(newItem);
-            return true; // returns true indicating item was added
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            return false; // returns false if unable to add the item
-        }
-
+    public void tagItem(Item newItem){
+        tagged_items.add(newItem);
     }
 
     public void untagItem(Item newItem){
