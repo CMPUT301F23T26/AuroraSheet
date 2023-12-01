@@ -312,6 +312,10 @@ public class AddItemActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(!ItemValidator.validateDate(dateText.getText().toString())){
+            Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
