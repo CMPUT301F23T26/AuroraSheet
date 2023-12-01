@@ -1,5 +1,6 @@
 package com.example.aurorasheetapp;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -103,6 +104,8 @@ public class ItemDate extends Date {
         return day + "-" + month + "-" + year;
     }
 
+
+
     /**
      * Takes in a formatted string containing date and returns an int array of length 3
      * supported format: "dd/mm/yyyy"  -   "dd-mm-yyyy"   - "dd mm yyyy"
@@ -117,5 +120,19 @@ public class ItemDate extends Date {
         dates[1] = Integer.parseInt(date[1]);
         dates[0] = Integer.parseInt(date[0]);
         return dates;
+    }
+
+
+    public java.util.Date getDateObject() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        // Subtract 1 from month because Calendar.MONTH is zero-based
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 }

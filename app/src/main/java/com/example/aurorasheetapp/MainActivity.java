@@ -268,27 +268,6 @@ public class MainActivity extends AppCompatActivity implements
             deleteButton.setVisibility(View.VISIBLE);
         }
     }
-    public void filterItemsByDate(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
-        Calendar startDate = Calendar.getInstance();
-        startDate.set(startYear, startMonth, startDay);
-        Calendar endDate = Calendar.getInstance();
-        endDate.set(endYear, endMonth, endDay);
-
-        List<Item> filteredItems = new ArrayList<>();
-        for (Item item : itemManager.getItems()) {
-            ItemDate itemDate = item.getDateOfPurchase(); // Assuming this returns a Date object
-            Calendar itemCalendar = Calendar.getInstance();
-            itemCalendar.setTime(itemDate);
-
-            if (itemCalendar.after(startDate) && itemCalendar.before(endDate)) {
-                filteredItems.add(item);
-            }
-        }
-
-        // Update the adapter with filtered items
-        adapter = new CustomArrayAdapter(filteredItems, this);
-        recyclerView.setAdapter(adapter);
-    }
 
 
 
@@ -618,5 +597,27 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
+
+    // Filter items based on the selected date range
+    public void filterItemsByDate(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
+        Calendar startDate = Calendar.getInstance();
+        startDate.set(startYear, startMonth, startDay-1, 0, 0, 0);
+        Calendar endDate = Calendar.getInstance();
+        endDate.set(endYear, endMonth, endDay, 23, 59, 59);
+
+        List<Item> filteredItems = new ArrayList<>();
+        for (Item item : itemManager.getItems()) {
+            Date itemDate = item.getDateOfPurchase().getDateObject(); // Assuming getDateOfPurchase returns an ItemDate with a method getDateObject()
+
+            if (itemDate != null && !itemDate.before(startDate.getTime()) && !itemDate.after(endDate.getTime())) {
+                filteredItems.add(item);
+            }
+        }
+
+        // Update the adapter with filtered items
+        adapter = new CustomArrayAdapter(filteredItems, this);
+        recyclerView.setAdapter(adapter);
+    }
+
 
 }
