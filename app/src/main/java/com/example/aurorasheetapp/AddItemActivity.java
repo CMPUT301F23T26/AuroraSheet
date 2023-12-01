@@ -184,6 +184,9 @@ public class AddItemActivity extends AppCompatActivity {
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
+                newItem.put("path", path);
+                newItem.put("images", images);
+                newItem.put("imageIndex", imageIndex);
 
                 //adding objects into database based on user
                 firestore.collection("users")
@@ -325,6 +328,7 @@ public class AddItemActivity extends AppCompatActivity {
                         path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), selectedImageBitmap, uniqueID);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -345,41 +349,8 @@ public class AddItemActivity extends AppCompatActivity {
                         path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
-                        uploadImage(imageBitmap, uniqueID, path);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), imageBitmap, uniqueID);
                     }
                 }
             });
-    private void uploadImage(Bitmap bitmap, String name, String path){
-        StorageReference reference = storageReference.child(path + '\\' + name);
-        ByteArrayOutputStream baos  = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-        UploadTask uploadTask = reference.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                storageReference.child(path + '\\' + name).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Toast.makeText(getBaseContext(), "Upload Failed - Duplicate image", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getBaseContext(), "Upload failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getBaseContext(), "Upload successful", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-    private void checkCloudForImage(String path, String name){
-
-    }
 }
