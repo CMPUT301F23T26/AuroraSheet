@@ -249,6 +249,10 @@ public class EditItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent outputIntent = new Intent();
+                //delete images when deletion
+                for(String name : images){
+                    ImageHelpers.deleteFromStorage(storageReference, getApplicationContext(), name);
+                }
                 outputIntent.putExtra("isDelete", true);
                 outputIntent.putExtra("index", index);
                 setResult(1, outputIntent);
