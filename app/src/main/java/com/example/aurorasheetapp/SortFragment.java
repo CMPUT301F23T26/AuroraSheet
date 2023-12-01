@@ -1,6 +1,7 @@
 package com.example.aurorasheetapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,13 +43,28 @@ public class SortFragment extends DialogFragment {
         });
 
         btnConfirm.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
-                // Notify MainActivity and close the fragment
+                Log.d("SortFragment", "Reset button clicked");
                 ((MainActivity)getActivity()).filterItemsByDate(startYear, startMonth, startDay, endYear, endMonth, endDay);
                 dismiss();
             }
         });
+
+        Button resetButton = view.findViewById(R.id.reset); // Adjust ID as needed
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).reloadAllItems();
+                }
+                dismiss(); // Close the SortFragment
+            }
+        });
+
+
 
         return view;
     }
@@ -64,7 +80,6 @@ public class SortFragment extends DialogFragment {
             endMonth = selectedEndMonth;
             endDay = selectedEndDay;
 
-            // Update the TextView
             String startDate = formatDateString(startYear, startMonth, startDay);
             String endDate = formatDateString(endYear, endMonth, endDay);
             date.setText(startDate + " - " + endDate);
