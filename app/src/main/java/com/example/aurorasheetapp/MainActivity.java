@@ -419,8 +419,12 @@ public class MainActivity extends AppCompatActivity implements
                             item.setDocumentId(document.getId()); // Save the document ID
                             itemManager.getItems().add(item);
                         }
-                        adapter.notifyDataSetChanged();
-                        totalAmountTextView.setText(itemManager.computeTotal());
+
+                        runOnUiThread(() -> {
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), MainActivity.this);
+                            recyclerView.setAdapter(adapter);
+                            totalAmountTextView.setText(itemManager.computeTotal());
+                        });
                     } else {
                         Log.w("Firestore", "Error getting documents.", task.getException());
                         Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
@@ -475,8 +479,8 @@ public class MainActivity extends AppCompatActivity implements
                                 );
 
                                 tag.tagItem(newItem);
+
                             }
-                            tagAdapter.notifyDataSetChanged();
                         } else {
                             Log.w("Firestore", "Error getting documents.", task.getException());
                             Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
@@ -605,16 +609,34 @@ public class MainActivity extends AppCompatActivity implements
         endDate.set(endYear, endMonth, endDay, 23, 59, 59);
 
         List<Item> filteredItems = new ArrayList<>();
+        double totalValue = 0.0;
         for (Item item : itemManager.getItems()) {
             Date itemDate = item.getDateOfPurchase().getDateObject();
             if (itemDate != null && !itemDate.before(startDate.getTime()) && !itemDate.after(endDate.getTime())) {
                 filteredItems.add(item);
+                totalValue += item.getEstimatedValue();
             }
         }
 
         adapter = new CustomArrayAdapter(filteredItems, this);
         recyclerView.setAdapter(adapter);
+        totalAmountTextView.setText(String.format("%.2f", totalValue));
     }
+
+    public void reloadAllItems() {
+        startDate = null;
+        endDate = null;
+        loadItemsFromFirestore();
+
+
+        Log.d("MainActivity", "Reloading all items from Firestore");
+
+
+
+    }
+
+
+
 
 
 }
