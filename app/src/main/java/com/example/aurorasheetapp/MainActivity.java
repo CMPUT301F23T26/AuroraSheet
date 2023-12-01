@@ -598,7 +598,6 @@ public class MainActivity extends AppCompatActivity implements
         totalAmountTextView.setText(itemManager.computeTotal());
     }
 
-    // Filter items based on the selected date range
     public void filterItemsByDate(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
         Calendar startDate = Calendar.getInstance();
         startDate.set(startYear, startMonth, startDay-1, 0, 0, 0);
@@ -607,14 +606,12 @@ public class MainActivity extends AppCompatActivity implements
 
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : itemManager.getItems()) {
-            Date itemDate = item.getDateOfPurchase().getDateObject(); // Assuming getDateOfPurchase returns an ItemDate with a method getDateObject()
-
+            Date itemDate = item.getDateOfPurchase().getDateObject();
             if (itemDate != null && !itemDate.before(startDate.getTime()) && !itemDate.after(endDate.getTime())) {
                 filteredItems.add(item);
             }
         }
 
-        // Update the adapter with filtered items
         adapter = new CustomArrayAdapter(filteredItems, this);
         recyclerView.setAdapter(adapter);
     }
