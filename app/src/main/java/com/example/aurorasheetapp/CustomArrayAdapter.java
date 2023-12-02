@@ -3,6 +3,7 @@ package com.example.aurorasheetapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +28,10 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
 
-    public CustomArrayAdapter(List<Item> listItems, RecyclerViewInterface recyclerViewInterface) {
+    public CustomArrayAdapter(List<Item> listItems, RecyclerViewInterface recyclerViewInterface, Context context) {
         this.listItems = listItems;
         this.recyclerViewInterface  = recyclerViewInterface;
+        this.context = context;
     }
 
     @NonNull
@@ -64,9 +66,13 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         holder.make.setText(listItem.getMake());
         holder.comment.setText(listItem.getComment());
         holder.model.setText(listItem.getModel());
-        if(listItem.getPath() != null){
+        if(listItem.getPath() != null && listItem.getTopImageIndex() != -1) {
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(listItem.getPath(), listItem.getImage().get(listItem.getTopImageIndex()));
             holder.picture.setImageBitmap(bitmap);
+        }
+        else if(listItem.getTopImageIndex() == -1){
+            Drawable defaultImage = ImageHelpers.getDefaultDrawable(context);
+            holder.picture.setImageDrawable(defaultImage);
         }
 
 

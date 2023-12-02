@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,10 +24,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,6 +43,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import io.grpc.Compressor;
+import io.grpc.Context;
 
 /**
  * This class manages adding new items to the item list. It gets user input and validates
@@ -57,6 +69,8 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     private EditText itemModel;
     private EditText itemComment;
     private FloatingActionButton addItemButton;
+    private StorageReference storageReference;
+    private LinearProgressIndicator progress;
     ArrayList<String> images;
     int imageIndex;
     String path;
@@ -71,6 +85,8 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
 
         //init a firebase
         firestore = FirebaseFirestore.getInstance();
+        FirebaseApp.initializeApp(AddItemActivity.this);
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         chooseImageButton = findViewById(R.id.selectImageButton);
         itemImage = findViewById(R.id.imageViewItem);
@@ -173,6 +189,9 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
+                newItem.put("path", path);
+                newItem.put("images", images);
+                newItem.put("imageIndex", imageIndex);
 
                 //adding objects into database based on user
                 firestore.collection("users")
@@ -208,16 +227,19 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    itemImage.setImageDrawable(null);
+
+                    Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
+                    itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
                 }
                 else if(images.size() == 0){
                 }
-                //TODO might need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
                     imageIndex = 0;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
@@ -286,6 +308,10 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
             Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(!ItemValidator.validateDate(dateText.getText().toString())){
+            Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
     /**
@@ -329,6 +355,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                         path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), selectedImageBitmap, uniqueID);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -370,6 +397,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                         path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), imageBitmap, uniqueID);
                     }
                 }
             });

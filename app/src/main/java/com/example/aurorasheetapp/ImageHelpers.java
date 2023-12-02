@@ -5,11 +5,20 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,7 +83,99 @@ public class ImageHelpers {
         //returns null on error!
         return null;
     }
+  
+    /**
+     * takes item name, storageReference and application context to delete an image from both local
+     * and remote repositories
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param name the name of the image to be loaded
+     * @return true if deletion successful
+     */
+    public static boolean deleteFromStorage(StorageReference storageReference, Context context, String name){
+        final boolean[] remoteDeleteSuccess = new boolean[1];
+        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File myPath=new File(directory, name);
+        StorageReference reference = storageReference.child("images/" + name);
+        reference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                remoteDeleteSuccess[0] = true;
+            }
+        });
+        return myPath.delete() && remoteDeleteSuccess[0];
+    }
+    /**
+     * takes in an bitmap of image, compress and convert it to byte stream and upload to firebase
+     * with provided name
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param bitmap the bitmap of the image to be uploaded
+     * @param name the name of the image to be loaded
+     */
+    public static void uploadImage(StorageReference storageReference, Context context, Bitmap bitmap, String name){
+        StorageReference reference = storageReference.child("images/" + name);
+        ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = reference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                storageReference.child("images/" + name).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(context, "Upload Failed - Duplicate image", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "Upload failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(context, "Upload successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    /**
+     * download the image to local storage space with given storageReference, context and image name
+     * @param storageReference the path to the saved image directory as String
+     * @param context the context for the application
+     * @param name the name of the image to be loaded
+     */
+    public static void downloadImage(StorageReference storageReference, Context context, String name){
+        StorageReference imageRef = storageReference.child("images/" + name);
+        final long ONE_MB = 1024 * 1024;
+        imageRef.getBytes(ONE_MB).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                ImageHelpers.saveToInternalStorage(context, bitmap, name);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, "Download failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    /**
+     * This is a method specifically for retrieving the default image in the application resources
+     * @param context the context for the application
+     * @return Drawable object of the default image in this app
+     */
+    public static Drawable getDefaultDrawable(Context context) {
+        return ResourcesCompat.getDrawable(context.getResources(), R.drawable.default_image, null);
+
+    }
     /**
      * Gets the image uri from a provided image bitmap
      * @param bitmap

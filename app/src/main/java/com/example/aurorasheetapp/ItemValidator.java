@@ -123,15 +123,20 @@ public class ItemValidator {
      * @return boolean false the date is invalid, true otherwise
      */
     public static boolean validateDate(String date) {
+        if(date.equals("Date")){
+            return false;
+        }
         int[] inputDates = ItemDate.parseDate(date);
         int day = inputDates[0];
         int month = inputDates[1];
         int year = inputDates[2];
         boolean checkMonth;
+
         boolean checkDay = false;
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         int[] currentTimes = ItemDate.parseDate(currentDate);
+
 
         if(year == currentTimes[2]){
             checkMonth = (month > 0) && (month <= currentTimes[1]);
