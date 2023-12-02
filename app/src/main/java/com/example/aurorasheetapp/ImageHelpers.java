@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
+
 /**
  * Helper functions for local image storage operations
  */
@@ -182,11 +184,34 @@ public class ImageHelpers {
      * @param contentResolver
      * @return the path to the saved image directory as Uri
      */
-    public Uri getImageUriFromBitmap(Bitmap bitmap, ContentResolver contentResolver) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "Title", null);
-        return Uri.parse(path);
+    public Uri getImageUriFromBitmap(Bitmap bitmap, ContentResolver contentResolver, Context context) {
+        // Save the bitmap to a file
+        File imageFile = saveBitmapToFile(context, bitmap);
+
+        if (imageFile != null) {
+            // Get the URI from the saved file
+            return Uri.fromFile(imageFile);
+        } else {
+            // Handle the case where saving the bitmap to a file failed
+            Toast.makeText(context, "Failed to save image to file", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+    // Helper method to save bitmap to a file
+    private File saveBitmapToFile(Context context, Bitmap bitmap) {
+        ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        String uniqueID = UUID.randomUUID().toString();
+        File imageFile = new File(directory, uniqueID);
+
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            return imageFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
