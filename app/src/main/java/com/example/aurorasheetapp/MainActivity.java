@@ -21,9 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.Document;
 
 import org.checkerframework.checker.units.qual.A;
 
@@ -43,8 +44,7 @@ import org.checkerframework.checker.units.qual.A;
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener {
-    private ItemDate startDate, endDate;
-
+    private StorageReference storageReference;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements
     private Boolean multiSelectMode;
 
     private int itemIndex;
-
     String documentId;
 
     @Override
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         //access database
+        storageReference = FirebaseStorage.getInstance().getReference();
         firestore = FirebaseFirestore.getInstance();
         tags = new ArrayList<>();
         loadItemsFromFirestore();
@@ -92,12 +92,11 @@ public class MainActivity extends AppCompatActivity implements
         itemManager = new ItemManager();
         itemResultHandler = new ItemResultHandler(this);
 
-        adapter = new CustomArrayAdapter(itemManager.getItems(), this);
+        adapter = new CustomArrayAdapter(itemManager.getItems(), this, getApplicationContext());
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);
-        addButton = findViewById(R.
-                id.buttonAdd);
+        addButton = findViewById(R.id.buttonAdd);
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
@@ -188,18 +187,7 @@ public class MainActivity extends AppCompatActivity implements
                 new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
             }
         });
-        sort_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create an instance of the dialog fragment and show it
-                SortFragment sortFragment = new SortFragment();
-                sortFragment.show(getSupportFragmentManager(), "sort_fragment");
-            }
-        });
     }
-
-
-
 
     private void launchEditData(Intent intent, int i) {
         if (intent != null) {
@@ -268,9 +256,6 @@ public class MainActivity extends AppCompatActivity implements
             deleteButton.setVisibility(View.VISIBLE);
         }
     }
-
-
-
     /**
      * Prepare the activity for item selection mode
      *
@@ -410,21 +395,27 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    document.getDouble("serial"),
+                                    document.getString("serial"),
                                     document.getString("model"),
                                     document.getDouble("value"),
                                     document.getString("comment")
 
                             );
+                            //check so that it doesn't break old accounts
+                            if(document.get("images") != null){
+                                //load image-related attributes and download images for the item
+                                item.setTopImageIndex(document.getDouble("imageIndex").intValue());
+                                item.setImage((ArrayList<String>) document.get("images"));
+                                item.setPath(document.getString("path"));
+                                for(String name : item.getImage()){
+                                    ImageHelpers.downloadImage(storageReference, getApplicationContext(), name);
+                                }
+                            }
                             item.setDocumentId(document.getId()); // Save the document ID
                             itemManager.getItems().add(item);
                         }
-
-                        runOnUiThread(() -> {
-                            adapter = new CustomArrayAdapter(itemManager.getItems(), MainActivity.this);
-                            recyclerView.setAdapter(adapter);
-                            totalAmountTextView.setText(itemManager.computeTotal());
-                        });
+                        adapter.notifyDataSetChanged();
+                        totalAmountTextView.setText(itemManager.computeTotal());
                     } else {
                         Log.w("Firestore", "Error getting documents.", task.getException());
                         Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
@@ -472,15 +463,23 @@ public class MainActivity extends AppCompatActivity implements
                                         new ItemDate(document.getString("date")),
                                         document.getString("description"),
                                         document.getString("make"),
-                                        Double.parseDouble(document.getString("serial")),
+                                        document.getString("serial"),
                                         document.getString("model"),
                                         Double.parseDouble(document.getString("value")),
                                         document.getString("comment")
                                 );
-
+                                //check so that it doesn't break old accounts
+                                if(document.getString("path") != null){
+                                    newItem.setTopImageIndex(document.getDouble("imageIndex").intValue());
+                                    newItem.setImage((ArrayList<String>) document.get("images"));
+                                    newItem.setPath(document.getString("path"));
+                                    for(String name : newItem.getImage()){
+                                        ImageHelpers.downloadImage(storageReference, getApplicationContext(), name);
+                                    }
+                                }
                                 tag.tagItem(newItem);
-
                             }
+                            tagAdapter.notifyDataSetChanged();
                         } else {
                             Log.w("Firestore", "Error getting documents.", task.getException());
                             Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
@@ -601,42 +600,5 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
-
-    public void filterItemsByDate(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
-        Calendar startDate = Calendar.getInstance();
-        startDate.set(startYear, startMonth, startDay-1, 0, 0, 0);
-        Calendar endDate = Calendar.getInstance();
-        endDate.set(endYear, endMonth, endDay, 23, 59, 59);
-
-        List<Item> filteredItems = new ArrayList<>();
-        double totalValue = 0.0;
-        for (Item item : itemManager.getItems()) {
-            Date itemDate = item.getDateOfPurchase().getDateObject();
-            if (itemDate != null && !itemDate.before(startDate.getTime()) && !itemDate.after(endDate.getTime())) {
-                filteredItems.add(item);
-                totalValue += item.getEstimatedValue();
-            }
-        }
-
-        adapter = new CustomArrayAdapter(filteredItems, this);
-        recyclerView.setAdapter(adapter);
-        totalAmountTextView.setText(String.format("%.2f", totalValue));
-    }
-
-    public void reloadAllItems() {
-        startDate = null;
-        endDate = null;
-        loadItemsFromFirestore();
-
-
-        Log.d("MainActivity", "Reloading all items from Firestore");
-
-
-
-    }
-
-
-
-
 
 }
