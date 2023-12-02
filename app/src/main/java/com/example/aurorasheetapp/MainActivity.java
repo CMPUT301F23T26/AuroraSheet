@@ -627,10 +627,21 @@ public class MainActivity extends AppCompatActivity implements
         FilterCriteria filterCriteria = new FilterCriteria(startDate, endDate);
         List<Item> filteredItems = filterCriteria.applyFilters(itemManager.getItems());
 
-        ((CustomArrayAdapter) adapter).updateItems(filteredItems);
+        if (filteredItems.isEmpty()) {
+            Toast.makeText(this, "No matches found", Toast.LENGTH_LONG).show();
+            // If filtered list is empty, show all items again
 
-        // Now, use filteredItems as needed, such as updating your RecyclerView
-        // Example: adapter.setItems(filteredItems); adapter.notifyDataSetChanged();
+            ((CustomArrayAdapter) adapter).updateItems(itemManager.getItems());
+        } else {
+            ((CustomArrayAdapter) adapter).updateItems(filteredItems);
+            double total = 0.0;
+            for (Item item : filteredItems) {
+                total += item.getEstimatedValue();
+            }
+            totalAmountTextView.setText(String.format("Total: %.2f", total));
+
+        }
+        adapter.notifyDataSetChanged();
     }
 
 }
