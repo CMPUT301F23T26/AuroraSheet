@@ -12,12 +12,14 @@ public class Item {
     private ItemDate dateOfPurchase;
     private String briefDescription;
     private String make;
-    private double serialNumber;
+    private String serialNumber;
     private String model;
     private double estimatedValue;
     private String comment;
     private ArrayList<String> image;
+    private int topImageIndex;
     private String documentID;
+    private String path;
 
     private Boolean isSelected;
     /**
@@ -32,7 +34,7 @@ public class Item {
      * @param comment          Additional comments about the item.
      */
     public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
-                double serialNumber, String model, double estimatedValue, String comment) {
+                String serialNumber, String model, double estimatedValue, String comment) {
         this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
@@ -41,15 +43,16 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
-
         this.isSelected = false;
 
-        
+        //image array initialization
+        this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
     public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
-                double serialNumber, String model, double estimatedValue, String comment, String documentID) {
+                String serialNumber, String model, double estimatedValue, String comment, String documentID) {
         this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
@@ -62,13 +65,23 @@ public class Item {
 
         this.isSelected = false;
 
-
+        //image array initialization
+        this.topImageIndex = -1;
+        path = null;
         image = new ArrayList<String>();
     }
 
 
     public Item() {
         }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 
     /**
      * Get the name of the item.
@@ -133,14 +146,14 @@ public class Item {
      * Get serial number of the item.
      * @return Serial number.
      */
-    public double getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
     /**
      * Set serial number of the item.
      * @param serialNumber Serial Number to set.
      */
-    public void setSerialNumber(double serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
     /**
@@ -194,6 +207,13 @@ public class Item {
         this.image = image;
     }
 
+    public int getTopImageIndex() {
+        return topImageIndex;
+    }
+
+    public void setTopImageIndex(int topImageIndex) {
+        this.topImageIndex = topImageIndex;
+    }
 
     /**
      * For use in the multiselect.
