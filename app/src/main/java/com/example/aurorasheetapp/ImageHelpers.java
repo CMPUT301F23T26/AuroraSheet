@@ -198,7 +198,12 @@ public class ImageHelpers {
         }
     }
 
-    // Helper method to save bitmap to a file
+    /**
+     * Saves the bitmap to a file in the application's internal storage
+     * @param context
+     * @param bitmap
+     * @return the path to the saved image directory as File
+     */
     private File saveBitmapToFile(Context context, Bitmap bitmap) {
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);

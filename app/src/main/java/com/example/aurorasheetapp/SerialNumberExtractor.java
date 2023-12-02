@@ -34,7 +34,6 @@ public class SerialNumberExtractor {
                     public void onSuccess(Text visionText) {
                         // Use visionText to get the recognized text
                         String resultText = visionText.getText();
-                        Log.d("SerialNumberExtractor", "Text: " + resultText);
                         String serialNumber = findSerialNumber(resultText);
                         callback.onSerialNumberExtracted(serialNumber);
                     }
