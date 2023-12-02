@@ -23,6 +23,8 @@ public class Item {
 
     private Boolean isHidden;
 
+    public List<Tag> tags;
+
     /**
      * Constructs an Item with the specified attributes.
      * @param name             The name of the item
@@ -48,7 +50,8 @@ public class Item {
         this.isSelected = false;
         this.isHidden = false;
 
-        
+        this.tags = new ArrayList<Tag>();
+
         image = new ArrayList<String>();
     }
 
@@ -198,6 +201,16 @@ public class Item {
         this.image = image;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    // -----------------------------------------------------------------------------------------
+    // selection and hiddenness
 
     /**
      * For use in the multiselect.

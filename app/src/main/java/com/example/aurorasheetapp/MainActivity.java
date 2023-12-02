@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
 
-                itemIndex = getTheOneSelectedItem();
+                itemIndex = itemManager.getTheOneSelectedItem();
                 if(itemIndex > -1 && !itemManager.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
                     launchEditData(intent, itemIndex);
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Integer> selected_items = getListOfSelectedItems();
+                ArrayList<Integer> selected_items = itemManager.getListOfSelectedItems();
                 Collections.reverse(selected_items); // Reverse to prevent index out of bounds
                 for (Integer selectedItemIndex : selected_items) {
                     if (selectedItemIndex > -1 && !itemManager.isEmpty()) {
@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deselectAllItems();
+                itemManager.deselectAllItems();
+                update_selection();
             }
         });
 
@@ -255,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements
             //shows two buttons once clicked
 
 
-            if (countSelectedItems() == 1);
+            if (itemManager.countSelectedItems() == 1);
             //Log.w("debug","item clicked while not in select mode");
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
@@ -283,20 +284,7 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton.setVisibility(View.INVISIBLE);
         //toggleSelectButton.setBackgroundColor(Color.argb(255, 60, 60, 255));
     }
-    /**
-     * Calculate how many items are currently selected
-     * @return The number of items that are currently selected
-     *
-     */
-    public int countSelectedItems() {
-        int count = 0;
-        for (Item thisitem:itemManager.getItems()) {
-            if (thisitem.getSelection()) {
-                count += 1;
-            }
-        }
-        return count;
-    }
+
 
     private void initialiseAsUnselected() {
         for (Item thisitem:itemManager.getItems()) {
@@ -304,23 +292,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Make all items unselected
-     *
-     */
-    public void deselectAllItems() {
-        for (Item thisitem:itemManager.getItems()) {
-            thisitem.unselect();
 
-        }
-        update_selection();
-    }
     /**
      * Update the display, as is appropriate for the current selection of items
      *
      */
     public void update_selection() {
-        int count = countSelectedItems();
+        int count = itemManager.countSelectedItems();
 
         if (count == 0) {
             addButton.setVisibility(View.VISIBLE);
@@ -346,35 +324,9 @@ public class MainActivity extends AppCompatActivity implements
         adapter.notifyDataSetChanged();
     }
 
-    /**
-     * Get the index of the currently selected item.
-     * @return The index of the item that is selected. If no item is selected, it returns -1
-     *
-     */
-    public int getTheOneSelectedItem() {
-        int listsize = itemManager.getItems().size();
-        for (int index = 0; index < listsize; index++) {
-            if (itemManager.getItems().get(index).getSelection()) {
-                return index;
-            }
-        }
-        return -1;
-    }
-    /**
-     * Get a list containing the indices of all currently selected item.
-     * @return The index of the item that is selected. If no item is selected, it returns -1
-     *
-     */
-    private ArrayList<Integer> getListOfSelectedItems() {
-        ArrayList<Integer> selected_items = new ArrayList<Integer>();
-        int listsize = itemManager.getItems().size();
-        for (int index = 0; index < listsize; index++) {
-            if (itemManager.getItems().get(index).getSelection()) {
-                selected_items.add(index);
-            }
-        }
-        return selected_items;
-    }
+
+
+
 
     //i added the following to access database and clear lisst of items and only display the ones in the database
     private void loadItemsFromFirestore() {
