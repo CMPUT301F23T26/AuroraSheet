@@ -32,6 +32,9 @@ public class Login extends AppCompatActivity {
     private ProgressDialog mdial;
     private FirebaseAuth authorization;
     private FirebaseFirestore db;
+    /**
+     * This method initializes the variables and gets the user input from the login page.
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +47,18 @@ public class Login extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mdial = new ProgressDialog(this);
     }
-
+ /**
+     * This method gets the user input from the login page.
+     */
     private void user_cred() {
         Username = findViewById(R.id.user_login);
         LoginPassword = findViewById(R.id.password_login);
         Login = findViewById(R.id.loginButton);
         NewUser = findViewById(R.id.signup);
     }
-
+    /**
+     * This method validates the user input and sends the data to the database.
+     */
     private void login() {
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +111,9 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+    /**
+     * This method registers a new user.
+     */
 
     private void Register() {
         NewUser.setOnClickListener(new View.OnClickListener() {

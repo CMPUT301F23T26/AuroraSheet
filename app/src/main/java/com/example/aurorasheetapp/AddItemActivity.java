@@ -124,6 +124,10 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         imageIndex = -1;
         images = new ArrayList<>();
 
+        /**
+         * This method launches the barcode scanner activity for scanning a barcode.
+         */
+
         itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -412,7 +416,9 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     }
                 }
             });
-
+    /**
+     * This method launches the barcode scanner activity for scanning a barcode.
+     */
     private void scanbarcode() {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Scan a barcode");
@@ -421,6 +427,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
     }
+
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
             String barcode = result.getContents();
