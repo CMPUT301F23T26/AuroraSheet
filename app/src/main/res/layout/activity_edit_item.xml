@@ -104,6 +104,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Take Photo" />
+            <TextView
+                android:id="@+id/itemNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="322dp"
+                android:text="Item Name"
+                android:textColor="#FF0000" />
+
 
             <EditText
                 android:id="@+id/itemName_edit"
@@ -112,7 +122,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="25dp"
                 android:background="@drawable/bg_edit_text"
                 android:gravity="center_vertical"
@@ -120,6 +130,16 @@
                 android:inputType="textPersonName"
                 android:paddingLeft="5dp"
                 android:textSize="18sp" />
+            <TextView
+                android:id="@+id/desciptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="319dp"
+                android:text="Description"
+                android:textColor="#FF0000" />
 
             <EditText
                 android:id="@+id/itemDescription_edit"
@@ -128,13 +148,45 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="25dp"
                 android:background="@drawable/bg_edit_text"
                 android:hint="Description"
                 android:inputType="textMultiLine"
                 android:paddingLeft="5dp"
                 android:textSize="18sp" />
+            <LinearLayout
+                android:id="@+id/layoutMakeModelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/itemMakeText"
+                    android:layout_width="203dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:text="Make"
+                    android:textColor="#FF0000">
+
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/itemModelText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Model"
+                    android:textColor="#FF0000">
+
+                </TextView>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutMakeModel_edit"
@@ -184,6 +236,7 @@
                 android:orientation="horizontal">
 
 
+
                 <Button
                     android:id="@+id/date_edit_btn"
                     android:layout_width="130dp"
@@ -218,7 +271,38 @@
 
             </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/layoutValueSerialText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/itemValueText"
+                    android:layout_width="203dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginRight="@android:dimen/app_icon_size"
+                    android:text="Value"
+                    android:textColor="#FF0000">
+
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/itemSerialText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Serial"
+                    android:textColor="#FF0000">
+
+                </TextView>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/layoutValueSerial_edit"
                 android:layout_width="match_parent"
@@ -256,7 +340,17 @@
                     android:hint="Serial Number"
                     android:paddingLeft="5dp" />
             </LinearLayout>
+            <TextView
+                android:id="@+id/commentText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="1dp"
+                android:text="Comment"
+                android:textColor="#FF0000">
 
+            </TextView>
             <EditText
                 android:id="@+id/itemComment_edit"
                 android:layout_width="match_parent"

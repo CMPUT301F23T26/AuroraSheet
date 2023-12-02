@@ -32,9 +32,15 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+<<<<<<< HEAD
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+=======
+import com.journeyapps.barcodescanner.CaptureActivity;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+>>>>>>> changes to ui and scan barcode implementation
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,7 +57,11 @@ import io.grpc.Context;
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
+
 public class AddItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback {
+
+    private Button scanBarcodeButton;
+
     private Button chooseImageButton;
     private ImageView itemImage;
     private EditText itemName;
@@ -105,6 +115,11 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         imageLeft = findViewById(R.id.imageLeft_add);
         imageRight = findViewById(R.id.imageRight_add);
         cameraImage = findViewById(R.id.cameraButton_add);
+        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
+        scanBarcodeButton.setOnClickListener(v -> {
+            scanbarcode();
+        });
+
 
         imageIndex = -1;
         images = new ArrayList<>();
@@ -158,7 +173,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 String model = itemModel.getText().toString();
                 String comment = itemComment.getText().toString();
 
-                if(!validateInput()){
+                if (!validateInput()) {
                     return;
                 }
 
@@ -228,29 +243,22 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 //if only one image and coming from input
                 if(images.size() == 1){
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
-                    images.remove(imageIndex);
-
                     Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
                     itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
-                }
-                else if(images.size() == 0){
+                } else if (images.size() == 0) {
                 }
                 //if multiple, set to the next one on the stack
                 else{
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
-                    images.remove(imageIndex);
-                    imageIndex = 0;
-                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
-                    itemImage.setImageBitmap(bitmap);
                 }
             }
         });
         imageLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageIndex > 0){
+                if (imageIndex > 0) {
                     imageIndex--;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
@@ -260,7 +268,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         imageRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageIndex + 1 < images.size()){
+                if (imageIndex + 1 < images.size()) {
                     imageIndex++;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
@@ -279,32 +287,34 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     /**
      * This method validates all of the user input for adding a new item.
      */
-    public boolean validateInput(){
-        if(!ItemValidator.validateItemName(itemName.getText().toString())){
+    public boolean validateInput() {
+        if (!ItemValidator.validateItemName(itemName.getText().toString())) {
             Toast.makeText(this, "Please enter a valid name", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(!ItemValidator.validateItemDescription(itemDescription.getText().toString())){
+        if (!ItemValidator.validateItemDescription(itemDescription.getText().toString())) {
             Toast.makeText(this, "Please enter a valid description", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(!ItemValidator.validateItemValue(itemValue.getText().toString())){
+        if (!ItemValidator.validateItemValue(itemValue.getText().toString())) {
             Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
             return false;
         }
+
         if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
             Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
+
             Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(!ItemValidator.validateItemModel(itemModel.getText().toString())){
+        if (!ItemValidator.validateItemModel(itemModel.getText().toString())) {
             Toast.makeText(this, "Please enter a valid model", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(!ItemValidator.validateItemComment(itemComment.getText().toString())){
+        if (!ItemValidator.validateItemComment(itemComment.getText().toString())) {
             Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -314,6 +324,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         }
         return true;
     }
+
     /**
      * This method launches the image chooser activity for adding an image to the item.
      */
@@ -387,9 +398,9 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                if(result.getResultCode() == Activity.RESULT_OK){
+                if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    if (data != null && data.getExtras() != null){
+                    if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                         itemImage.setImageBitmap(imageBitmap);
                         imageIndex++;
@@ -401,5 +412,23 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     }
                 }
             });
+
+    private void scanbarcode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan a barcode");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            String barcode = result.getContents();
+            itemDescription.setText(barcode);
+        }
+        else{
+            Toast.makeText(this, "No barcode found", Toast.LENGTH_SHORT).show();
+        }
+    });
 
 }
