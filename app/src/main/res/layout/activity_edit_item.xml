@@ -254,7 +254,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_edit_text"
                     android:hint="Serial Number"
-                    android:inputType="number"
                     android:paddingLeft="5dp" />
             </LinearLayout>
 

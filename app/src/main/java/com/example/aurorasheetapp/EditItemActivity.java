@@ -131,7 +131,7 @@ public class EditItemActivity extends AppCompatActivity {
         comment = inputIntent.getStringExtra("comment");
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
-        serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
+        serial = inputIntent.getStringExtra("serial");
         imageIndex = inputIntent.getIntExtra("imageIndex", 0);
 
 
@@ -218,10 +218,10 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("make", itemMake.getText().toString());
                     itemUpdate.put("comment", itemComment.getText().toString());
                     itemUpdate.put("time", itemDate.getText().toString());
-                    itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
                     itemUpdate.put("path", path);
                     itemUpdate.put("images", images);
                     itemUpdate.put("imageIndex", imageIndex);
+                    itemUpdate.put("serial", itemSerial.getText().toString());
 
                     if (documentId == null) {
                         // Show a Toast message to the user
@@ -339,6 +339,10 @@ public class EditItemActivity extends AppCompatActivity {
         }
         if(!ItemValidator.validateItemValue(itemValue.getText().toString())){
             Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
+            Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(!ItemValidator.validateItemMake(itemMake.getText().toString())){

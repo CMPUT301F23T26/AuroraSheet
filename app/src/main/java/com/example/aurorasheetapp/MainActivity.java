@@ -395,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    document.getDouble("serial"),
+                                    document.getString("serial"),
                                     document.getString("model"),
                                     document.getDouble("value"),
                                     document.getString("comment")
@@ -463,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements
                                         new ItemDate(document.getString("date")),
                                         document.getString("description"),
                                         document.getString("make"),
-                                        Double.parseDouble(document.getString("serial")),
+                                        document.getString("serial"),
                                         document.getString("model"),
                                         Double.parseDouble(document.getString("value")),
                                         document.getString("comment")

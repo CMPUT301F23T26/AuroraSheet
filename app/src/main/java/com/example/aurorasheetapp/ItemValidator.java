@@ -29,6 +29,14 @@ public class ItemValidator {
     }
 
     /**
+     * This method validates the item serial number by ensuring it is not empty.
+     * @param serialNumber
+     * @return boolean
+     */
+    public static boolean validateSerialNumber(String serialNumber) {
+        return serialNumber.length() > 0;
+    }
+    /**
      * This method validates the item value by ensuring it is not empty.
      * @param itemValue
      * @return
