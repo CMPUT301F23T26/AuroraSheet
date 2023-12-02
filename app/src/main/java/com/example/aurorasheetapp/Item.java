@@ -12,7 +12,7 @@ public class Item {
     private ItemDate dateOfPurchase;
     private String briefDescription;
     private String make;
-    private String serialNumber;
+    private double serialNumber;
     private String model;
     private double estimatedValue;
     private String comment;
@@ -34,7 +34,7 @@ public class Item {
      * @param comment          Additional comments about the item.
      */
     public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
-                String serialNumber, String model, double estimatedValue, String comment) {
+                double serialNumber, String model, double estimatedValue, String comment) {
         this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
@@ -52,7 +52,7 @@ public class Item {
     }
 
     public Item(String name, ItemDate dateOfPurchase, String briefDescription, String make,
-                String serialNumber, String model, double estimatedValue, String comment, String documentID) {
+                double serialNumber, String model, double estimatedValue, String comment, String documentID) {
         this.name = name;
         this.dateOfPurchase = dateOfPurchase;
         this.briefDescription = briefDescription;
@@ -146,14 +146,14 @@ public class Item {
      * Get serial number of the item.
      * @return Serial number.
      */
-    public String getSerialNumber() {
+    public double getSerialNumber() {
         return serialNumber;
     }
     /**
      * Set serial number of the item.
      * @param serialNumber Serial Number to set.
      */
-    public void setSerialNumber(String serialNumber) {
+    public void setSerialNumber(double serialNumber) {
         this.serialNumber = serialNumber;
     }
     /**
