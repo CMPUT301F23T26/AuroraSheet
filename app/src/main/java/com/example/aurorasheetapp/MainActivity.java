@@ -4,6 +4,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton sort_btn;
     private ImageButton search_btn;
 
+
     private FirebaseFirestore firestore;
 
     private Boolean multiSelectMode;
@@ -100,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
+        sort_btn = findViewById(R.id.sortItem_btn);
+
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -152,6 +157,15 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 deselectAllItems();
+            }
+        });
+
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortFragment sortFragment = new SortFragment();
+                sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
 
