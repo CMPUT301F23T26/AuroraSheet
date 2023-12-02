@@ -17,8 +17,21 @@ public class SortFragment extends DialogFragment {
     private TextView date;
     private Button btnConfirm;
     private int startYear, startMonth, startDay, endYear, endMonth, endDay;
+    public interface OnDateRangeSelectedListener {
+        void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay);
+    }
 
+    private OnDateRangeSelectedListener mListener;
 
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnDateRangeSelectedListener) {
+            mListener = (OnDateRangeSelectedListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnDateRangeSelectedListener");
+        }
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -37,6 +50,16 @@ public class SortFragment extends DialogFragment {
         date = view.findViewById(R.id.filter_date);
         btnConfirm = view.findViewById(R.id.done);
 
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onDateRangeSelected(startYear, startMonth, startDay, endYear, endMonth, endDay);
+                }
+                dismiss();
+            }
+        });
+
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,13 +67,14 @@ public class SortFragment extends DialogFragment {
             }
         });
 
-
-
-        Button resetButton = view.findViewById(R.id.reset); // Adjust ID as needed
-
-
-
-
+        // Add functionality to the reset button
+        Button resetButton = view.findViewById(R.id.reset);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Reset logic here
+            }
+        });
         return view;
     }
 
@@ -59,7 +83,6 @@ public class SortFragment extends DialogFragment {
         datePicker.setOnDateRangeSelectedListener(new DatePicker.OnDateRangeSelectedListener() {
             @Override
             public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
-                // Save the selected dates
                 SortFragment.this.startYear = startYear;
                 SortFragment.this.startMonth = startMonth;
                 SortFragment.this.startDay = startDay;
@@ -70,10 +93,14 @@ public class SortFragment extends DialogFragment {
                 String startDate = formatDateString(startYear, startMonth, startDay);
                 String endDate = formatDateString(endYear, endMonth, endDay);
                 date.setText(startDate + " - " + endDate);
+
+                // Notify MainActivity about the date range selection
+                if (mListener != null) {
+                    mListener.onDateRangeSelected(startYear, startMonth, startDay, endYear, endMonth, endDay);
+                }
             }
         });
 
-        // Show the DatePicker Dialog
         datePicker.show(getParentFragmentManager(), "datePicker");
     }
 

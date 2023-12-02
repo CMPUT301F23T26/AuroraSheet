@@ -45,7 +45,7 @@ import org.checkerframework.checker.units.qual.A;
  */
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
-        TagFragment.OnFragmentInteractionListener {
+        TagFragment.OnFragmentInteractionListener,SortFragment.OnDateRangeSelectedListener {
     private StorageReference storageReference;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -613,6 +613,24 @@ public class MainActivity extends AppCompatActivity implements
 
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
+    }
+    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
+        String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
+        String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+        ItemDate startDate = new ItemDate(startDateFormat);
+        ItemDate endDate = new ItemDate(endDateFormat);
+
+        filterItems(startDate, endDate);
+    }
+
+    private void filterItems(ItemDate startDate, ItemDate endDate) {
+        FilterCriteria filterCriteria = new FilterCriteria(startDate, endDate);
+        List<Item> filteredItems = filterCriteria.applyFilters(itemManager.getItems());
+
+        ((CustomArrayAdapter) adapter).updateItems(filteredItems);
+
+        // Now, use filteredItems as needed, such as updating your RecyclerView
+        // Example: adapter.setItems(filteredItems); adapter.notifyDataSetChanged();
     }
 
 }
