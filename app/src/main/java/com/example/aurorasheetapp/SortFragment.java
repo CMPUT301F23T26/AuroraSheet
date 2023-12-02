@@ -18,6 +18,7 @@ public class SortFragment extends DialogFragment {
     private Button btnConfirm;
     private int startYear, startMonth, startDay, endYear, endMonth, endDay;
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -71,7 +72,11 @@ public class SortFragment extends DialogFragment {
                 date.setText(startDate + " - " + endDate);
             }
         });
+
+        // Show the DatePicker Dialog
+        datePicker.show(getParentFragmentManager(), "datePicker");
     }
+
     private String formatDateString(int year, int month, int day) {
         return String.format("%02d/%02d/%04d", day, month + 1, year);
     }
