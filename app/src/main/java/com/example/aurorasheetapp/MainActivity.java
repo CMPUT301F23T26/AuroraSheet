@@ -447,7 +447,10 @@ public class MainActivity extends AppCompatActivity implements
 
                             tags.add(tag);
                         }
-                        tagAdapter.notifyDataSetChanged();
+                        runOnUiThread(() -> {
+                            tagAdapter.notifyDataSetChanged();
+
+                        });
                     } else {
                         Log.w("Firestore", "Error getting documents.", task.getException());
                         Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
