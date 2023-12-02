@@ -2,15 +2,18 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,7 +39,7 @@ import java.util.UUID;
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
-public class AddItemActivity extends AppCompatActivity {
+public class AddItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback {
     private Button chooseImageButton;
     private ImageView itemImage;
     private EditText itemName;
@@ -48,6 +52,7 @@ public class AddItemActivity extends AppCompatActivity {
     private Button cameraImage;
     private EditText itemValue;
     private EditText itemSerial;
+    private Button scanSerialButton;
     private EditText itemMake;
     private EditText itemModel;
     private EditText itemComment;
@@ -75,6 +80,7 @@ public class AddItemActivity extends AppCompatActivity {
         dateText = findViewById(R.id.dateText);
         itemValue = findViewById(R.id.itemValue);
         itemSerial = findViewById(R.id.itemSerialNumber);
+        scanSerialButton = findViewById(R.id.scanSerialButton);
         itemMake = findViewById(R.id.itemMake);
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
@@ -108,11 +114,19 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
-
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageChooser();
+            }
+        });
+
+        scanSerialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the camera to scan the serial number
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                launchCameraActivity.launch(intent);
             }
         });
         addItemButton.setOnClickListener(new View.OnClickListener() {
@@ -142,13 +156,6 @@ public class AddItemActivity extends AppCompatActivity {
                     return;
                 }
 
-                try {
-                    newserial = Long.parseLong(serial);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(AddItemActivity.this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 //info bout current user
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser == null) {
@@ -162,7 +169,7 @@ public class AddItemActivity extends AppCompatActivity {
                 newItem.put("description", description);
                 newItem.put("date", date);
                 newItem.put("value", newvalue);
-                newItem.put("serial", newserial);
+                newItem.put("serial", serial);
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
@@ -194,8 +201,6 @@ public class AddItemActivity extends AppCompatActivity {
                             finish();
                         })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
-
-
             }
         });
         imageDelete.setOnClickListener(new View.OnClickListener() {
@@ -250,16 +255,6 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
-     * This method launches the image chooser activity for adding an image to the item.
-     */
-    public void imageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
-    }
-
-    /**
      * This method validates all of the user input for adding a new item.
      */
     public boolean validateInput(){
@@ -273,6 +268,10 @@ public class AddItemActivity extends AppCompatActivity {
         }
         if(!ItemValidator.validateItemValue(itemValue.getText().toString())){
             Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
+            Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
@@ -289,6 +288,29 @@ public class AddItemActivity extends AppCompatActivity {
         }
         return true;
     }
+    /**
+     * This method launches the image chooser activity for adding an image to the item.
+     */
+    public void imageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
+    }
+    /**
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
+     */
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
+        }
+    }
+
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
@@ -314,6 +336,27 @@ public class AddItemActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+    ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // get the image bitmap from the camera activity and extract the serial number
+                    if (data != null && data.getExtras() != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        Log.d("AddItemActivity", "HELLO");
+                        ImageHelpers imageHelpers = new ImageHelpers();
+                        Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver());
+                        int rotationDegree = imageHelpers.getRotationDegree(imageUri);
+
+                        SerialNumberExtractor serialNumberExtractor = new SerialNumberExtractor();
+                        serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree, AddItemActivity.this);
+                    }
+                }
+            });
+
     ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -330,4 +373,5 @@ public class AddItemActivity extends AppCompatActivity {
                     }
                 }
             });
+
 }

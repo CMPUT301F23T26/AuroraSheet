@@ -1,11 +1,16 @@
 package com.example.aurorasheetapp;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,5 +73,44 @@ public class ImageHelpers {
         }
         //returns null on error!
         return null;
+    }
+
+    /**
+     * Gets the image uri from a provided image bitmap
+     * @param bitmap
+     * @param contentResolver
+     * @return the path to the saved image directory as Uri
+     */
+    public Uri getImageUriFromBitmap(Bitmap bitmap, ContentResolver contentResolver) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
+    /**
+     * Gets the rotation degree of the image from the image uri
+     * @param imageUri
+     * @return the rotation degree of the image as int
+     */
+    public int getRotationDegree(Uri imageUri) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(imageUri.getPath());
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
