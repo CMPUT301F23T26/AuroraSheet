@@ -175,7 +175,7 @@ public class ImageHelpers {
     public static Drawable getDefaultDrawable(Context context) {
         return ResourcesCompat.getDrawable(context.getResources(), R.drawable.default_image, null);
 
-
+    }
     /**
      * Gets the image uri from a provided image bitmap
      * @param bitmap
