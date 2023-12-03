@@ -4,6 +4,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,8 +45,10 @@ import org.checkerframework.checker.units.qual.A;
  */
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
-        TagFragment.OnFragmentInteractionListener {
+        TagFragment.OnFragmentInteractionListener,SortFragment.OnDateRangeSelectedListener {
     private StorageReference storageReference;
+    private ItemDate startDate, endDate;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton profile_btn;
     private ImageButton sort_btn;
     private ImageButton search_btn;
+
 
     private FirebaseFirestore firestore;
 
@@ -100,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
+        sort_btn = findViewById(R.id.sortItem_btn);
+
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -152,6 +159,15 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 deselectAllItems();
+            }
+        });
+
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortFragment sortFragment = new SortFragment();
+                sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
 
@@ -600,5 +616,23 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
+    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay, String filterBy, String descriptionKeyword, String make, String sortorder) {
+        // Format the start and end dates
+        String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
+        String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+
+        // Create ItemDate objects
+        ItemDate startDate = new ItemDate(startDateFormat);
+        ItemDate endDate = new ItemDate(endDateFormat);
+
+        // Filter items based on the dates
+
+
+        // Log the values
+
+    }
+
+
+
 
 }
