@@ -152,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements
                 for (Integer selectedItemIndex : selected_items) {
                     if (selectedItemIndex > -1 && !itemManager.isEmpty()) {
                         Item itemToDelete = itemManager.remove(selectedItemIndex);
+                        for(Tag tag : tags) {
+                            if(tag.getTagged_items().contains(itemToDelete)){
+                                tag.untagItem(itemToDelete);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
                         deleteItemFromFirestore(itemToDelete.getDocumentId());
                     }
