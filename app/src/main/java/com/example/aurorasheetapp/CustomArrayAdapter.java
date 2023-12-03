@@ -133,7 +133,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
                 @Override
                 public void onClick(View view) {
                     if (recyclerViewInterface != null) {
-                        int position = getAdapterPosition();
+                        int position = getBindingAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             recyclerViewInterface.onItemClick(position);
                         }

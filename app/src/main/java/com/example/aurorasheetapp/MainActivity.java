@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener {
     private StorageReference storageReference;
+    private ItemDate startDate, endDate;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;

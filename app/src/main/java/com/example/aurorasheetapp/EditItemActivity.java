@@ -1,5 +1,6 @@
 package com.example.aurorasheetapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -47,10 +48,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.firestore.v1.Document;
+
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
 
 /**
  * This class is responsible for providing the correct behavior for edit activities
@@ -58,7 +64,7 @@ import com.google.firestore.v1.Document;
 public class EditItemActivity extends AppCompatActivity {
     private StorageReference storageReference;
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
-            , imageLeft, imageRight, camera;
+            , imageLeft, imageRight, camera, scanBarcodeButton_edit;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -72,6 +78,9 @@ public class EditItemActivity extends AppCompatActivity {
     private FirebaseFirestore firestore;
     private String documentId;
     private String userId;
+
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -108,6 +117,10 @@ public class EditItemActivity extends AppCompatActivity {
         imageLeft = findViewById(R.id.imageLeft_edit);
         imageRight = findViewById(R.id.imageRight_edit);
         camera = findViewById(R.id.cameraButton_edit);
+        scanBarcodeButton_edit = findViewById(R.id.scanBarcodeButton_edit);
+        scanBarcodeButton_edit.setOnClickListener(v -> {
+            scanBarcode();
+        });
 
 
         //TODO: store / pass in image
@@ -285,7 +298,7 @@ public class EditItemActivity extends AppCompatActivity {
                 else{
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    imageIndex = 0;
+                    imageIndex = images.size() - 1;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
                 }
@@ -409,5 +422,27 @@ public class EditItemActivity extends AppCompatActivity {
                    }
                }
             });
+
+    /**
+     * This method launches the barcode scanner activity for scanning a barcode.
+     */
+    private void scanBarcode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan a barcode");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            String barcode = result.getContents();
+            itemDescription.setText(barcode);
+        }
+        else{
+            Toast.makeText(this, "No barcode found", Toast.LENGTH_SHORT).show();
+        }
+    });
 
 }
