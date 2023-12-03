@@ -240,13 +240,9 @@ public class Item {
 
 
     public boolean equals(Item otherItem){
-        if (Objects.equals(this.name, otherItem.name)
-                && Objects.equals(this.dateOfPurchase, otherItem.dateOfPurchase)
-                && Objects.equals(this.briefDescription, otherItem.briefDescription)
-                && Objects.equals(this.estimatedValue, otherItem.estimatedValue)
-                && Objects.equals(this.comment, otherItem.comment)
-                && Objects.equals(this.model, otherItem.model)
-                && Objects.equals(this.make, otherItem.make)) {
+        if (this.name == otherItem.name
+                && this.dateOfPurchase == otherItem.dateOfPurchase
+                && this.estimatedValue == otherItem.estimatedValue){
             return true;
         } else {
             return false;

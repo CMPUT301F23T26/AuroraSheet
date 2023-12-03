@@ -126,7 +126,9 @@ public class TagItemsFragment extends DialogFragment {
         for (Tag tag : tags){
             if (tag.getStatus()) {
                 tag.select_tagItem();
+                tag.setTmp_status(true);
                 selected_tags.add(tag);
+                tag.setStatus(false);
             }
         }
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.tag_items_fragment, null);
@@ -159,6 +161,7 @@ public class TagItemsFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         for (Tag tag : tags){
                             tag.unselect_tagItem();
+                            tag.setStatus(tag.getTmp_status());
                         }
                         listener.onCancel_Pressed();
                     }
@@ -175,6 +178,7 @@ public class TagItemsFragment extends DialogFragment {
                             }
                         }
                         for (Tag tag : tags){
+                            tag.setStatus(tag.getTmp_status());
                             if (!selected_tags.contains(tag)){
                                 for (Item item : items) {
                                     if (tag.getTagged_items().contains(item)){

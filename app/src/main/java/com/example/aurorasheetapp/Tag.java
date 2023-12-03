@@ -10,6 +10,7 @@ public class Tag {
     private ArrayList<Item> tagged_items;
     private boolean main_selected;
     private boolean select_tagItem;
+    private boolean tmp_status;
 
     private String documentID;
 
@@ -70,5 +71,9 @@ public class Tag {
     public String getDocumentID(){
         return documentID;
     }
+
+    public void setTmp_status(boolean status){tmp_status = status;}
+
+    public boolean getTmp_status(){return tmp_status;}
 
 }
