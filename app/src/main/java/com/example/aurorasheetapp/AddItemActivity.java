@@ -394,7 +394,6 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                     // get the image bitmap from the camera activity and extract the serial number
                     if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-                        Log.d("AddItemActivity", "HELLO");
                         ImageHelpers imageHelpers = new ImageHelpers();
                         Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver(), AddItemActivity.this);
                         int rotationDegree = imageHelpers.getRotationDegree(imageUri);

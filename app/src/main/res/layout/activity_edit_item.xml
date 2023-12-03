@@ -350,6 +350,15 @@
                     android:hint="Serial Number"
                     android:paddingLeft="5dp" />
             </LinearLayout>
+            <Button
+                android:id="@+id/scanSerialButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/itemSerialNumber_edit"
+                android:text="Scan Serial Number"
+                android:layout_marginStart="220dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="25dp"/>
             <TextView
                 android:id="@+id/commentText"
                 android:layout_width="wrap_content"

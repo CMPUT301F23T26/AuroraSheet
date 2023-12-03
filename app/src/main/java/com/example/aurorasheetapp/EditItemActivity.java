@@ -61,10 +61,10 @@ import com.journeyapps.barcodescanner.ScanOptions;
 /**
  * This class is responsible for providing the correct behavior for edit activities
  */
-public class EditItemActivity extends AppCompatActivity {
+public class EditItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback{
     private StorageReference storageReference;
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
-            , imageLeft, imageRight, camera, scanBarcodeButton_edit;
+            , imageLeft, imageRight, camera, scanBarcodeButton_edit, scanSerialButton;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -117,12 +117,19 @@ public class EditItemActivity extends AppCompatActivity {
         imageLeft = findViewById(R.id.imageLeft_edit);
         imageRight = findViewById(R.id.imageRight_edit);
         camera = findViewById(R.id.cameraButton_edit);
+        scanSerialButton = findViewById(R.id.scanSerialButton);
         scanBarcodeButton_edit = findViewById(R.id.scanBarcodeButton_edit);
         scanBarcodeButton_edit.setOnClickListener(v -> {
             scanBarcode();
         });
-
-
+        scanSerialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the camera to scan the serial number
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                launchCameraActivity.launch(intent);
+            }
+        });
         //TODO: store / pass in image
 
         //get extras from passed in item
@@ -376,6 +383,19 @@ public class EditItemActivity extends AppCompatActivity {
         }
         return true;
     }
+    /**
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
+     */
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(EditItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
+        }
+    }
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
             new ActivityResultContracts
                     .StartActivityForResult(),
@@ -402,6 +422,23 @@ public class EditItemActivity extends AppCompatActivity {
                         catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                }
+            });
+    ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // get the image bitmap from the camera activity and extract the serial number
+                    if (data != null && data.getExtras() != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        ImageHelpers imageHelpers = new ImageHelpers();
+                        Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver(), EditItemActivity.this);
+                        int rotationDegree = imageHelpers.getRotationDegree(imageUri);
+
+                        SerialNumberExtractor serialNumberExtractor = new SerialNumberExtractor();
+                        serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree, EditItemActivity.this);
                     }
                 }
             });
