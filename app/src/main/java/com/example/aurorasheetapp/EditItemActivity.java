@@ -217,7 +217,7 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("model", itemModel.getText().toString());
                     itemUpdate.put("make", itemMake.getText().toString());
                     itemUpdate.put("comment", itemComment.getText().toString());
-                    itemUpdate.put("time", itemDate.getText().toString());
+                    itemUpdate.put("date", itemDate.getText().toString());
                     itemUpdate.put("path", path);
                     itemUpdate.put("images", images);
                     itemUpdate.put("imageIndex", imageIndex);
