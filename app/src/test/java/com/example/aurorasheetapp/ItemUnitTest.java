@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * This test provides verification for Item class
+ */
 public class ItemUnitTest {
 
     private ItemDate itemDate;

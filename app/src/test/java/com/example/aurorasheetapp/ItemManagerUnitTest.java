@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * This test verifies the functionality of ItemManager
+ */
 public class ItemManagerUnitTest {
 
     private ItemManager itemManager;

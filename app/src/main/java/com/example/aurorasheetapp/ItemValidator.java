@@ -137,7 +137,6 @@ public class ItemValidator {
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         int[] currentTimes = ItemDate.parseDate(currentDate);
 
-
         if(year == currentTimes[2]){
             checkMonth = (month > 0) && (month <= currentTimes[1]);
         }
