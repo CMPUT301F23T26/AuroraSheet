@@ -9,9 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Unit test for verifying the correctness of Validator for item fields
  */
 public class ValidatorUnitTest {
     @Test

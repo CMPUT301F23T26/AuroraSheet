@@ -24,6 +24,10 @@ import org.junit.runners.MethodSorters;
 
 import java.util.UUID;
 
+/**
+ * This test will test for normal user flow in sequence by adding, editing and deleting an item
+ * It verifies the functionality of add, edit and deletion functionalities
+ */
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainActivityTest {
@@ -31,7 +35,6 @@ public class MainActivityTest {
     @Rule
     public ActivityScenarioRule<Login> loginActivityRule =
             new ActivityScenarioRule<>(Login.class);
-    String randomItemName;
 
     @Test
     public void A_testAddItemAfterLogin() {
