@@ -627,8 +627,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // Log the values
-        Log.d("DateRangeSelection", "Start Date: " + startDateFormat + " | End Date: " + endDateFormat +
-                " | Filter by: " + filterBy + " | Keyword: " + descriptionKeyword + " | Make: " + make  +  "  " + sortorder);
+
     }
 
 
