@@ -8,17 +8,17 @@ import java.util.ArrayList;
 public class Tag {
     private String name;
     private ArrayList<Item> tagged_items;
-    private boolean selected;
+    private boolean main_selected;
+    private boolean select_tagItem;
+    private boolean tmp_status;
+
+    private String documentID;
 
     public Tag(String name){
         this.name = name;
         this.tagged_items = new ArrayList<>();
-        this.selected = false;
-    }
-
-    public Tag(String name, ArrayList<Item> tagged_items){
-        this.name = name;
-        this.tagged_items = tagged_items;
+        this.main_selected = false;
+        this.select_tagItem = false;
     }
 
     public void setName(String name) {
@@ -34,15 +34,8 @@ public class Tag {
      * @param newItem
      * @return boolean indicating if the item was added
      */
-    public boolean tagItem(Item newItem){
-        try {
-            tagged_items.add(newItem);
-            return true; // returns true indicating item was added
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            return false; // returns false if unable to add the item
-        }
-
+    public void tagItem(Item newItem){
+        tagged_items.add(newItem);
     }
 
     public void untagItem(Item newItem){
@@ -50,16 +43,37 @@ public class Tag {
     }
 
     public void select_tag(){
-        selected = true;
+        main_selected = true;
     }
 
     public void unselect_tag(){
-        selected = false;
+        main_selected = false;
     }
 
     public boolean getStatus(){
-        return selected;
+        return main_selected;
     }
 
+    public void setStatus(boolean status) {main_selected = status;}
+
+    public void select_tagItem() {select_tagItem = true;}
+
+    public void unselect_tagItem() {select_tagItem = false;}
+
+    public boolean getSelect_tagItem() {return select_tagItem;}
+
     public ArrayList<Item> getTagged_items(){return tagged_items;}
+
+    public void setDocumentID(String ID){
+        this.documentID = ID;
+    }
+
+    public String getDocumentID(){
+        return documentID;
+    }
+
+    public void setTmp_status(boolean status){tmp_status = status;}
+
+    public boolean getTmp_status(){return tmp_status;}
+
 }

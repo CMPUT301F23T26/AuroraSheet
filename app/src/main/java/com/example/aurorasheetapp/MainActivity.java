@@ -45,7 +45,10 @@ import org.checkerframework.checker.units.qual.A;
  */
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
-        TagFragment.OnFragmentInteractionListener,SortFragment.OnDateRangeSelectedListener {
+        TagFragment.OnFragmentInteractionListener,
+        TagItemsFragment.OnFragmentInteractionListener,
+        SortFragment.OnDateRangeSelectedListener {
+
     private StorageReference storageReference;
     private ItemDate startDate, endDate;
 
@@ -59,12 +62,14 @@ public class MainActivity extends AppCompatActivity implements
     private FloatingActionButton editButton;
     private FloatingActionButton deleteButton;
     private FloatingActionButton deselectAllButton;
+    private FloatingActionButton tagItemButton;
 
     private RecyclerView tagView;
     private RecyclerView.Adapter tagAdapter;
     private ArrayList<Tag> tags; // keeps track of all tags
     private ArrayList<Tag> selected_tags; // keeps track of tags to display items
     private Tag selected_tag;
+    private ArrayList<Item> loaded_items;
     private FloatingActionButton addTag_btn;
 
     private ImageButton profile_btn;
@@ -77,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements
     private Boolean multiSelectMode;
 
     private int itemIndex;
-    String documentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
         storageReference = FirebaseStorage.getInstance().getReference();
         firestore = FirebaseFirestore.getInstance();
         tags = new ArrayList<>();
+        loaded_items = new ArrayList<>();
         loadItemsFromFirestore();
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -105,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements
         editButton = findViewById(R.id.buttonEdit);
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
+        tagItemButton = findViewById(R.id.buttonTagItem);
         sort_btn = findViewById(R.id.sortItem_btn);
-
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -147,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements
                 for (Integer selectedItemIndex : selected_items) {
                     if (selectedItemIndex > -1 && !itemManager.isEmpty()) {
                         Item itemToDelete = itemManager.remove(selectedItemIndex);
+                        for(Tag tag : tags) {
+                            if(tag.getTagged_items().contains(itemToDelete)){
+                                tag.untagItem(itemToDelete);
+                            }
+                        }
                         adapter.notifyDataSetChanged();
                         deleteItemFromFirestore(itemToDelete.getDocumentId());
                     }
@@ -178,16 +188,32 @@ public class MainActivity extends AppCompatActivity implements
                         boolean status = tag.getStatus();
                         if (status){
                             tag.unselect_tag();
+                            selected_tags.remove(tag);
                         } else {
                             tag.select_tag();
+                            selected_tags.add(tag);
                         }
                         tagAdapter.notifyDataSetChanged();
+                        if (selected_tags.size() != 0){
+                            Tag first_tag = selected_tags.get(0);
+                            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+                            for (Tag one_tag : selected_tags){
+                                tagged_items.retainAll(one_tag.getTagged_items());
+                            }
+                            itemManager.setTagged_Items(tagged_items);
+                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
+                            recyclerView.setAdapter(adapter);
+                        } else {
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
+                            recyclerView.setAdapter(adapter);
+
+                        }
                     }
                 },
                 new CustomTagAdapter.OnItemLongClickListener() {
                     @Override
                     public void onItemLongClick(Tag tag) {
-                        new TagFragment(tag).show(getSupportFragmentManager(), "edit_tag");
+                        new TagFragment(tag, tags).show(getSupportFragmentManager(), "edit_tag");
                     }
                 });
         tagView.setAdapter(tagAdapter);
@@ -200,7 +226,14 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 selected_tag = null;
-                new TagFragment(selected_tag).show(getSupportFragmentManager(), "add_tag");
+                new TagFragment(selected_tag, tags).show(getSupportFragmentManager(), "add_tag");
+            }
+        });
+
+        tagItemButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                new TagItemsFragment(tags, (ArrayList) itemManager.getItems(true)).show(getSupportFragmentManager(), "tag_item");
             }
         });
     }
@@ -258,7 +291,13 @@ public class MainActivity extends AppCompatActivity implements
 
         if (multiSelectMode) {
             //Log.w("debug","item clicked while in select mode");
-            itemManager.getItems().get(position).toggleSelect();
+            Item item = itemManager.getItems().get(position);
+            item.toggleSelect();
+            if (item.getSelection()){
+                itemManager.addTagged_Items(item);
+            } else {
+                itemManager.delTagged_Items(item);
+            }
 
             update_selection();
         }
@@ -270,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements
             //Log.w("debug","item clicked while not in select mode");
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
     }
     /**
@@ -281,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements
         // hide the edit button; show the delete button
         editButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.VISIBLE);
+        tagItemButton.setVisibility(View.VISIBLE);
         //toggleSelectButton.setBackgroundColor(Color.argb(255, 200, 200, 255));
     }
     /**
@@ -292,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements
         // hide both buttons. selecting an individual item can bring them back
         editButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
+        tagItemButton.setVisibility(View.INVISIBLE);
         //toggleSelectButton.setBackgroundColor(Color.argb(255, 60, 60, 255));
     }
     /**
@@ -322,8 +364,11 @@ public class MainActivity extends AppCompatActivity implements
     public void deselectAllItems() {
         for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
-
+            itemManager.delTagged_Items(thisitem);
         }
+        ArrayList<Item> newArray = new ArrayList<>();
+        itemManager.setTagged_Items(newArray);
+
         update_selection();
     }
     /**
@@ -338,6 +383,8 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.INVISIBLE);
             deselectAllButton.setVisibility(View.INVISIBLE);
+            tagItemButton.setVisibility(View.INVISIBLE);
+
         }
 
         if (count == 1) {
@@ -345,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             deselectAllButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
 
         if (count > 1) {
@@ -352,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             deselectAllButton.setVisibility(View.VISIBLE);
+            tagItemButton.setVisibility(View.VISIBLE);
         }
 
         adapter.notifyDataSetChanged();
@@ -387,8 +436,10 @@ public class MainActivity extends AppCompatActivity implements
         return selected_items;
     }
 
-    //i added the following to access database and clear lisst of items and only display the ones in the database
-    private void loadItemsFromFirestore() {
+    /**
+     * Loads items from Firestore database and updates the UI accordingly.
+     */
+    public void loadItemsFromFirestore() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null) {
@@ -428,15 +479,28 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                             }
                             item.setDocumentId(document.getId()); // Save the document ID
-                            itemManager.getItems().add(item);
+                            itemManager.add(item);
                         }
                         adapter.notifyDataSetChanged();
                         totalAmountTextView.setText(itemManager.computeTotal());
+                        loadTagsFromFirestore();
                     } else {
                         Log.w("Firestore", "Error getting documents.", task.getException());
                         Toast.makeText(MainActivity.this, "Error getting items.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    /**
+     * Loads tags from Firestore database and updates the UI accordingly.
+     */
+    public void loadTagsFromFirestore() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
         firestore.collection("users")
                 .document(currentUser.getUid())
                 .collection("tags")
@@ -451,8 +515,9 @@ public class MainActivity extends AppCompatActivity implements
                             Tag tag = new Tag(
                                     document.getString("name")
                             );
-
+                            tag.setDocumentID(document.getId());
                             tags.add(tag);
+                            loadTaggedItems(tag);
                         }
                         tagAdapter.notifyDataSetChanged();
                     } else {
@@ -460,49 +525,60 @@ public class MainActivity extends AppCompatActivity implements
                         Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
                     }
                 });
-        for (Tag tag: tags) {
-            ArrayList<Item> taggedItems = new ArrayList<>();
-            firestore.collection("users")
-                    .document(currentUser.getUid())
-                    .collection("tags")
-                    .document(tag.getName())
-                    .collection("tagged_items")
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            tags.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("Firestore", document.getId() + " => " + document.getData());
+    }
 
-                                Item newItem = new Item(
-                                        document.getString("name"),
-                                        new ItemDate(document.getString("date")),
-                                        document.getString("description"),
-                                        document.getString("make"),
-                                        document.getString("serial"),
-                                        document.getString("model"),
-                                        Double.parseDouble(document.getString("value")),
-                                        document.getString("comment")
-                                );
-                                //check so that it doesn't break old accounts
-                                if(document.getString("path") != null){
-                                    newItem.setTopImageIndex(document.getDouble("imageIndex").intValue());
-                                    newItem.setImage((ArrayList<String>) document.get("images"));
-                                    newItem.setPath(document.getString("path"));
-                                    for(String name : newItem.getImage()){
-                                        ImageHelpers.downloadImage(storageReference, getApplicationContext(), name);
-                                    }
+    public void loadTaggedItems(Tag tag){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("tags")
+                .document(tag.getDocumentID())
+                .collection("tagged_items")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d("Firestore", document.getId() + " => " + document.getData());
+                            Item newItem = new Item(
+                                    document.getString("name"),
+                                    new ItemDate(document.getString("date")),
+                                    document.getString("description"),
+                                    document.getString("make"),
+                                    document.getString("serial"),
+                                    document.getString("model"),
+                                    document.getDouble("value"),
+                                    document.getString("comment")
+                            );
+                            for (Item item : itemManager.getItems()){
+                                if (Objects.equals(item.getName(), newItem.getName())
+                                    && Objects.equals(item.getBriefDescription(), newItem.getBriefDescription())){
+                                    Log.d("item equal", "true");
+                                    item.setTaggedDocumentId(document.getId());
+                                    tag.tagItem(item);
                                 }
-                                tag.tagItem(newItem);
                             }
-                            tagAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.w("Firestore", "Error getting documents.", task.getException());
-                            Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                        tagAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.w("Firestore", "Error getting documents.", task.getException());
+                        Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void viewTaggedItems(ArrayList<Tag> selected_tags){
+        if (selected_tags.size() > 0){
+            Tag first_tag = selected_tags.get(0);
+            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+            for (Tag tag : selected_tags){
+                tagged_items.retainAll(tag.getTagged_items());
+            }
+            itemManager.setTagged_Items(tagged_items);
+            adapter = new CustomArrayAdapter(itemManager.getItems(true), this, getApplicationContext());
+            recyclerView.setAdapter(adapter);
         }
     }
+
 
     private void db_add_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -519,36 +595,8 @@ public class MainActivity extends AppCompatActivity implements
                 .document(currentUser.getUid())
                 .collection("tags")
                 .add(newTag)
-                .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag added", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show());
-        ArrayList<Item> tagged_items = tag.getTagged_items();
-        for (Item item: tagged_items){
-            String name = item.getName();
-            String description = item.getBriefDescription();
-            String date = item.getDateOfPurchase().toString();
-            String value = String.valueOf(item.getEstimatedValue());
-            String serial = String.valueOf(item.getSerialNumber());
-            String make = item.getMake();
-            String model = item.getModel();
-            String comment = item.getComment();
-            Map<String, Object> newItem = new HashMap<>();
-            newItem.put("name", name);
-            newItem.put("description", description);
-            newItem.put("date", date);
-            newItem.put("value", value);
-            newItem.put("serial", serial);
-            newItem.put("make", make);
-            newItem.put("model", model);
-            newItem.put("comment", comment);
-            firestore.collection("users")
-                    .document(currentUser.getUid())
-                    .collection("tag")
-                    .document(tag.getName())
-                    .collection("tagged_items")
-                    .add(newItem)
-                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag added", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show());
-        }
+                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tag", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(documentReference -> tag.setDocumentID(documentReference.getId()));
     }
 
     private void db_del_tag(Tag tag){
@@ -557,18 +605,20 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        firestore.collection("users")
-                .document(currentUser.getUid())
-                .collection("tags")
-                .document(tag.getName())
-                .delete()
-                .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+        if (tag.getDocumentID() != null) {
+            firestore.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("tags")
+                    .document(tag.getDocumentID())
+                    .delete()
+                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+        }
     }
+
     // Override interface methods for add tag fragment
     @Override
-    public void onCancelPressed() {
+    public void onCancelPressed()  {
         selected_tag = null;
     }
 
@@ -590,14 +640,22 @@ public class MainActivity extends AppCompatActivity implements
             db_add_tag(newTag);
         }
         selected_tag = null;
+        viewTaggedItems(selected_tags);
     }
 
+    /**
+     * Delete the specified tag object from program.
+     * @param tag Tag object to be deleted
+     *
+     */
     @Override
     public void onDeletePressed(Tag tag){
         tags.remove(tag);
+        selected_tags.remove(tag);
         tagAdapter.notifyDataSetChanged();
         db_del_tag(tag);
         selected_tag = null;
+        viewTaggedItems(selected_tags);
     }
 
     public void deleteItemFromFirestore(String documentId) {
@@ -631,8 +689,24 @@ public class MainActivity extends AppCompatActivity implements
         // Log the values
 
     }
+    /**
+     * Confirm button pressed from TagItemFragment
+     * @param selected_tags The list of tags selected
+     *
+     */
+    @Override
+    public void onOK_Pressed(ArrayList<Tag> selected_tags) {
+        this.selected_tags = selected_tags;
+        viewTaggedItems(selected_tags);
+        deselectAllItems();
+    }
 
-
-
-
+    /**
+     * Unselect all items when cancel button pressed.
+     *
+     */
+    @Override
+    public void onCancel_Pressed() {
+        deselectAllItems();
+    }
 }
