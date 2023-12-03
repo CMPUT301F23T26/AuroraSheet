@@ -298,7 +298,7 @@ public class EditItemActivity extends AppCompatActivity {
                 else{
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    imageIndex = 0;
+                    imageIndex = images.size() - 1;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
                 }

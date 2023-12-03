@@ -247,6 +247,8 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 //if only one image and coming from input
                 if(images.size() == 1){
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
+                    images.remove(imageIndex);
+
                     Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
                     itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
@@ -256,6 +258,10 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 //if multiple, set to the next one on the stack
                 else{
                     ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
+                    images.remove(imageIndex);
+                    imageIndex = images.size() - 1;
+                    Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
+                    itemImage.setImageBitmap(bitmap);
                 }
             }
         });
