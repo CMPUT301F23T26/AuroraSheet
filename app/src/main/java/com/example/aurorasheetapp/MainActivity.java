@@ -614,34 +614,24 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
-    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
+    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay, String filterBy, String descriptionKeyword, String make, String sortorder) {
+        // Format the start and end dates
         String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
         String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+
+        // Create ItemDate objects
         ItemDate startDate = new ItemDate(startDateFormat);
         ItemDate endDate = new ItemDate(endDateFormat);
 
-        filterItems(startDate, endDate);
+        // Filter items based on the dates
+
+
+        // Log the values
+        Log.d("DateRangeSelection", "Start Date: " + startDateFormat + " | End Date: " + endDateFormat +
+                " | Filter by: " + filterBy + " | Keyword: " + descriptionKeyword + " | Make: " + make  +  "  " + sortorder);
     }
 
-    private void filterItems(ItemDate startDate, ItemDate endDate) {
-        FilterCriteria filterCriteria = new FilterCriteria(startDate, endDate);
-        List<Item> filteredItems = filterCriteria.applyFilters(itemManager.getItems());
 
-        if (filteredItems.isEmpty()) {
-            Toast.makeText(this, "No matches found", Toast.LENGTH_LONG).show();
-            // If filtered list is empty, show all items again
 
-            ((CustomArrayAdapter) adapter).updateItems(itemManager.getItems());
-        } else {
-            ((CustomArrayAdapter) adapter).updateItems(filteredItems);
-            double total = 0.0;
-            for (Item item : filteredItems) {
-                total += item.getEstimatedValue();
-            }
-            totalAmountTextView.setText(String.format("Total: %.2f", total));
-
-        }
-        adapter.notifyDataSetChanged();
-    }
 
 }

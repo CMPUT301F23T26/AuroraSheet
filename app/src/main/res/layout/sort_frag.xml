@@ -59,6 +59,79 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <EditText
+                android:id="@+id/filter_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/specifications"
+                android:drawablePadding="15dp"
+                android:hint="Description Keyword"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/filter_make"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/specifications"
+                android:drawablePadding="15dp"
+                android:hint="Make"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/my_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/specifications"
+                android:drawableEnd="@drawable/baseline_keyboard_arrow_down_24"
+                android:spinnerMode="dropdown"
+                android:gravity="center_vertical"
+                android:paddingEnd="8dp" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
+
+                <RadioButton
+                    android:id="@+id/radioAscending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ascending"
+                    android:textSize="17dp"
+                    android:textStyle="bold"
+                    android:textColorHint="#6C6767"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radioDescending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Descending"
+                    android:textSize="17dp"
+                    android:textStyle="bold"
+                    android:textColorHint="#6C6767"/>
+            </RadioGroup>
+
+
+
 
 
 
@@ -77,12 +150,6 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-
-
-
-
-
 
 
 

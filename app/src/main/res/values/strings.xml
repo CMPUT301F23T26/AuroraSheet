@@ -5,4 +5,12 @@
     <string name="main_activity_label">Main Activity</string>
     <!-- Add other string resources here as needed -->
     <string name="total">Total Estimated Value:</string>
+    <string-array name="spinner_options">
+        <item>Filter By:</item>
+        <item>Date</item>
+        <item>Description Keyword</item>
+        <item>Make</item>
+        <item>Estimated Value</item>
+
+    </string-array>
 </resources>
