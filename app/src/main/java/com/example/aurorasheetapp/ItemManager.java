@@ -3,6 +3,9 @@ package com.example.aurorasheetapp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents the list of items of a user.
+ */
 public class ItemManager {
     private List<Item> listItems;
     private List<Item> tagged_Items;
@@ -42,10 +45,6 @@ public class ItemManager {
 
     public boolean isEmpty() {
         return listItems.isEmpty();
-    }
-
-    public int size() {
-        return listItems.size();
     }
 
     /**

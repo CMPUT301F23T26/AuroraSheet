@@ -7,6 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * This class handles the result of the add item activity and the edit item activity to update the
+ * list of items.
+ */
 public class ItemResultHandler {
 
     private final MainActivity mainActivity;
@@ -15,6 +19,12 @@ public class ItemResultHandler {
         this.mainActivity = mainActivity;
     }
 
+    /**
+     * This method takes in the intent data from the add item activity and updates the list of items
+     * @param data
+     * @param itemManager
+     * @param adapter
+     */
     public void addItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
         if (data != null) {
             String documentId = data.getStringExtra("documentId");
@@ -28,24 +38,36 @@ public class ItemResultHandler {
             String make = data.getStringExtra("make");
             String model = data.getStringExtra("model");
             String comment = data.getStringExtra("comment");
+            ArrayList<String> images = data.getStringArrayListExtra("images");
+            int topIndex = data.getIntExtra("imageIndex", -1);
+            String path = data.getStringExtra("path");
 
             Item listItem = new Item(
                     name,
                     date,
                     description,
                     make,
-                    Integer.parseInt(serial),
+                    serial,
                     model,
                     Double.parseDouble(value),
                     comment,
                     documentId
 
             );
+            listItem.setPath(path);
+            listItem.setImage(images);
+            listItem.setTopImageIndex(topIndex);
             itemManager.add(listItem);
             adapter.notifyDataSetChanged();
         }
     }
 
+    /**
+     * This method takes in the intent data from the edit item activity and updates the list of items
+     * @param data
+     * @param itemManager
+     * @param adapter
+     */
     public void editItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
         if (data != null) {
             Boolean isDelete = data.getBooleanExtra("isDelete", false);
@@ -64,9 +86,11 @@ public class ItemResultHandler {
                 String model = data.getStringExtra("model");
                 String comment = data.getStringExtra("comment");
                 ItemDate date = new ItemDate(data.getStringExtra("time"));
-                Double serial = Double.parseDouble(data.getStringExtra("serial"));
+                String serial = data.getStringExtra("serial");
                 int index = data.getIntExtra("index", -1);
                 ArrayList<String> image = data.getStringArrayListExtra("images");
+                int imageTopIndex = data.getIntExtra("imageIndex", -1);
+                String path = data.getStringExtra("path");
 
                 if (index != -1) {
                     Item item = itemManager.getItem(index);
@@ -79,6 +103,8 @@ public class ItemResultHandler {
                     item.setBriefDescription(description);
                     item.setSerialNumber(serial);
                     item.setImage(image);
+                    item.setTopImageIndex(imageTopIndex);
+                    item.setPath(path);
                 }
                 adapter.notifyDataSetChanged();
             }

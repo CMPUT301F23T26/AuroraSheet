@@ -66,7 +66,7 @@ public class TagItemsFragment extends DialogFragment {
         String description = item.getBriefDescription();
         String date = item.getDateOfPurchase().toString();
         Double value = item.getEstimatedValue();
-        Double serial = item.getSerialNumber();
+        String serial = item.getSerialNumber();
         String make = item.getMake();
         String model = item.getModel();
         String comment = item.getComment();

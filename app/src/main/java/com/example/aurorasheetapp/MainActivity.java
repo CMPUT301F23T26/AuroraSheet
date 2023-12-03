@@ -4,6 +4,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +34,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.Document;
 
 import org.checkerframework.checker.units.qual.A;
 
@@ -41,7 +46,12 @@ import org.checkerframework.checker.units.qual.A;
 public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener,
-        TagItemsFragment.OnFragmentInteractionListener{
+        TagItemsFragment.OnFragmentInteractionListener,
+        SortFragment.OnDateRangeSelectedListener {
+
+    private StorageReference storageReference;
+    private ItemDate startDate, endDate;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Item> listItems;
@@ -66,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton sort_btn;
     private ImageButton search_btn;
 
+
     private FirebaseFirestore firestore;
 
     private Boolean multiSelectMode;
@@ -78,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         //access database
+        storageReference = FirebaseStorage.getInstance().getReference();
         firestore = FirebaseFirestore.getInstance();
         tags = new ArrayList<>();
         loaded_items = new ArrayList<>();
@@ -90,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
         itemManager = new ItemManager();
         itemResultHandler = new ItemResultHandler(this);
 
-        adapter = new CustomArrayAdapter(itemManager.getItems(), this);
+        adapter = new CustomArrayAdapter(itemManager.getItems(), this, getApplicationContext());
         recyclerView.setAdapter(adapter);
 
         totalAmountTextView = findViewById(R.id.totalValue);
@@ -99,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton = findViewById(R.id.buttonDelete);
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
         tagItemButton = findViewById(R.id.buttonTagItem);
+        sort_btn = findViewById(R.id.sortItem_btn);
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -154,6 +167,15 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        sort_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortFragment sortFragment = new SortFragment();
+                sortFragment.show(getSupportFragmentManager(), "sort_fragment");
+            }
+        });
+
         tagAdapter = new CustomTagAdapter(tags, this,
                 new CustomTagAdapter.OnItemClickListener() {
                     @Override
@@ -174,10 +196,10 @@ public class MainActivity extends AppCompatActivity implements
                                 tagged_items.retainAll(one_tag.getTagged_items());
                             }
                             itemManager.setTagged_Items(tagged_items);
-                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext());
+                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
                         } else {
-                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext());
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
 
                         }
@@ -225,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements
             intent.putExtra("description", itemToEdit.getBriefDescription());
             intent.putStringArrayListExtra("images", (ArrayList<String>)itemToEdit.getImage());
             intent.putExtra("index", i);
+            intent.putExtra("imageIndex", itemToEdit.getTopImageIndex());
             editItemLauncher.launch(intent);
         }
     }
@@ -434,12 +457,22 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    document.getDouble("serial"),
+                                    document.getString("serial"),
                                     document.getString("model"),
                                     document.getDouble("value"),
                                     document.getString("comment")
 
                             );
+                            //check so that it doesn't break old accounts
+                            if(document.get("images") != null){
+                                //load image-related attributes and download images for the item
+                                item.setTopImageIndex(document.getDouble("imageIndex").intValue());
+                                item.setImage((ArrayList<String>) document.get("images"));
+                                item.setPath(document.getString("path"));
+                                for(String name : item.getImage()){
+                                    ImageHelpers.downloadImage(storageReference, getApplicationContext(), name);
+                                }
+                            }
                             item.setDocumentId(document.getId()); // Save the document ID
                             itemManager.add(item);
                         }
@@ -506,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements
                                     new ItemDate(document.getString("date")),
                                     document.getString("description"),
                                     document.getString("make"),
-                                    document.getDouble("serial"),
+                                    document.getString("serial"),
                                     document.getString("model"),
                                     document.getDouble("value"),
                                     document.getString("comment")
@@ -536,7 +569,7 @@ public class MainActivity extends AppCompatActivity implements
                 tagged_items.retainAll(tag.getTagged_items());
             }
             itemManager.setTagged_Items(tagged_items);
-            adapter = new CustomArrayAdapter(itemManager.getItems(true), this);
+            adapter = new CustomArrayAdapter(itemManager.getItems(true), this, getApplicationContext());
             recyclerView.setAdapter(adapter);
         }
     }
@@ -636,8 +669,21 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
+    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay, String filterBy, String descriptionKeyword, String make, String sortorder) {
+        // Format the start and end dates
+        String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
+        String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+
+        // Create ItemDate objects
+        ItemDate startDate = new ItemDate(startDateFormat);
+        ItemDate endDate = new ItemDate(endDateFormat);
+
+        // Filter items based on the dates
 
 
+        // Log the values
+
+    }
     /**
      * Confirm button pressed from TagItemFragment
      * @param selected_tags The list of tags selected
