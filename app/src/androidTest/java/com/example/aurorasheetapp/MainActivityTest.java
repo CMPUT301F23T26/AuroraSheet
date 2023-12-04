@@ -39,8 +39,8 @@ public class MainActivityTest {
     @Test
     public void A_testAddItemAfterLogin() {
         // Login to app
-        onView(withId(R.id.user_login)).perform(ViewActions.typeText("bonobo"));
-        onView(withId(R.id.password_login)).perform(ViewActions.typeText("cmput301"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.user_login)).perform(ViewActions.typeText("harrison"));
+        onView(withId(R.id.password_login)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
 
         try {
             Thread.sleep(1000);
@@ -50,7 +50,7 @@ public class MainActivityTest {
         onView(withId(R.id.loginButton)).perform(ViewActions.click());
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -81,8 +81,8 @@ public class MainActivityTest {
     @Test
     public void B_testEditItem(){
         //login to user
-        onView(withId(R.id.user_login)).perform(ViewActions.typeText("bonobo"));
-        onView(withId(R.id.password_login)).perform(ViewActions.typeText("cmput301"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.user_login)).perform(ViewActions.typeText("harrison"));
+        onView(withId(R.id.password_login)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
 
         try {
             Thread.sleep(1000);
@@ -92,7 +92,7 @@ public class MainActivityTest {
         onView(withId(R.id.loginButton)).perform(ViewActions.click());
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -123,8 +123,8 @@ public class MainActivityTest {
 
     @Test
     public void C_testDeletion(){
-        onView(withId(R.id.user_login)).perform(ViewActions.typeText("bonobo"));
-        onView(withId(R.id.password_login)).perform(ViewActions.typeText("cmput301"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.user_login)).perform(ViewActions.typeText("harrison"));
+        onView(withId(R.id.password_login)).perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard());
 
         try {
             Thread.sleep(1000);
@@ -134,7 +134,7 @@ public class MainActivityTest {
         onView(withId(R.id.loginButton)).perform(ViewActions.click());
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
