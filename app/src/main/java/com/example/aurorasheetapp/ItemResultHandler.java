@@ -25,7 +25,8 @@ public class ItemResultHandler {
      * @param itemManager
      * @param adapter
      */
-    public void addItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
+    public ArrayList<String> addItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
+        ArrayList<String> tagNames = new ArrayList<>();
         if (data != null) {
             String documentId = data.getStringExtra("documentId");
             // Display a Toast message to show the documentId
@@ -41,6 +42,7 @@ public class ItemResultHandler {
             ArrayList<String> images = data.getStringArrayListExtra("images");
             int topIndex = data.getIntExtra("imageIndex", -1);
             String path = data.getStringExtra("path");
+            tagNames = data.getStringArrayListExtra("tags");
 
             Item listItem = new Item(
                     name,
@@ -60,6 +62,7 @@ public class ItemResultHandler {
             itemManager.add(listItem);
             adapter.notifyDataSetChanged();
         }
+        return tagNames;
     }
 
     /**
@@ -68,7 +71,8 @@ public class ItemResultHandler {
      * @param itemManager
      * @param adapter
      */
-    public void editItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
+    public ArrayList<String> editItemResult(Intent data, ItemManager itemManager, RecyclerView.Adapter adapter) {
+        ArrayList<String> tagNames = new ArrayList<>();
         if (data != null) {
             Boolean isDelete = data.getBooleanExtra("isDelete", false);
             if (isDelete) {
@@ -76,7 +80,7 @@ public class ItemResultHandler {
                 if (index > -1) {
                     Item itemToDelete = itemManager.remove(index);
                     adapter.notifyDataSetChanged();
-                    mainActivity.deleteItemFromFirestore( itemToDelete.getDocumentId());
+                    mainActivity.deleteItemFromFirestore(itemToDelete.getDocumentId());
                 }
             } else {
                 String name = data.getStringExtra("name");
@@ -91,6 +95,7 @@ public class ItemResultHandler {
                 ArrayList<String> image = data.getStringArrayListExtra("images");
                 int imageTopIndex = data.getIntExtra("imageIndex", -1);
                 String path = data.getStringExtra("path");
+                tagNames = data.getStringArrayListExtra("tags");
 
                 if (index != -1) {
                     Item item = itemManager.getItem(index);
@@ -109,5 +114,6 @@ public class ItemResultHandler {
                 adapter.notifyDataSetChanged();
             }
         }
+        return tagNames;
     }
 }

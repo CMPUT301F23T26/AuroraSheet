@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<Tag> tags; // keeps track of all tags
     private ArrayList<Tag> selected_tags; // keeps track of tags to display items
     private Tag selected_tag;
+    private ArrayList<String> tagNames;
+    private ArrayList<String> tagStatus;
     private ArrayList<Item> loaded_items;
     private FloatingActionButton addTag_btn;
 
@@ -119,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements
         tagView.setLayoutManager(layoutManager);
         selected_tags = new ArrayList<>();
         selected_tag = null;
+        tagNames = new ArrayList<>();
+        tagStatus = new ArrayList<>();
 
         multiSelectMode = true;
         initialiseAsUnselected();
@@ -128,6 +132,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
+                for (Tag tag : tags){
+                    tagNames.add(tag.getName());
+                    tagStatus.add("false");
+                }
+                intent.putStringArrayListExtra("tags", tagNames);
+                intent.putStringArrayListExtra("tagStatus", tagStatus);
                 addItemLauncher.launch(intent);
             }
         });
@@ -139,6 +149,16 @@ public class MainActivity extends AppCompatActivity implements
                 itemIndex = getTheOneSelectedItem();
                 if(itemIndex > -1 && !itemManager.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                    for (Tag tag : tags){
+                        tagNames.add(tag.getName());
+                        if(tag.getStatus()){
+                            tagStatus.add("true");
+                        } else {
+                            tagStatus.add("false");
+                        }
+                    }
+                    intent.putStringArrayListExtra("tags", tagNames);
+                    intent.putStringArrayListExtra("tagStatus", tagStatus);
                     launchEditData(intent, itemIndex);
                 }
             }
@@ -263,7 +283,10 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-                                itemResultHandler.addItemResult(data, itemManager, adapter);
+                                tagNames = itemResultHandler.addItemResult(data, itemManager, adapter);
+
+
+
                                 updateTotalValue();
                             }
                         }
@@ -274,7 +297,10 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-                                itemResultHandler.editItemResult(data, itemManager, adapter);
+                                tagNames = itemResultHandler.editItemResult(data, itemManager, adapter);
+
+
+
                                 updateTotalValue();
                             }
                         }
