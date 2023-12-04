@@ -28,9 +28,33 @@ public class ItemManager {
     public List<Tag> filterMustIncludeTags;
     public List<Tag> filterMustNotIncludeTags;
 
+
+    public ArrayList<Integer> sortingStatus;
+
+    public List<Item> shownItems;
+
+
+
+
+    // Variables used for filtering
+    public ItemDate filterBeforeDate;
+
+    public ItemDate filterAfterDate;
+
+    public String filterDescriptionSubstring;
+
+    public String filterMake;
+
+    private Boolean filterDescriptionSubstringExcludeMode;
+    private Boolean filterMakeExcludeMode;
+
+    public List<Tag> filterMustIncludeTags;
+    public List<Tag> filterMustNotIncludeTags;
+
     public ItemManager() {
         listItems = new ArrayList<>();
         tagged_Items = new ArrayList<>();
+
         last_added = null;
 
         shownItems = new ArrayList<>();
@@ -99,6 +123,7 @@ public class ItemManager {
         return String.format("%.2f", total);
     }
 
+
     // -----------------------------------------------------------------------------------------------------
     // functions about sorting
 
@@ -108,7 +133,6 @@ public class ItemManager {
     public void setSortingStatus(ArrayList<Integer> sortingStatus) {
         this.sortingStatus = sortingStatus;
     }
-
 
     /**
      * With a correct sortingStatus list in place, sort the list of items as specified
@@ -120,14 +144,16 @@ public class ItemManager {
         ArrayList<Comparator> activeComparators = new ArrayList<>();
 
         // to make iteration easier, we will iterate through all these comparators
-        comparators.add(Comparator.comparing(Item::getName));
+
+        comparators.add(Comparator.comparing(Item::getNameLower));
         comparators.add(Comparator.comparing(Item::getDateOfPurchase));
-        comparators.add(Comparator.comparing(Item::getMake));
         comparators.add(Comparator.comparing(Item::getSerialNumber));
-        comparators.add(Comparator.comparing(Item::getModel));
+        comparators.add(Comparator.comparing(Item::getModelLower));
         comparators.add(Comparator.comparing(Item::getEstimatedValue));
-        comparators.add(Comparator.comparing(Item::getComment));
-        comparators.add(Comparator.comparing(Item::getBriefDescription));
+        comparators.add(Comparator.comparing(Item::getMakeLower));
+        comparators.add(Comparator.comparing(Item::getCommentLower));
+        comparators.add(Comparator.comparing(Item::getDescriptionLower));
+
 
         activeComparators.add(Comparator.comparing(Item::getHiddenness));
 
@@ -256,8 +282,7 @@ public class ItemManager {
     public void filterForTags() {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
-
-            if (intersectionOfList(item.getTags(), filterMustIncludeTags).size() < 1) {
+            if (intersectionOfList(item.getTags(),filterMustIncludeTags).size() < 1) {
                 item.hide();
             }
         }
@@ -270,13 +295,11 @@ public class ItemManager {
     public void filterAgainstTags() {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
-
-            if (intersectionOfList(item.getTags(), filterMustNotIncludeTags).size() > 0) {
+            if (intersectionOfList(item.getTags(),filterMustNotIncludeTags).size() > 0) {
                 item.hide();
             }
         }
     }
-
 
     /**
      * shows all items
@@ -290,7 +313,6 @@ public class ItemManager {
     /**
      * Rests all selections and filters, then hides items according to active filters.
      * Will sort the filtered item list afterwards.
-     * <p>
      * Filters for Date (before / after), a substring (keyword) in the description, Make, and Tags (both their presence and their absence).
      */
     public void doFiltering() {
@@ -303,20 +325,16 @@ public class ItemManager {
 
         if (Objects.nonNull(filterBeforeDate)) {
             filterDatesBefore(filterBeforeDate);
-        }
-        printItemHiddenness();
+        } printItemHiddenness();
         if (Objects.nonNull(filterAfterDate)) {
             filterDatesAfter(filterAfterDate);
-        }
-        printItemHiddenness();
+        } printItemHiddenness();
         if (Objects.nonNull(filterDescriptionSubstring) && !"".equals(filterDescriptionSubstring) && Objects.nonNull(filterDescriptionSubstringExcludeMode)) {
-            filterItemsForDescriptionKeyword(filterDescriptionSubstring, filterDescriptionSubstringExcludeMode);
-        }
-        printItemHiddenness();
+            filterItemsForDescriptionKeyword(filterDescriptionSubstring,filterDescriptionSubstringExcludeMode);
+        } printItemHiddenness();
         if (Objects.nonNull(filterMake) && !"".equals(filterMake) && Objects.nonNull(filterMakeExcludeMode)) {
-            filterItemsForMake(filterMake, filterMakeExcludeMode);
-        }
-        printItemHiddenness();
+            filterItemsForMake(filterMake,filterMakeExcludeMode);
+        } printItemHiddenness();
 
         // filterForTags(); filterAgainstTags();
 
@@ -388,7 +406,7 @@ public class ItemManager {
 
     public void update_shown_items() {
         shownItems.clear();
-        for (Item item : listItems) {
+        for (Item item:listItems) {
             // if the item is not hidden, don't add it to show
 
             if (!item.getHiddenness()) {
@@ -397,7 +415,6 @@ public class ItemManager {
             }
         }
     }
-
 
     // --------------------------------------------------------------------
     // methods about selection
@@ -469,3 +486,4 @@ public class ItemManager {
         }
     }
 }
+
