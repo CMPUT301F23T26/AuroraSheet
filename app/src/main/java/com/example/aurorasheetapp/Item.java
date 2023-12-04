@@ -1,5 +1,7 @@
 package com.example.aurorasheetapp;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,10 @@ public class Item {
     private String taggedDocumentID;
 
     private Boolean isSelected;
+    private Boolean isHidden;
+
+    public List<Tag> tags;
+
     /**
      * Constructs an Item with the specified attributes.
      * @param name             The name of the item
@@ -45,7 +51,11 @@ public class Item {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+
         this.isSelected = false;
+        this.isHidden = false;
+
+        this.tags = new ArrayList<Tag>();
 
         //image array initialization
         this.topImageIndex = -1;
@@ -217,6 +227,13 @@ public class Item {
         this.topImageIndex = topImageIndex;
     }
 
+
+
+
+    // -----------------------------------------------------------------------------------------
+    // selection and hiddenness
+
+
     /**
      * For use in the multiselect.
      * @return Whether this item is selected
@@ -245,6 +262,51 @@ public class Item {
     public void toggleSelect() {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
     }
+
+    /**
+     * For use in sorting and filtering.
+     * @return Whether this item is hidden
+     */
+    public Boolean getHiddenness() {
+        return this.isHidden;
+    }
+    /**
+     * Set the item's isHidden to true. for use in filtering
+     *
+     */
+    public void hide() {
+        this.isHidden = true;
+    }
+    /**
+     * Set the item's isHidden to false. for use in filtering
+     *
+     */
+    public void unhide() {
+        this.isHidden = false;
+    }
+    /**
+     * Toggle the item's hiddenness. for use in filtering
+     *
+     */
+    public void toggleHidden() {
+        if (this.isSelected) { this.isHidden = false; } else { this.isHidden = true; }
+    }
+
+
+    // -------------------------------------------------------------
+
+
+    public List<Tag> getTags() {
+        if (this.tags != null) { return tags; } else {return new ArrayList<Tag>();}
+
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    // ------------------------------------------------
+
 
     public String getDocumentId() {
         return documentID;
