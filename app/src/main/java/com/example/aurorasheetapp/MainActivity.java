@@ -129,11 +129,14 @@ public class MainActivity extends AppCompatActivity implements
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tagNames.clear();
+                tagStatus.clear();
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
                 for (Tag tag : tags){
                     tagNames.add(tag.getName());
                     tagStatus.add("false");
                 }
+                Log.d("tagNames size", String.valueOf(tagNames.size()));
                 intent.putStringArrayListExtra("tags", tagNames);
                 intent.putStringArrayListExtra("tagStatus", tagStatus);
                 addItemLauncher.launch(intent);
@@ -305,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements
                                     for (Tag tag : tags){
                                         if (Objects.equals(tag.getName(), name)){
                                             tag.tagItem(item);
+                                            db_add_tagItem(tag, item);
                                         }
                                     }
                                 }
@@ -627,6 +631,39 @@ public class MainActivity extends AppCompatActivity implements
                         Toast.makeText(MainActivity.this, "Error getting tags.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void db_add_tagItem(Tag tag, Item item){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String name = item.getName();
+        String description = item.getBriefDescription();
+        String date = item.getDateOfPurchase().toString();
+        Double value = item.getEstimatedValue();
+        String serial = item.getSerialNumber();
+        String make = item.getMake();
+        String model = item.getModel();
+        String comment = item.getComment();
+        Map<String, Object> newItem = new HashMap<>();
+        newItem.put("name", name);
+        newItem.put("description", description);
+        newItem.put("date", date);
+        newItem.put("value", value);
+        newItem.put("serial", serial);
+        newItem.put("make", make);
+        newItem.put("model", model);
+        newItem.put("comment", comment);
+        firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("tags")
+                .document(tag.getDocumentID())
+                .collection("tagged_items")
+                .add(newItem)
+                .addOnSuccessListener(documentReference -> item.setTaggedDocumentId(documentReference.getId()))
+                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tagged item", Toast.LENGTH_SHORT).show());
     }
 
     /**
