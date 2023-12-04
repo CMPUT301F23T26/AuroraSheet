@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
         SortingFragment.OnSortingConfirmListener
 {
 
+
     private StorageReference storageReference;
     private ItemDate startDate, endDate;
 
@@ -183,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 // Create an instance of the dialog fragment and show it
                 SortingFragment sortFragment = new SortingFragment();
+
                 sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
@@ -533,6 +535,10 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    /**
+     * load the items with specified tag
+     * @param tag tag of the item(s) to be loaaded
+     */
     public void loadTaggedItems(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firestore.collection("users")
@@ -572,6 +578,10 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    /**
+     * set the view to display on the tagged items
+     * @param selected_tags the list of tags selected for filter
+     */
     public void viewTaggedItems(ArrayList<Tag> selected_tags){
         if (selected_tags.size() > 0){
             Tag first_tag = selected_tags.get(0);
@@ -585,7 +595,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
+    /**
+     * add a tag to firebase
+     * @param tag the tag object to be added
+     */
     private void db_add_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -605,6 +618,10 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnSuccessListener(documentReference -> tag.setDocumentID(documentReference.getId()));
     }
 
+    /**
+     * method for deleting a tag from firebase
+     * @param tag tag object to be deleted
+     */
     private void db_del_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -664,6 +681,10 @@ public class MainActivity extends AppCompatActivity implements
         viewTaggedItems(selected_tags);
     }
 
+    /**
+     * delete an item from firestore with given doucment ID
+     * @param documentId the ID of the documnent to be deleted
+     */
     public void deleteItemFromFirestore(String documentId) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null && documentId != null) {
@@ -677,9 +698,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * compute and update the total value of items
+     */
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
+
     public void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate, String descriptionKeyword, String make) {
         // Check if the start and end dates are real
         if (afterDate.getYear() == 0) {
@@ -687,14 +712,23 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-
+    /**
+     * filter the items with given parameters
+     * @param beforeDate  the date range at the before
+     * @param afterDate   the date range at the after
+     * @param descriptionKeyword  the description keyword to be used for sorting
+     * @param make the make string to be used for sorting
+     */
+    public void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate, String descriptionKeyword, String make) {
+        // Check if the start and end dates are real
+        if (afterDate.getYear() == 0) {
+            afterDate.setYear(9999);
+        }
         // Filter items based on the dates
-
         itemManager.setFilterBeforeDate(beforeDate);
         itemManager.setFilterAfterDate(afterDate);
         itemManager.setFilterDescriptionSubstring(descriptionKeyword);
         itemManager.setFilterMake(make);
-
 
 
         itemManager.doFiltering();
@@ -707,8 +741,6 @@ public class MainActivity extends AppCompatActivity implements
         // Log the values
 
     }
-
-
 
 
     /**

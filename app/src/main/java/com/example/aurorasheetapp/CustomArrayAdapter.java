@@ -27,13 +27,22 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
     private List<Item> listItems;
     private Context context;
     private RecyclerViewInterface recyclerViewInterface;
-
+    /**
+     * Construct the CustomArrayAdapter
+     * @param listItems list of Items to be included
+     * @param recyclerViewInterface the recyclerview to be used for adapter
+     * @param context the application context to find the resources from
+     */
     public CustomArrayAdapter(List<Item> listItems, RecyclerViewInterface recyclerViewInterface, Context context) {
         this.listItems = listItems;
         this.recyclerViewInterface  = recyclerViewInterface;
         this.context = context;
     }
 
+    /**
+     * Update the list of Items with another list of items
+     * @param newListItems a new list of Items to be added to the adapter
+     */
     public void updateItems(List<Item> newListItems) {
         this.listItems = newListItems;
         notifyDataSetChanged();

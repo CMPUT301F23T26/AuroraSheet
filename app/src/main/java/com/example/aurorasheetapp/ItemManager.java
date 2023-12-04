@@ -121,12 +121,11 @@ public class ItemManager {
     public void doSorting() {
 
 
-
-
         ArrayList<Comparator> comparators = new ArrayList<>();
         ArrayList<Comparator> activeComparators = new ArrayList<>();
 
         // to make iteration easier, we will iterate through all these comparators
+
         comparators.add(Comparator.comparing(Item::getNameLower));
         comparators.add(Comparator.comparing(Item::getDateOfPurchase));
         comparators.add(Comparator.comparing(Item::getSerialNumber));
@@ -135,6 +134,7 @@ public class ItemManager {
         comparators.add(Comparator.comparing(Item::getMakeLower));
         comparators.add(Comparator.comparing(Item::getCommentLower));
         comparators.add(Comparator.comparing(Item::getDescriptionLower));
+
 
         activeComparators.add(Comparator.comparing(Item::getHiddenness));
 
