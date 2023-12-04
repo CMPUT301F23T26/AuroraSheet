@@ -132,7 +132,7 @@ public class MainActivityTest {
             throw new RuntimeException(e);
         }
         onView(withId(R.id.loginButton)).perform(ViewActions.click());
-        // delay
+   
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
