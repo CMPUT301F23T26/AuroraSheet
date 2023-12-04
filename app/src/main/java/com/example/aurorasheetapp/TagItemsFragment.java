@@ -56,6 +56,11 @@ public class TagItemsFragment extends DialogFragment {
         }
     }
 
+    /**
+     * add tagged item to the data base
+     * @param tag the tag object of the item to be added
+     * @param item item object to be added
+     */
     private void db_add_tagItem(Tag tag, Item item){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -89,6 +94,11 @@ public class TagItemsFragment extends DialogFragment {
                 .addOnFailureListener(e -> Toast.makeText(context, "Error adding tagged item", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * delete the tag item from data base
+     * @param tag the tag object to be deleted
+     * @param item the item object to be deleted
+     */
     private void db_delete_tagItem(Tag tag, Item item){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -108,6 +118,11 @@ public class TagItemsFragment extends DialogFragment {
         }
     }
 
+    /**
+     * constructor that taks in the lists of tags and items
+     * @param tags arraylist of tag objects to be used for this fragment
+     * @param items arraylist of item objeects to be used
+     */
     public TagItemsFragment(ArrayList<Tag> tags, ArrayList<Item> items){
         this.tags = tags;
         this.items = items;
