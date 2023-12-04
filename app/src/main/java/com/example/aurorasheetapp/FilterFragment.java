@@ -151,4 +151,3 @@ public class FilterFragment extends DialogFragment {
         return String.format("%02d/%02d/%04d", day, month + 1, year);
     }
 }
-

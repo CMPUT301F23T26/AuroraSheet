@@ -15,33 +15,28 @@ import java.util.Objects;
 public class ItemManager {
     private List<Item> listItems;
     private List<Item> tagged_Items;
-
+    private List<Item> display_Items;
+    private Item last_added;
 
     public ArrayList<Integer> sortingStatus;
-
     public List<Item> shownItems;
-
-
-
-
-    // Variables used for filtering
     public ItemDate filterBeforeDate;
-
     public ItemDate filterAfterDate;
-
     public String filterDescriptionSubstring;
-
     public String filterMake;
-
     private Boolean filterDescriptionSubstringExcludeMode;
     private Boolean filterMakeExcludeMode;
-
+    private boolean showTaggedItems;
     public List<Tag> filterMustIncludeTags;
     public List<Tag> filterMustNotIncludeTags;
+    
 
     public ItemManager() {
         listItems = new ArrayList<>();
         tagged_Items = new ArrayList<>();
+        display_Items = new ArrayList<>();
+
+        last_added = null;
 
         shownItems = new ArrayList<>();
 
@@ -50,17 +45,25 @@ public class ItemManager {
 
         filterDescriptionSubstringExcludeMode = false;
         filterMakeExcludeMode = false;
+        showTaggedItems = false;
 
         filterMustIncludeTags = new ArrayList<Tag>();
         filterMustNotIncludeTags = new ArrayList<Tag>();
-
     }
+
+    public void setShowTaggedItems(boolean status) {showTaggedItems = status;}
+
+    public boolean getShowTaggedItems() {return showTaggedItems;}
 
     public List<Item> getItems() {
-        return listItems;
+        if (showTaggedItems){
+            return display_Items;
+        } else {
+            return listItems;
+        }
     }
 
-    public List<Item> getItems(Boolean showTagItem){
+    public List<Item> getItems(Boolean showTagItem) {
         return tagged_Items;
     }
 
@@ -68,16 +71,31 @@ public class ItemManager {
         return listItems.get(index);
     }
 
-    public void addTagged_Items(Item item) {this.tagged_Items.add(item);}
+    public void addTagged_Items(Item item) {
+        if(!tagged_Items.contains(item)){
+            this.tagged_Items.add(item);
+        }
+    }
 
-    public void delTagged_Items(Item item) {this.tagged_Items.remove(item);}
+    public void delTagged_Items(Item item) {
+        this.tagged_Items.remove(item);
+    }
 
-    public void setTagged_Items(List<Item> tagged_Items){
+    public void setTagged_Items(List<Item> tagged_Items) {
         this.tagged_Items = tagged_Items;
     }
 
+    public void setDisplay_Items(List<Item> items) {this.display_Items = items;}
+
     public void add(Item item) {
-        listItems.add(item);
+        if (!listItems.contains(item)){
+            listItems.add(item);
+            last_added = item;
+        }
+    }
+
+    public Item get_lastAdded() {
+        return last_added;
     }
 
     public Item remove(int index) {
@@ -90,6 +108,7 @@ public class ItemManager {
 
     /**
      * Computes the total value of all the items in the list.
+     *
      * @return A string representation of the total value of all the items.
      */
     public String computeTotal() {
@@ -101,10 +120,8 @@ public class ItemManager {
     }
 
 
-
     // -----------------------------------------------------------------------------------------------------
     // functions about sorting
-
 
 
     // this is a default generated setter. If, when calling this, you don't know all 8 of these values,
@@ -112,8 +129,6 @@ public class ItemManager {
     public void setSortingStatus(ArrayList<Integer> sortingStatus) {
         this.sortingStatus = sortingStatus;
     }
-
-
 
     /**
      * With a correct sortingStatus list in place, sort the list of items as specified
@@ -140,7 +155,6 @@ public class ItemManager {
 
 
         for (int i = 0; i < 8; i++) {
-
             if (sortingStatus.get(i) == 2) {
                 activeComparators.add(comparators.get(i).reversed());
             } else if (sortingStatus.get(i) == 1) {
@@ -246,7 +260,6 @@ public class ItemManager {
     }
 
     /**
-     *
      * @param list1
      * @param list2
      * @return a list containing all elements that are in both lists
@@ -265,7 +278,6 @@ public class ItemManager {
     public void filterForTags() {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
-
             if (intersectionOfList(item.getTags(),filterMustIncludeTags).size() < 1) {
                 item.hide();
             }
@@ -279,14 +291,11 @@ public class ItemManager {
     public void filterAgainstTags() {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
-
             if (intersectionOfList(item.getTags(),filterMustNotIncludeTags).size() > 0) {
                 item.hide();
             }
         }
     }
-
-
 
     /**
      * shows all items
@@ -300,7 +309,6 @@ public class ItemManager {
     /**
      * Rests all selections and filters, then hides items according to active filters.
      * Will sort the filtered item list afterwards.
-     *
      * Filters for Date (before / after), a substring (keyword) in the description, Make, and Tags (both their presence and their absence).
      */
     public void doFiltering() {
@@ -373,16 +381,19 @@ public class ItemManager {
             filterMustIncludeTags.remove(tag);
         }
     }
+
     public void addToMustIncludeTags(Tag tag) {
         if (!filterMustIncludeTags.contains(tag)) {
             filterMustIncludeTags.add(tag);
         }
     }
+
     public void removeFromMustNotIncludeTags(Tag tag) {
         if (filterMustNotIncludeTags.contains(tag)) {
             filterMustNotIncludeTags.remove(tag);
         }
     }
+
     public void addToMustNotIncludeTags(Tag tag) {
         if (!filterMustNotIncludeTags.contains(tag)) {
             filterMustNotIncludeTags.add(tag);
@@ -400,12 +411,6 @@ public class ItemManager {
             }
         }
     }
-
-
-
-
-
-
 
     // --------------------------------------------------------------------
     // methods about selection

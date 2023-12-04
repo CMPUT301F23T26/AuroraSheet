@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -23,11 +24,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TagItemsFragment extends DialogFragment {
+public class TagAddItemFragment extends DialogFragment {
     private OnFragmentInteractionListener listener;
 
     private ArrayList<Tag> tags;
-    private ArrayList<Item> items;
     private ArrayList<Tag> selected_tags;
 
     private RecyclerView tagView;
@@ -56,11 +56,6 @@ public class TagItemsFragment extends DialogFragment {
         }
     }
 
-    /**
-     * add tagged item to the data base
-     * @param tag the tag object of the item to be added
-     * @param item item object to be added
-     */
     private void db_add_tagItem(Tag tag, Item item){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -94,11 +89,6 @@ public class TagItemsFragment extends DialogFragment {
                 .addOnFailureListener(e -> Toast.makeText(context, "Error adding tagged item", Toast.LENGTH_SHORT).show());
     }
 
-    /**
-     * delete the tag item from data base
-     * @param tag the tag object to be deleted
-     * @param item the item object to be deleted
-     */
     private void db_delete_tagItem(Tag tag, Item item){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -118,14 +108,8 @@ public class TagItemsFragment extends DialogFragment {
         }
     }
 
-    /**
-     * constructor that taks in the lists of tags and items
-     * @param tags arraylist of tag objects to be used for this fragment
-     * @param items arraylist of item objeects to be used
-     */
-    public TagItemsFragment(ArrayList<Tag> tags, ArrayList<Item> items){
+    public TagAddItemFragment(ArrayList<Tag> tags){
         this.tags = tags;
-        this.items = items;
     }
 
     @NonNull
@@ -184,27 +168,9 @@ public class TagItemsFragment extends DialogFragment {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        for (Tag tag : selected_tags){
-                            for (Item item : items){
-                                if (!tag.getTagged_items().contains(item)) {
-                                    tag.tagItem(item);
-                                    db_add_tagItem(tag, item);
-                                }
-                            }
-                        }
-                        for (Tag tag : tags){
-                            tag.setStatus(tag.getTmp_status());
-                            if (!selected_tags.contains(tag)){
-                                for (Item item : items) {
-                                    if (tag.getTagged_items().contains(item)){
-                                        tag.untagItem(item);
-                                        db_delete_tagItem(tag, item);
-                                    }
-                                }
-                            }
-                        }
                         selected_tags.clear();
                         for (Tag tag : tags){
+                            tag.setStatus(tag.getSelect_tagItem());
                             tag.unselect_tagItem();
                             if (tag.getStatus()){
                                 selected_tags.add(tag);
