@@ -262,7 +262,6 @@ public class Item {
     }
 
 
-
     // -----------------------------------------------------------------
     // some extra getters, to get strings in lowercase
     // this is for use in sorting items by these fields
@@ -298,7 +297,6 @@ public class Item {
      * @return description, in lowercase
      */
     public String getDescriptionLower() { return briefDescription.toLowerCase();}
-
 
 
     // -----------------------------------------------------------------------------------------
@@ -386,6 +384,7 @@ public class Item {
         this.tags = tags;
     }
 
+
     // ------------------------------------------------
 
 
@@ -393,6 +392,7 @@ public class Item {
      * get the documentID for this item on firebase
      * @return the document ID as string form
      */
+
     public String getDocumentId() {
         return documentID;
     }

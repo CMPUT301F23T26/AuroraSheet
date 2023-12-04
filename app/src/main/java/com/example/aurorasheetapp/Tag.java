@@ -1,11 +1,14 @@
 package com.example.aurorasheetapp;
 
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 /**
  * This class represents a tag with a name and a list of tagged items.
  */
-public class Tag {
+public class Tag{
     private String name;
     private ArrayList<Item> tagged_items;
     private boolean main_selected;
@@ -14,6 +17,10 @@ public class Tag {
 
     private String documentID;
 
+    /**
+     * Constructor of Tag objects
+     * @param name name of the tag in string form
+     */
     public Tag(String name){
         this.name = name;
         this.tagged_items = new ArrayList<>();
@@ -39,7 +46,8 @@ public class Tag {
 
     /**
      * Add an item to the list of tagged items
-     * @param newItem item to be added
+     * @param newItem new Item to be tagged.
+     *
      */
     public void tagItem(Item newItem){
         tagged_items.add(newItem);
@@ -130,5 +138,4 @@ public class Tag {
      * @return temporary status in boolean form
      */
     public boolean getTmp_status(){return tmp_status;}
-
 }

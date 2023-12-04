@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<Tag> tags; // keeps track of all tags
     private ArrayList<Tag> selected_tags; // keeps track of tags to display items
     private Tag selected_tag;
+    private ArrayList<String> tagNames;
+    private ArrayList<String> tagStatus;
     private ArrayList<Item> loaded_items;
     private FloatingActionButton addTag_btn;
 
@@ -117,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements
         tagView.setLayoutManager(layoutManager);
         selected_tags = new ArrayList<>();
         selected_tag = null;
+        tagNames = new ArrayList<>();
+        tagStatus = new ArrayList<>();
 
         multiSelectMode = true;
         initialiseAsUnselected();
@@ -125,7 +129,16 @@ public class MainActivity extends AppCompatActivity implements
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tagNames.clear();
+                tagStatus.clear();
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
+                for (Tag tag : tags){
+                    tagNames.add(tag.getName());
+                    tagStatus.add("false");
+                }
+                Log.d("tagNames size", String.valueOf(tagNames.size()));
+                intent.putStringArrayListExtra("tags", tagNames);
+                intent.putStringArrayListExtra("tagStatus", tagStatus);
                 addItemLauncher.launch(intent);
             }
         });
@@ -137,6 +150,17 @@ public class MainActivity extends AppCompatActivity implements
                 itemIndex = getTheOneSelectedItem();
                 if(itemIndex > -1 && !itemManager.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                    Item thisItem = itemManager.getItem(itemIndex);
+                    for (Tag tag : tags){
+                        tagNames.add(tag.getName());
+                        if(tag.getTagged_items().contains(thisItem)){
+                            tagStatus.add("true");
+                        } else {
+                            tagStatus.add("false");
+                        }
+                    }
+                    intent.putStringArrayListExtra("tags", tagNames);
+                    intent.putStringArrayListExtra("tagStatus", tagStatus);
                     launchEditData(intent, itemIndex);
                 }
             }
@@ -208,10 +232,15 @@ public class MainActivity extends AppCompatActivity implements
                             for (Tag one_tag : selected_tags){
                                 tagged_items.retainAll(one_tag.getTagged_items());
                             }
+                            itemManager.setShowTaggedItems(true);
                             itemManager.setTagged_Items(tagged_items);
-                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
+                            itemManager.setDisplay_Items(tagged_items);
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
                         } else {
+                            List<Item> newList = new ArrayList<>();
+                            itemManager.setDisplay_Items(newList);
+                            itemManager.setShowTaggedItems(false);
                             adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
 
@@ -271,7 +300,18 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-                                itemResultHandler.addItemResult(data, itemManager, adapter);
+                                tagNames = itemResultHandler.addItemResult(data, itemManager, adapter);
+                                Item item = itemManager.get_lastAdded();
+                                String itemName = tagNames.get(tagNames.size() - 1);
+                                tagNames.remove(tagNames.size() - 1);
+                                for(String name : tagNames){
+                                    for (Tag tag : tags){
+                                        if (Objects.equals(tag.getName(), name)){
+                                            tag.tagItem(item);
+                                            db_add_tagItem(tag, item);
+                                        }
+                                    }
+                                }
                                 updateTotalValue();
                             }
                         }
@@ -282,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (result.getResultCode() == 1) {
                             Intent data = result.getData();
                             if (data != null) {
-                                itemResultHandler.editItemResult(data, itemManager, adapter);
+                                tagNames = itemResultHandler.editItemResult(data, itemManager, adapter);
                                 updateTotalValue();
                             }
                         }
@@ -318,6 +358,19 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             tagItemButton.setVisibility(View.VISIBLE);
+        }
+        if (selected_tags.size() != 0) {
+            Tag first_tag = selected_tags.get(0);
+            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+            for (Tag one_tag : selected_tags) {
+                tagged_items.retainAll(one_tag.getTagged_items());
+            }
+            itemManager.setShowTaggedItems(true);
+            itemManager.setTagged_Items(tagged_items);
+            itemManager.setDisplay_Items(tagged_items);
+        }
+        if (selected_tags.size() != 0){
+            itemManager.setShowTaggedItems(true);
         }
     }
     /**
@@ -370,13 +423,15 @@ public class MainActivity extends AppCompatActivity implements
      *
      */
     public void deselectAllItems() {
+        boolean status = itemManager.getShowTaggedItems();
+        itemManager.setShowTaggedItems(false);
         for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
             itemManager.delTagged_Items(thisitem);
         }
         ArrayList<Item> newArray = new ArrayList<>();
         itemManager.setTagged_Items(newArray);
-
+        itemManager.setShowTaggedItems(status);
         update_selection();
     }
     /**
@@ -578,21 +633,37 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
-    /**
-     * set the view to display on the tagged items
-     * @param selected_tags the list of tags selected for filter
-     */
-    public void viewTaggedItems(ArrayList<Tag> selected_tags){
-        if (selected_tags.size() > 0){
-            Tag first_tag = selected_tags.get(0);
-            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
-            for (Tag tag : selected_tags){
-                tagged_items.retainAll(tag.getTagged_items());
-            }
-            itemManager.setTagged_Items(tagged_items);
-            adapter = new CustomArrayAdapter(itemManager.getItems(true), this, getApplicationContext());
-            recyclerView.setAdapter(adapter);
+    private void db_add_tagItem(Tag tag, Item item){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show();
+            return;
         }
+        String name = item.getName();
+        String description = item.getBriefDescription();
+        String date = item.getDateOfPurchase().toString();
+        Double value = item.getEstimatedValue();
+        String serial = item.getSerialNumber();
+        String make = item.getMake();
+        String model = item.getModel();
+        String comment = item.getComment();
+        Map<String, Object> newItem = new HashMap<>();
+        newItem.put("name", name);
+        newItem.put("description", description);
+        newItem.put("date", date);
+        newItem.put("value", value);
+        newItem.put("serial", serial);
+        newItem.put("make", make);
+        newItem.put("model", model);
+        newItem.put("comment", comment);
+        firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("tags")
+                .document(tag.getDocumentID())
+                .collection("tagged_items")
+                .add(newItem)
+                .addOnSuccessListener(documentReference -> item.setTaggedDocumentId(documentReference.getId()))
+                .addOnFailureListener(e -> Toast.makeText(this, "Error adding tagged item", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -633,9 +704,7 @@ public class MainActivity extends AppCompatActivity implements
                     .document(currentUser.getUid())
                     .collection("tags")
                     .document(tag.getDocumentID())
-                    .delete()
-                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+                    .delete();
         }
     }
 
@@ -663,7 +732,7 @@ public class MainActivity extends AppCompatActivity implements
             db_add_tag(newTag);
         }
         selected_tag = null;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
     }
 
     /**
@@ -678,7 +747,7 @@ public class MainActivity extends AppCompatActivity implements
         tagAdapter.notifyDataSetChanged();
         db_del_tag(tag);
         selected_tag = null;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
     }
 
     /**
@@ -746,7 +815,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onOK_Pressed(ArrayList<Tag> selected_tags) {
         this.selected_tags = selected_tags;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
         deselectAllItems();
     }
 
@@ -758,7 +827,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onCancel_Pressed() {
         deselectAllItems();
     }
-    // is this related to a tag thing?
 
     /**
      * When the confirm button is pressed from the sortingFragment, pass the information along into the itemManager for sorting

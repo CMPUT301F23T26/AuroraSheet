@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import io.grpc.Compressor;
@@ -58,7 +59,9 @@ import io.grpc.Context;
  * all the item fields before sending the data back to the main item list activity.
  */
 
-public class AddItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback {
+public class AddItemActivity extends AppCompatActivity implements
+        SerialNumberExtractor.SerialNumberCallback,
+        TagAddItemFragment.OnFragmentInteractionListener {
 
     private Button scanBarcodeButton;
 
@@ -79,8 +82,13 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
     private EditText itemModel;
     private EditText itemComment;
     private FloatingActionButton addItemButton;
+    private FloatingActionButton addTagsButton;
     private StorageReference storageReference;
     private LinearProgressIndicator progress;
+    private ArrayList<Tag> tags;
+    private ArrayList<String> tagNames;
+    private ArrayList<String> tagStatus;
+    private ArrayList<String> selected_tagNames;
     ArrayList<String> images;
     int imageIndex;
     String path;
@@ -97,6 +105,24 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         firestore = FirebaseFirestore.getInstance();
         FirebaseApp.initializeApp(AddItemActivity.this);
         storageReference = FirebaseStorage.getInstance().getReference();
+
+        tags = new ArrayList<>();
+        tagNames = new ArrayList<>();
+        selected_tagNames = new ArrayList<>();
+        tagNames = this.getIntent().getStringArrayListExtra("tags");
+        tagStatus = this.getIntent().getStringArrayListExtra("tagStatus");
+        for(int i = 0; i < tagNames.size(); i++){
+            String name = tagNames.get(i);
+            boolean status;
+            if (Objects.equals(tagStatus.get(i), "true")){
+                status = true;
+            } else {
+                status = false;
+            }
+            Tag newTag = new Tag(name);
+            newTag.setStatus(status);
+            tags.add(newTag);
+        }
 
         chooseImageButton = findViewById(R.id.selectImageButton);
         itemImage = findViewById(R.id.imageViewItem);
@@ -115,6 +141,7 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         imageLeft = findViewById(R.id.imageLeft_add);
         imageRight = findViewById(R.id.imageRight_add);
         cameraImage = findViewById(R.id.cameraButton_add);
+        addTagsButton = findViewById(R.id.addTagsButton);
         scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
         scanBarcodeButton.setOnClickListener(v -> {
             scanbarcode();
@@ -163,6 +190,14 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                 launchCameraActivity.launch(intent);
             }
         });
+
+        addTagsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new TagAddItemFragment(tags).show(getSupportFragmentManager(), "tag_item");
+            }
+        });
+
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,6 +269,8 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
                             intent.putExtra("images", images);
                             intent.putExtra("imageIndex", imageIndex);
                             intent.putExtra("path", path);
+
+                            intent.putStringArrayListExtra("tags", selected_tagNames);
                             setResult(1, intent);
                             finish();
                         })
@@ -442,4 +479,25 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         }
     });
 
+    @Override
+    public void onOK_Pressed(ArrayList<Tag> selected_tags) {
+        selected_tagNames.clear();
+        for (Tag tag : selected_tags){
+            selected_tagNames.add(tag.getName());
+        }
+        Log.d("selected tag names size", String.valueOf(selected_tagNames.size()));
+        for (Tag tag : tags){
+            if (selected_tagNames.contains(tag.getName())){
+                tag.setStatus(true);
+            } else {
+                selected_tagNames.remove(tag.getName());
+                tag.setStatus(false);
+            }
+            Log.d(tag.getName(), String.valueOf(tag.getStatus()));
+        }
+    }
+
+    @Override
+    public void onCancel_Pressed() {
+    }
 }
