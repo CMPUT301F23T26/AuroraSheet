@@ -27,29 +27,7 @@ public class ItemManager {
     private Boolean filterMakeExcludeMode;
     public List<Tag> filterMustIncludeTags;
     public List<Tag> filterMustNotIncludeTags;
-
-
-    public ArrayList<Integer> sortingStatus;
-
-    public List<Item> shownItems;
-
-
-
-
-    // Variables used for filtering
-    public ItemDate filterBeforeDate;
-
-    public ItemDate filterAfterDate;
-
-    public String filterDescriptionSubstring;
-
-    public String filterMake;
-
-    private Boolean filterDescriptionSubstringExcludeMode;
-    private Boolean filterMakeExcludeMode;
-
-    public List<Tag> filterMustIncludeTags;
-    public List<Tag> filterMustNotIncludeTags;
+    
 
     public ItemManager() {
         listItems = new ArrayList<>();
