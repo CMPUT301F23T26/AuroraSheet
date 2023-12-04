@@ -97,9 +97,6 @@ public class ItemResultHandler {
                 ArrayList<String> image = data.getStringArrayListExtra("images");
                 int imageTopIndex = data.getIntExtra("imageIndex", -1);
                 String path = data.getStringExtra("path");
-                tagNames = data.getStringArrayListExtra("tags");
-
-                tagNames.add(name);
 
                 if (index != -1) {
                     Item item = itemManager.getItem(index);
@@ -118,6 +115,6 @@ public class ItemResultHandler {
                 adapter.notifyDataSetChanged();
             }
         }
-        return tagNames;
+        return null;
     }
 }
