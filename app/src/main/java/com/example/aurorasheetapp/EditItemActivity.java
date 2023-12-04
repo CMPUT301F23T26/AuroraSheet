@@ -1,11 +1,13 @@
 package com.example.aurorasheetapp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -26,6 +28,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,6 +70,7 @@ public class EditItemActivity extends AppCompatActivity implements SerialNumberE
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
             , imageLeft, imageRight, camera, scanBarcodeButton_edit, scanSerialButton;
     private ImageView itemImage;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
     private TextView itemDate;
@@ -125,9 +130,14 @@ public class EditItemActivity extends AppCompatActivity implements SerialNumberE
         scanSerialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Open the camera to scan the serial number
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                launchCameraActivity.launch(intent);
+                if (checkCameraPermission()) {
+                    // Permission is granted, launch the camera intent
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    launchCameraActivity.launch(intent);
+                } else {
+                    // Permission is not granted, request it
+                    requestCameraPermission();
+                }
             }
         });
         //TODO: store / pass in image
@@ -282,7 +292,14 @@ public class EditItemActivity extends AppCompatActivity implements SerialNumberE
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageChooser();
+                if (checkCameraPermission()) {
+                    // Permission is granted, launch the camera intent
+                    Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                    cameraActivity.launch(cameraIntent);
+                } else {
+                    // Permission is not granted, request it
+                    requestCameraPermission();
+                }
             }
         });
         //deletes the image from the image list and from view
@@ -481,5 +498,14 @@ public class EditItemActivity extends AppCompatActivity implements SerialNumberE
             Toast.makeText(this, "No barcode found", Toast.LENGTH_SHORT).show();
         }
     });
+    private boolean checkCameraPermission() {
+        // Check if the camera permission is granted
+        return ContextCompat.checkSelfPermission(EditItemActivity.this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestCameraPermission() {
+        // Request camera permission
+        ActivityCompat.requestPermissions(EditItemActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+    }
 
 }

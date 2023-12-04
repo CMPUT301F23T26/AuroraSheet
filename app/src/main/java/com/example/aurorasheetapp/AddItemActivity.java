@@ -1,13 +1,20 @@
 package com.example.aurorasheetapp;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -78,6 +85,7 @@ public class AddItemActivity extends AppCompatActivity implements
     private EditText itemValue;
     private EditText itemSerial;
     private Button scanSerialButton;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private EditText itemMake;
     private EditText itemModel;
     private EditText itemComment;
@@ -185,9 +193,14 @@ public class AddItemActivity extends AppCompatActivity implements
         scanSerialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Open the camera to scan the serial number
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                launchCameraActivity.launch(intent);
+                if (checkCameraPermission()) {
+                    // Permission is granted, launch the camera intent
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    launchCameraActivity.launch(intent);
+                } else {
+                    // Permission is not granted, request it
+                    requestCameraPermission();
+                }
             }
         });
 
@@ -324,8 +337,14 @@ public class AddItemActivity extends AppCompatActivity implements
         cameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
-                cameraActivity.launch(cameraIntent);
+                if (checkCameraPermission()) {
+                    // Permission is granted, launch the camera intent
+                    Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+                    cameraActivity.launch(cameraIntent);
+                } else {
+                    // Permission is not granted, request it
+                    requestCameraPermission();
+                }
             }
         });
     }
@@ -496,7 +515,15 @@ public class AddItemActivity extends AppCompatActivity implements
             Log.d(tag.getName(), String.valueOf(tag.getStatus()));
         }
     }
+    private boolean checkCameraPermission() {
+        // Check if the camera permission is granted
+        return ContextCompat.checkSelfPermission(AddItemActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
 
+    private void requestCameraPermission() {
+        // Request camera permission
+        ActivityCompat.requestPermissions(AddItemActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+    }
     @Override
     public void onCancel_Pressed() {
     }
