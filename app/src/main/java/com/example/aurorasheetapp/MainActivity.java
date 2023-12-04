@@ -225,9 +225,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
         tagView.setAdapter(tagAdapter);
-        addTag_btn = findViewById(R.id.addTagButton);
-        profile_btn = findViewById(R.id.userProfile_btn);
-        sort_btn = findViewById(R.id.sortItem_btn);
+        addTag_btn = findViewById(R.id.addTagButton);sort_btn = findViewById(R.id.sortItem_btn);
         search_btn = findViewById(R.id.searchItem_btn);
 
         addTag_btn.setOnClickListener(new View.OnClickListener() {
