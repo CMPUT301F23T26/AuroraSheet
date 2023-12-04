@@ -61,6 +61,8 @@ public class ItemResultHandler {
             listItem.setTopImageIndex(topIndex);
             itemManager.add(listItem);
             adapter.notifyDataSetChanged();
+
+            tagNames.add(listItem.getName());
         }
         return tagNames;
     }
@@ -96,6 +98,8 @@ public class ItemResultHandler {
                 int imageTopIndex = data.getIntExtra("imageIndex", -1);
                 String path = data.getStringExtra("path");
                 tagNames = data.getStringArrayListExtra("tags");
+
+                tagNames.add(name);
 
                 if (index != -1) {
                     Item item = itemManager.getItem(index);

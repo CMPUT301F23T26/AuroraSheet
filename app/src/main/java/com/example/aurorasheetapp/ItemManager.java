@@ -9,10 +9,12 @@ import java.util.List;
 public class ItemManager {
     private List<Item> listItems;
     private List<Item> tagged_Items;
+    private Item last_added;
 
     public ItemManager() {
         listItems = new ArrayList<>();
         tagged_Items = new ArrayList<>();
+        last_added = null;
     }
 
     public List<Item> getItems() {
@@ -37,7 +39,10 @@ public class ItemManager {
 
     public void add(Item item) {
         listItems.add(item);
+        last_added = item;
     }
+
+    public Item get_lastAdded() { return last_added;}
 
     public Item remove(int index) {
         return listItems.remove(index);

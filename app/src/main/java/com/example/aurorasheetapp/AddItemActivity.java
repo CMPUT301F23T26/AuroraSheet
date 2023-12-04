@@ -61,7 +61,7 @@ import io.grpc.Context;
 
 public class AddItemActivity extends AppCompatActivity implements
         SerialNumberExtractor.SerialNumberCallback,
-        TagItemsFragment.OnFragmentInteractionListener {
+        TagAddItemFragment.OnFragmentInteractionListener {
 
     private Button scanBarcodeButton;
 
@@ -121,6 +121,7 @@ public class AddItemActivity extends AppCompatActivity implements
             }
             Tag newTag = new Tag(name);
             newTag.setStatus(status);
+            tags.add(newTag);
         }
 
         chooseImageButton = findViewById(R.id.selectImageButton);
@@ -194,7 +195,7 @@ public class AddItemActivity extends AppCompatActivity implements
         addTagsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TagItemsFragment(tags, null).show(getSupportFragmentManager(), "tag_item");
+                new TagAddItemFragment(tags).show(getSupportFragmentManager(), "tag_item");
             }
         });
 
@@ -481,8 +482,19 @@ public class AddItemActivity extends AppCompatActivity implements
 
     @Override
     public void onOK_Pressed(ArrayList<Tag> selected_tags) {
+        selected_tagNames.clear();
         for (Tag tag : selected_tags){
             selected_tagNames.add(tag.getName());
+        }
+        Log.d("selected tag names size", String.valueOf(selected_tagNames.size()));
+        for (Tag tag : tags){
+            if (selected_tagNames.contains(tag.getName())){
+                tag.setStatus(true);
+            } else {
+                selected_tagNames.remove(tag.getName());
+                tag.setStatus(false);
+            }
+            Log.d(tag.getName(), String.valueOf(tag.getStatus()));
         }
     }
 

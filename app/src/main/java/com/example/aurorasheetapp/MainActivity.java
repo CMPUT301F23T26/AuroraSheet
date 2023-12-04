@@ -149,9 +149,10 @@ public class MainActivity extends AppCompatActivity implements
                 itemIndex = getTheOneSelectedItem();
                 if(itemIndex > -1 && !itemManager.isEmpty()){
                     Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+                    Item thisItem = itemManager.getItem(itemIndex);
                     for (Tag tag : tags){
                         tagNames.add(tag.getName());
-                        if(tag.getStatus()){
+                        if(tag.getTagged_items().contains(thisItem)){
                             tagStatus.add("true");
                         } else {
                             tagStatus.add("false");
@@ -284,6 +285,16 @@ public class MainActivity extends AppCompatActivity implements
                             Intent data = result.getData();
                             if (data != null) {
                                 tagNames = itemResultHandler.addItemResult(data, itemManager, adapter);
+                                Item item = itemManager.get_lastAdded();
+                                String itemName = tagNames.get(tagNames.size() - 1);
+                                tagNames.remove(tagNames.size() - 1);
+                                for(String name : tagNames){
+                                    for (Tag tag : tags){
+                                        if (Objects.equals(tag.getName(), name)){
+                                            tag.tagItem(item);
+                                        }
+                                    }
+                                }
 
 
 
@@ -298,9 +309,6 @@ public class MainActivity extends AppCompatActivity implements
                             Intent data = result.getData();
                             if (data != null) {
                                 tagNames = itemResultHandler.editItemResult(data, itemManager, adapter);
-
-
-
                                 updateTotalValue();
                             }
                         }
