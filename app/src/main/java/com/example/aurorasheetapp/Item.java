@@ -263,6 +263,43 @@ public class Item {
 
 
 
+    // -----------------------------------------------------------------
+    // some extra getters, to get strings in lowercase
+    // this is for use in sorting items by these fields
+
+    /**
+     * Getter for the name, in lowercase
+     * @return name, in lowercase
+     */
+    public String getNameLower() { return name.toLowerCase();}
+
+    /**
+     * Getter for the make, in lowercase
+     * @return make, in lowercase
+     */
+    public String getMakeLower() { return make.toLowerCase();}
+
+    /**
+     * Getter for the model, in lowercase
+     * @return model, in lowercase
+     */
+    public String getModelLower() { return model.toLowerCase();}
+
+
+    /**
+     * Getter for the comment, in lowercase
+     * @return comment, in lowercase
+     */
+    public String getCommentLower() { return comment.toLowerCase();}
+
+
+    /**
+     * Getter for the description, in lowercase
+     * @return description, in lowercase
+     */
+    public String getDescriptionLower() { return briefDescription.toLowerCase();}
+
+
 
     // -----------------------------------------------------------------------------------------
     // selection and hiddenness
@@ -329,14 +366,17 @@ public class Item {
 
     // -------------------------------------------------------------
 
+
     /**
      * get the list of tags for this item
      * @return list of tags object as this item's tags
      */
+
     public List<Tag> getTags() {
         if (this.tags != null) { return tags; } else {return new ArrayList<Tag>();}
 
     }
+
 
     /**
      * set the tags for this item
@@ -347,6 +387,7 @@ public class Item {
     }
 
     // ------------------------------------------------
+
 
     /**
      * get the documentID for this item on firebase

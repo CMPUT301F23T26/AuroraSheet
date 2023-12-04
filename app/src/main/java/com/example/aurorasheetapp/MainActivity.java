@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,10 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener,
         TagItemsFragment.OnFragmentInteractionListener,
-        FilterFragment.OnFilterConfirmListener {
+        FilterFragment.OnFilterConfirmListener,
+        SortingFragment.OnSortingConfirmListener
+{
+
 
     private StorageReference storageReference;
     private ItemDate startDate, endDate;
@@ -104,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
         tagItemButton = findViewById(R.id.buttonTagItem);
         sort_btn = findViewById(R.id.sortItem_btn);
+        search_btn = findViewById(R.id.searchItem_btn);
+
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -168,7 +174,17 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // Create an instance of the dialog fragment and show it
-                FilterFragment sortFragment = new FilterFragment();
+                FilterFragment filterFragment = new FilterFragment();
+                filterFragment.show(getSupportFragmentManager(), "filter_fragment");
+            }
+        });
+
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortingFragment sortFragment = new SortingFragment();
+
                 sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
@@ -689,6 +705,8 @@ public class MainActivity extends AppCompatActivity implements
         totalAmountTextView.setText(itemManager.computeTotal());
     }
 
+ 
+
     /**
      * filter the items with given parameters
      * @param beforeDate  the date range at the before
@@ -707,8 +725,10 @@ public class MainActivity extends AppCompatActivity implements
         itemManager.setFilterDescriptionSubstring(descriptionKeyword);
         itemManager.setFilterMake(make);
 
+
         itemManager.doFiltering();
         itemManager.update_shown_items();
+
 
         this.adapter.updateItems(itemManager.shownItems);
         adapter.notifyDataSetChanged();
@@ -716,6 +736,7 @@ public class MainActivity extends AppCompatActivity implements
         // Log the values
 
     }
+
 
     /**
      * Confirm button pressed from TagItemFragment
@@ -737,4 +758,40 @@ public class MainActivity extends AppCompatActivity implements
     public void onCancel_Pressed() {
         deselectAllItems();
     }
+    // is this related to a tag thing?
+
+    /**
+     * When the confirm button is pressed from the sortingFragment, pass the information along into the itemManager for sorting
+     *
+     * @param nameMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param dateMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param valueMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param makeMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param descMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     */
+
+    public void receiveSortingData(int nameMode, int dateMode, int valueMode, int makeMode, int descMode) {
+        ArrayList<Integer> sortingmode = new ArrayList<Integer>();
+
+        sortingmode.add(nameMode);
+        sortingmode.add(dateMode);
+        sortingmode.add(0);     // serial number
+        sortingmode.add(0);     // model
+        sortingmode.add(valueMode);
+        sortingmode.add(makeMode);
+        sortingmode.add(0);     // comment
+        sortingmode.add(descMode);
+
+
+        itemManager.setSortingStatus(sortingmode);
+
+        itemManager.doSorting();
+        itemManager.update_shown_items();
+
+
+        this.adapter.updateItems(itemManager.shownItems);
+        adapter.notifyDataSetChanged();
+
+    }
+
 }
