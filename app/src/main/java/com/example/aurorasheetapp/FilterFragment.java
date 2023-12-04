@@ -17,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * Class responsible for behaviors of filtering fragment
+ */
 public class FilterFragment extends DialogFragment {
     private TextView date;
     private Button btnConfirm;
