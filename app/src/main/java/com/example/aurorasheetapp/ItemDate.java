@@ -3,7 +3,7 @@ package com.example.aurorasheetapp;
  * A data structure that holds three integers as the date for the item
  * Added parsing support for string dates
  */
-public class ItemDate {
+public class ItemDate implements Comparable<ItemDate> {
     int year, month, day;
     /**
      * Constructs ItemDate with the specified attributes.
@@ -114,5 +114,18 @@ public class ItemDate {
         dates[1] = Integer.parseInt(date[1]);
         dates[0] = Integer.parseInt(date[0]);
         return dates;
+    }
+
+
+    /**
+     * Makes dates comparable
+     *
+     * @param anotherItemDate another instance of this class to compare to
+     * @return int, positive if this instance is later, negative if this instance is later
+     */
+    public int compareTo(ItemDate anotherItemDate) {
+        int thisnumber = this.year                 * 10000 + this.month                 * 100 + this.day ;
+        int thatnumber = anotherItemDate.getYear() * 10000 + anotherItemDate.getMonth() * 100 + anotherItemDate.getDay();
+        return thisnumber - thatnumber;
     }
 }

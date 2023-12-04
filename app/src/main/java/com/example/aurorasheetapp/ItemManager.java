@@ -49,7 +49,7 @@ public class ItemManager {
         return listItems;
     }
 
-    public List<Item> getItems(Boolean showTagItem){
+    public List<Item> getItems(Boolean showTagItem) {
         return tagged_Items;
     }
 
@@ -57,11 +57,15 @@ public class ItemManager {
         return listItems.get(index);
     }
 
-    public void addTagged_Items(Item item) {this.tagged_Items.add(item);}
+    public void addTagged_Items(Item item) {
+        this.tagged_Items.add(item);
+    }
 
-    public void delTagged_Items(Item item) {this.tagged_Items.remove(item);}
+    public void delTagged_Items(Item item) {
+        this.tagged_Items.remove(item);
+    }
 
-    public void setTagged_Items(List<Item> tagged_Items){
+    public void setTagged_Items(List<Item> tagged_Items) {
         this.tagged_Items = tagged_Items;
     }
 
@@ -70,7 +74,9 @@ public class ItemManager {
         last_added = item;
     }
 
-    public Item get_lastAdded() { return last_added;}
+    public Item get_lastAdded() {
+        return last_added;
+    }
 
     public Item remove(int index) {
         return listItems.remove(index);
@@ -82,6 +88,7 @@ public class ItemManager {
 
     /**
      * Computes the total value of all the items in the list.
+     *
      * @return A string representation of the total value of all the items.
      */
     public String computeTotal() {
@@ -96,13 +103,11 @@ public class ItemManager {
     // functions about sorting
 
 
-
     // this is a default generated setter. If, when calling this, you don't know all 8 of these values,
     // you should create a new list that's 8 integers long, with unknown values set to 0
     public void setSortingStatus(ArrayList<Integer> sortingStatus) {
         this.sortingStatus = sortingStatus;
     }
-
 
 
     /**
@@ -233,7 +238,6 @@ public class ItemManager {
     }
 
     /**
-     *
      * @param list1
      * @param list2
      * @return a list containing all elements that are in both lists
@@ -253,7 +257,7 @@ public class ItemManager {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
 
-            if (intersectionOfList(item.getTags(),filterMustIncludeTags).size() < 1) {
+            if (intersectionOfList(item.getTags(), filterMustIncludeTags).size() < 1) {
                 item.hide();
             }
         }
@@ -267,12 +271,11 @@ public class ItemManager {
         // unlike the other ones, this filter function takes its entries directly from the lists provided in the class
         for (Item item : listItems) {
 
-            if (intersectionOfList(item.getTags(),filterMustNotIncludeTags).size() > 0) {
+            if (intersectionOfList(item.getTags(), filterMustNotIncludeTags).size() > 0) {
                 item.hide();
             }
         }
     }
-
 
 
     /**
@@ -287,7 +290,7 @@ public class ItemManager {
     /**
      * Rests all selections and filters, then hides items according to active filters.
      * Will sort the filtered item list afterwards.
-     *
+     * <p>
      * Filters for Date (before / after), a substring (keyword) in the description, Make, and Tags (both their presence and their absence).
      */
     public void doFiltering() {
@@ -300,16 +303,20 @@ public class ItemManager {
 
         if (Objects.nonNull(filterBeforeDate)) {
             filterDatesBefore(filterBeforeDate);
-        } printItemHiddenness();
+        }
+        printItemHiddenness();
         if (Objects.nonNull(filterAfterDate)) {
             filterDatesAfter(filterAfterDate);
-        } printItemHiddenness();
+        }
+        printItemHiddenness();
         if (Objects.nonNull(filterDescriptionSubstring) && !"".equals(filterDescriptionSubstring) && Objects.nonNull(filterDescriptionSubstringExcludeMode)) {
-            filterItemsForDescriptionKeyword(filterDescriptionSubstring,filterDescriptionSubstringExcludeMode);
-        } printItemHiddenness();
+            filterItemsForDescriptionKeyword(filterDescriptionSubstring, filterDescriptionSubstringExcludeMode);
+        }
+        printItemHiddenness();
         if (Objects.nonNull(filterMake) && !"".equals(filterMake) && Objects.nonNull(filterMakeExcludeMode)) {
-            filterItemsForMake(filterMake,filterMakeExcludeMode);
-        } printItemHiddenness();
+            filterItemsForMake(filterMake, filterMakeExcludeMode);
+        }
+        printItemHiddenness();
 
         // filterForTags(); filterAgainstTags();
 
@@ -360,16 +367,19 @@ public class ItemManager {
             filterMustIncludeTags.remove(tag);
         }
     }
+
     public void addToMustIncludeTags(Tag tag) {
         if (!filterMustIncludeTags.contains(tag)) {
             filterMustIncludeTags.add(tag);
         }
     }
+
     public void removeFromMustNotIncludeTags(Tag tag) {
         if (filterMustNotIncludeTags.contains(tag)) {
             filterMustNotIncludeTags.remove(tag);
         }
     }
+
     public void addToMustNotIncludeTags(Tag tag) {
         if (!filterMustNotIncludeTags.contains(tag)) {
             filterMustNotIncludeTags.add(tag);
@@ -378,7 +388,7 @@ public class ItemManager {
 
     public void update_shown_items() {
         shownItems.clear();
-        for (Item item:listItems) {
+        for (Item item : listItems) {
             // if the item is not hidden, don't add it to show
 
             if (!item.getHiddenness()) {
@@ -386,4 +396,76 @@ public class ItemManager {
                 shownItems.add(item);
             }
         }
+    }
+
+
+    // --------------------------------------------------------------------
+    // methods about selection
+
+    /**
+     * Make all items unselected
+     * <p>
+     * this copies the code that was in MainActivity, but does not run updateSelection
+     */
+    public void deselectAllItems() {
+        for (Item thisitem : listItems) {
+            thisitem.unselect();
+
+        }
+    }
+
+    /**
+     * Get the index of the currently selected item.
+     * If there are multiple selected items, it will return the first one
+     *
+     * @return The index of the item that is selected. If no item is selected, it returns -1
+     */
+    public int getTheOneSelectedItem() {
+        int listsize = listItems.size();
+        for (int index = 0; index < listsize; index++) {
+            if (listItems.get(index).getSelection()) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Calculate how many items are currently selected
+     *
+     * @return The number of items that are currently selected
+     */
+
+    public int countSelectedItems() {
+        int count = 0;
+        for (Item thisitem : listItems) {
+            if (thisitem.getSelection()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Get a list containing the indices of all currently selected item.
+     *
+     * @return The index of the item that is selected. If no item is selected, it returns -1
+     */
+    public ArrayList<Integer> getListOfSelectedItems() {
+        ArrayList<Integer> selected_items = new ArrayList<Integer>();
+        int listsize = listItems.size();
+        for (int index = 0; index < listsize; index++) {
+            if (listItems.get(index).getSelection()) {
+                selected_items.add(index);
+            }
+        }
+        return selected_items;
+
+    }
+
+    private void printItemHiddenness() {
+        for (Item item:listItems) {
+            Log.d("hiddennessList", String.format("item %s is hidden: %b", item.getName(), item.getHiddenness()));
+        }
+    }
 }
