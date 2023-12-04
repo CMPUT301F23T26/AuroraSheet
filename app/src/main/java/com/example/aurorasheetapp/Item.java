@@ -24,6 +24,9 @@ public class Item {
     private String taggedDocumentID;
 
     private Boolean isSelected;
+    private Boolean isHidden;
+
+    public List<Tag> tags;
     /**
      * Constructs an Item with the specified attributes.
      * @param name             The name of the item
@@ -244,6 +247,55 @@ public class Item {
      */
     public void toggleSelect() {
         if (this.isSelected) { this.isSelected = false; } else { this.isSelected = true; }
+    }
+
+    /**
+     * For use in sorting and filtering.
+     * @return Whether this item is hidden
+     */
+    public Boolean getHiddenness() {
+        return this.isHidden;
+    }
+    /**
+     * Set the item's isHidden to true. for use in filtering
+     *
+     */
+    public void hide() {
+        this.isHidden = true;
+    }
+    /**
+     * Set the item's isHidden to false. for use in filtering
+     *
+     */
+    public void unhide() {
+        this.isHidden = false;
+    }
+    /**
+     * Toggle the item's hiddenness. for use in filtering
+     *
+     */
+    public void toggleHidden() {
+        if (this.isSelected) { this.isHidden = false; } else { this.isHidden = true; }
+    }
+
+
+    // -------------------------------------------------------------
+
+    /**
+     * get the list of tags for this item
+     * @return list of tags object as this item's tags
+     */
+    public List<Tag> getTags() {
+        if (this.tags != null) { return tags; } else {return new ArrayList<Tag>();}
+
+    }
+
+    /**
+     * set the tags for this item
+     * @param tags list of tags to be set
+     */
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public String getDocumentId() {
