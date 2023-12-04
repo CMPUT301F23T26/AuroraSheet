@@ -1,5 +1,9 @@
 package com.example.aurorasheetapp;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -93,14 +97,60 @@ public class SortingFragment extends DialogFragment {
         valueswitch = view.findViewById(R.id.ValueSwitch);
         makeswitch = view.findViewById(R.id.MakeSwitch);
         descswitch = view.findViewById(R.id.DescSwitch);
-        
-        nameswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                view.getContext();
-            }
+
+
+        // if the buttons are on, show the ascending/descending switch. otherwise, hide it
+        namecheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { nameswitch.setVisibility(VISIBLE); }
+            else {nameswitch.setVisibility(INVISIBLE); }
+        });
+        datecheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { dateswitch.setVisibility(VISIBLE); }
+            else {dateswitch.setVisibility(INVISIBLE); }
+        });
+        valuecheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { valueswitch.setVisibility(VISIBLE); }
+            else {valueswitch.setVisibility(INVISIBLE); }
+        });
+        makecheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { makeswitch.setVisibility(VISIBLE); }
+            else {makeswitch.setVisibility(INVISIBLE); }
+        });
+        desccheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { descswitch.setVisibility(VISIBLE); }
+            else {descswitch.setVisibility(INVISIBLE); }
         });
 
+
+        // to make something easier, we will turn off the button everytime this fragment comes on
+        nameswitch.setChecked(false); dateswitch.setChecked(false); valueswitch.setChecked(false); makeswitch.setChecked(false); descswitch.setChecked(false);
+
+        
+        
+        
+        
+        
+        nameswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { nameswitch.setText(R.string.descending); }
+            else {nameswitch.setText(R.string.ascending); }
+        });
+        dateswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { dateswitch.setText(R.string.descending); }
+            else {dateswitch.setText(R.string.ascending); }
+        });
+        valueswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { valueswitch.setText(R.string.descending); }
+            else {valueswitch.setText(R.string.ascending); }
+        });
+        makeswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { makeswitch.setText(R.string.descending); }
+            else {makeswitch.setText(R.string.ascending); }
+        });
+        descswitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) { descswitch.setText(R.string.descending); }
+            else {descswitch.setText(R.string.ascending); }
+        });
+        
 
 
 
@@ -117,19 +167,19 @@ public class SortingFragment extends DialogFragment {
 
 
             if (namecheckbox.isChecked()) {
-                if (nameswitch.isActivated()) { nameMode = 2; } else { nameMode = 1; }
+                if (nameswitch.isChecked()) { nameMode = 2; } else { nameMode = 1; }
             }
             if (datecheckbox.isChecked()) {
-                if (dateswitch.isActivated()) { dateMode = 2; } else { dateMode = 1; }
+                if (dateswitch.isChecked()) { dateMode = 2; } else { dateMode = 1; }
             }
             if (valuecheckbox.isChecked()) {
-                if (valueswitch.isActivated()) { valueMode = 2; } else { valueMode = 1; }
+                if (valueswitch.isChecked()) { valueMode = 2; } else { valueMode = 1; }
             }
             if (makecheckbox.isChecked()) {
-                if (makeswitch.isActivated()) { makeMode = 2; } else { makeMode = 1; }
+                if (makeswitch.isChecked()) { makeMode = 2; } else { makeMode = 1; }
             }
             if (desccheckbox.isChecked()) {
-                if (descswitch.isActivated()) { descMode = 2; } else { descMode = 1; }
+                if (descswitch.isChecked()) { descMode = 2; } else { descMode = 1; }
             }
 
 
