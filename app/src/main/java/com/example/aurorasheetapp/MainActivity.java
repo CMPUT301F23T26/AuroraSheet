@@ -2,16 +2,12 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,14 +27,10 @@ import java.util.Objects;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.Document;
-
-import org.checkerframework.checker.units.qual.A;
 
 /**
  * This class serves as the main activity and manages a list of Item Records.
@@ -47,13 +39,13 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener,
         TagItemsFragment.OnFragmentInteractionListener,
-        SortFragment.OnDateRangeSelectedListener {
+        FilterFragment.OnFilterConfirmListener {
 
     private StorageReference storageReference;
     private ItemDate startDate, endDate;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private CustomArrayAdapter adapter;
     private List<Item> listItems;
     private ItemManager itemManager;
     private ItemResultHandler itemResultHandler;
@@ -176,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // Create an instance of the dialog fragment and show it
-                SortFragment sortFragment = new SortFragment();
+                FilterFragment sortFragment = new FilterFragment();
                 sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
@@ -674,21 +666,37 @@ public class MainActivity extends AppCompatActivity implements
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
-    public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay, String filterBy, String descriptionKeyword, String make, String sortorder) {
-        // Format the start and end dates
-        String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
-        String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+    public void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate, String descriptionKeyword, String make) {
+        // Check if the start and end dates are real
+        if (afterDate.getYear() == 0) {
+            afterDate.setYear(9999);
+        }
 
-        // Create ItemDate objects
-        ItemDate startDate = new ItemDate(startDateFormat);
-        ItemDate endDate = new ItemDate(endDateFormat);
+
 
         // Filter items based on the dates
 
+        itemManager.setFilterBeforeDate(beforeDate);
+        itemManager.setFilterAfterDate(afterDate);
+        itemManager.setFilterDescriptionSubstring(descriptionKeyword);
+        itemManager.setFilterMake(make);
+
+
+
+        itemManager.doFiltering();
+        itemManager.update_shown_items();
+
+
+        this.adapter.updateItems(itemManager.shownItems);
+        adapter.notifyDataSetChanged();
 
         // Log the values
 
     }
+
+
+
+
     /**
      * Confirm button pressed from TagItemFragment
      * @param selected_tags The list of tags selected
