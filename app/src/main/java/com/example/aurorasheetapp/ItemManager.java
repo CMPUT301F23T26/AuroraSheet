@@ -15,6 +15,7 @@ import java.util.Objects;
 public class ItemManager {
     private List<Item> listItems;
     private List<Item> tagged_Items;
+    private List<Item> display_Items;
     private Item last_added;
 
     public ArrayList<Integer> sortingStatus;
@@ -25,6 +26,7 @@ public class ItemManager {
     public String filterMake;
     private Boolean filterDescriptionSubstringExcludeMode;
     private Boolean filterMakeExcludeMode;
+    private boolean showTaggedItems;
     public List<Tag> filterMustIncludeTags;
     public List<Tag> filterMustNotIncludeTags;
     
@@ -32,6 +34,7 @@ public class ItemManager {
     public ItemManager() {
         listItems = new ArrayList<>();
         tagged_Items = new ArrayList<>();
+        display_Items = new ArrayList<>();
 
         last_added = null;
 
@@ -42,13 +45,22 @@ public class ItemManager {
 
         filterDescriptionSubstringExcludeMode = false;
         filterMakeExcludeMode = false;
+        showTaggedItems = false;
 
         filterMustIncludeTags = new ArrayList<Tag>();
         filterMustNotIncludeTags = new ArrayList<Tag>();
     }
 
+    public void setShowTaggedItems(boolean status) {showTaggedItems = status;}
+
+    public boolean getShowTaggedItems() {return showTaggedItems;}
+
     public List<Item> getItems() {
-        return listItems;
+        if (showTaggedItems){
+            return display_Items;
+        } else {
+            return listItems;
+        }
     }
 
     public List<Item> getItems(Boolean showTagItem) {
@@ -60,7 +72,9 @@ public class ItemManager {
     }
 
     public void addTagged_Items(Item item) {
-        this.tagged_Items.add(item);
+        if(!tagged_Items.contains(item)){
+            this.tagged_Items.add(item);
+        }
     }
 
     public void delTagged_Items(Item item) {
@@ -71,9 +85,13 @@ public class ItemManager {
         this.tagged_Items = tagged_Items;
     }
 
+    public void setDisplay_Items(List<Item> items) {this.display_Items = items;}
+
     public void add(Item item) {
-        listItems.add(item);
-        last_added = item;
+        if (!listItems.contains(item)){
+            listItems.add(item);
+            last_added = item;
+        }
     }
 
     public Item get_lastAdded() {

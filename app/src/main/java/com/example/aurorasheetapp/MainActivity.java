@@ -229,10 +229,15 @@ public class MainActivity extends AppCompatActivity implements
                             for (Tag one_tag : selected_tags){
                                 tagged_items.retainAll(one_tag.getTagged_items());
                             }
+                            itemManager.setShowTaggedItems(true);
                             itemManager.setTagged_Items(tagged_items);
-                            adapter = new CustomArrayAdapter(itemManager.getItems(true), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
+                            itemManager.setDisplay_Items(tagged_items);
+                            adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
                         } else {
+                            List<Item> newList = new ArrayList<>();
+                            itemManager.setDisplay_Items(newList);
+                            itemManager.setShowTaggedItems(false);
                             adapter = new CustomArrayAdapter(itemManager.getItems(), (RecyclerViewInterface) recyclerView.getContext(), getApplicationContext());
                             recyclerView.setAdapter(adapter);
 
@@ -303,9 +308,6 @@ public class MainActivity extends AppCompatActivity implements
                                         }
                                     }
                                 }
-
-
-
                                 updateTotalValue();
                             }
                         }
@@ -352,6 +354,19 @@ public class MainActivity extends AppCompatActivity implements
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             tagItemButton.setVisibility(View.VISIBLE);
+        }
+        if (selected_tags.size() != 0) {
+            Tag first_tag = selected_tags.get(0);
+            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
+            for (Tag one_tag : selected_tags) {
+                tagged_items.retainAll(one_tag.getTagged_items());
+            }
+            itemManager.setShowTaggedItems(true);
+            itemManager.setTagged_Items(tagged_items);
+            itemManager.setDisplay_Items(tagged_items);
+        }
+        if (selected_tags.size() != 0){
+            itemManager.setShowTaggedItems(true);
         }
     }
     /**
@@ -404,13 +419,15 @@ public class MainActivity extends AppCompatActivity implements
      *
      */
     public void deselectAllItems() {
+        boolean status = itemManager.getShowTaggedItems();
+        itemManager.setShowTaggedItems(false);
         for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
             itemManager.delTagged_Items(thisitem);
         }
         ArrayList<Item> newArray = new ArrayList<>();
         itemManager.setTagged_Items(newArray);
-
+        itemManager.setShowTaggedItems(status);
         update_selection();
     }
     /**
@@ -613,23 +630,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * set the view to display on the tagged items
-     * @param selected_tags the list of tags selected for filter
-     */
-    public void viewTaggedItems(ArrayList<Tag> selected_tags){
-        if (selected_tags.size() > 0){
-            Tag first_tag = selected_tags.get(0);
-            List<Item> tagged_items = new ArrayList<>(first_tag.getTagged_items());
-            for (Tag tag : selected_tags){
-                tagged_items.retainAll(tag.getTagged_items());
-            }
-            itemManager.setTagged_Items(tagged_items);
-            adapter = new CustomArrayAdapter(itemManager.getItems(true), this, getApplicationContext());
-            recyclerView.setAdapter(adapter);
-        }
-    }
-
-    /**
      * add a tag to firebase
      * @param tag the tag object to be added
      */
@@ -697,7 +697,7 @@ public class MainActivity extends AppCompatActivity implements
             db_add_tag(newTag);
         }
         selected_tag = null;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
     }
 
     /**
@@ -712,7 +712,7 @@ public class MainActivity extends AppCompatActivity implements
         tagAdapter.notifyDataSetChanged();
         db_del_tag(tag);
         selected_tag = null;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
     }
 
     /**
@@ -780,7 +780,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onOK_Pressed(ArrayList<Tag> selected_tags) {
         this.selected_tags = selected_tags;
-        viewTaggedItems(selected_tags);
+//        viewTaggedItems(selected_tags);
         deselectAllItems();
     }
 
@@ -792,7 +792,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onCancel_Pressed() {
         deselectAllItems();
     }
-    // is this related to a tag thing?
 
     /**
      * When the confirm button is pressed from the sortingFragment, pass the information along into the itemManager for sorting
