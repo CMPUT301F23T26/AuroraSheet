@@ -41,7 +41,7 @@ public class MainActivityTest {
         // Login to app
         onView(withId(R.id.user_login)).perform(ViewActions.typeText("bonobo"));
         onView(withId(R.id.password_login)).perform(ViewActions.typeText("cmput301"), ViewActions.closeSoftKeyboard());
-
+        // delay
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
