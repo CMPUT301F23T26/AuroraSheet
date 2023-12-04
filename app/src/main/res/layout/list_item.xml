@@ -13,36 +13,91 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/light_cardbackground"
-
-        />
+        android:backgroundTint="#6A9A96" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/specifications"
         android:padding="10dp">
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="name" />
 
         <ImageView
             android:id="@+id/picture"
             android:layout_width="156dp"
             android:layout_height="104dp"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/default_image"
-            tools:srcCompat="@drawable/default_image" />
+            android:layout_gravity="center"
+            android:scaleType="fitEnd"
+            app:srcCompat="@drawable/default_image" />
 
-        <TextView
-            android:id="@+id/dateofpurchase"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date of purchase"
-            android:visibility="gone" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="Name: "
+                android:textColor="#7E7979"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="Date: "
+                android:textColor="#7E7979"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/dateofpurchase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="Value: "
+                android:textColor="#7E7979"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/estimatedvalue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#7E7979"
+                android:textColorHint="#6C6767"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/briefdescription"
@@ -55,8 +110,12 @@
             android:id="@+id/make"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Make"
-            android:visibility="gone" />
+            android:text="Make: "
+            android:textColor="#7E7979"
+            android:textColorHint="#6C6767"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/serialnumber"
@@ -73,19 +132,10 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/estimatedvalue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Estimated Value"
-            android:visibility="gone" />
-
-        <TextView
             android:id="@+id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="comment"
             android:visibility="gone" />
     </LinearLayout>
-
 </LinearLayout>
-
