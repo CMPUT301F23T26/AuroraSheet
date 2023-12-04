@@ -93,9 +93,9 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
 
         //Log.d("customArrayAdapter","the binding thing got activated");
         if (listItem.getSelection()) {
-            holder.background.setBackgroundColor(Color.argb(255, 255, 240, 255));
+            holder.background.setBackgroundColor(Color.argb(255, 225, 240, 255));
         } else {
-            holder.background.setBackgroundColor(Color.argb(255,225,240,255));
+            holder.background.setBackgroundColor(Color.argb(255,255,240,255));
         }
 
     }

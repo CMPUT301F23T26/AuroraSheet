@@ -37,6 +37,10 @@ public class Registration extends AppCompatActivity {
 
     private ProgressDialog mdial;
 
+    /**
+     * Initializes the Firebase Authentication and Firestore instances, along with UI components.
+     * It sets up the user credentials input fields, the sign-up button, and the link for existing users to return to the login screen.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,11 @@ public class Registration extends AppCompatActivity {
         prev_user = findViewById(R.id.switch_tosignup);
     }
 
+    /**
+     * Sets up the onClickListener for the sign-up button. When clicked, it validates the user input for email, password,
+     * and username fields. If validation is successful, it proceeds with creating a new user account in Firebase Authentication
+     * and stores additional user details in Firestore.
+     */
     private void signup() {
         sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +128,10 @@ public class Registration extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets up the onClickListener for the TextView that allows existing users to navigate back to the login screen.
+     * When clicked, it starts the Login activity and finishes the current Registration activity.
+     */
     private void ReturnToLogin(){
         prev_user.setOnClickListener(new View.OnClickListener() {
             @Override

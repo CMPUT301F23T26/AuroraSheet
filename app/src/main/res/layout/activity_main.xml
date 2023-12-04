@@ -3,67 +3,103 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/MainView"
     android:layout_width="match_parent"
-    android:background="@drawable/gradient"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="@color/white">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="25dp"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="20dp"
+        android:background="@drawable/specifications">
+    </androidx.cardview.widget.CardView>
+
+
+
 
     <LinearLayout
         android:id="@+id/userProfileBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="126dp"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@drawable/total">
 
-        <ImageButton
-            android:id="@+id/userProfile_btn"
-            android:layout_width="85dp"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/sym_def_app_icon" />
+            android:layout_gravity="center"
+            android:layout_weight="0.6"
+            android:text="Total Estimate Value:"
+            android:id="@+id/test"
+            android:textColor="#FFFFFF"
+            android:textSize="28dp"
+            android:typeface="normal"
+            />
 
-        <ImageButton
-            android:id="@+id/sortItem_btn"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/totalValue"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
-
-        <ImageButton
-            android:id="@+id/searchItem_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_search" />
-
+            android:layout_gravity="center"
+            android:layout_weight="0.4"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp" />
     </LinearLayout>
 
-      <LinearLayout
+
+
+    <LinearLayout
         android:id="@+id/tagBar"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/userProfileBar"
         android:orientation="horizontal">
 
-          <com.google.android.material.floatingactionbutton.FloatingActionButton
-              android:id="@+id/addTagButton"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginStart="16dp"
-              android:layout_marginBottom="4dp"
-              android:clickable="true"
-              android:focusable="true"
-              app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:srcCompat="@android:drawable/ic_input_add" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tag_View"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp" />
 
-          <androidx.recyclerview.widget.RecyclerView
-              android:id="@+id/tag_View"
-              android:layout_width="300dp"
-              android:layout_height="match_parent"
-              android:layout_marginStart="20dp"
-              app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintStart_toEndOf="@+id/addTagButton" />
-      </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addTagButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="#37756F"
+            app:tint="#FFFFFF"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
+
+
+        <ImageButton
+            android:id="@+id/sortItem_btn"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:layout_gravity="center"
+            android:scaleType="fitEnd"
+            app:srcCompat="@drawable/baseline_filter_alt_24"
+            />
+        <ImageButton
+            android:id="@+id/searchItem_btn"
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:layout_gravity="center"
+            android:scaleType="fitEnd"
+            app:srcCompat="@drawable/baseline_sort_24"
+            />
+
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -80,21 +116,6 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="16dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:text="@string/total"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/totalValue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:textSize="24sp" />
-
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -104,6 +125,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
+        app:backgroundTint="#37756F"
+        app:tint="#FFFFFF"
         android:layout_marginBottom="17dp"
         app:srcCompat="@android:drawable/ic_input_add" />
 
@@ -114,8 +137,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="239dp"
+        android:layout_marginBottom="165dp"
         android:clickable="true"
+        app:backgroundTint="#37756F"
+        app:tint="#FFFFFF"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
@@ -128,6 +153,8 @@
         android:layout_marginEnd="17dp"
         android:layout_marginBottom="17dp"
         android:clickable="true"
+        app:backgroundTint="#37756F"
+        app:tint="#FFFFFF"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
@@ -138,6 +165,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
+        app:backgroundTint="#37756F"
+        app:tint="#FFFFFF"
         android:layout_marginBottom="91dp"
         android:clickable="true"
         android:visibility="invisible"
@@ -149,11 +178,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        app:backgroundTint="#37756F"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="165dp"
+        android:layout_marginBottom="235dp"
         android:clickable="true"
         android:visibility="invisible"
         android:src="@android:drawable/ic_input_get" />
 
 
+
 </RelativeLayout>
+
+
+

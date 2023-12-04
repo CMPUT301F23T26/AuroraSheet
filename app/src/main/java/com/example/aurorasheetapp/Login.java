@@ -25,13 +25,14 @@ import com.google.firebase.firestore.QuerySnapshot;
  * all the user fields before sending the data to the database.
  */
 public class Login extends AppCompatActivity {
-    private EditText Username, LoginPassword;
+    EditText Username;
+    EditText LoginPassword;
     private Button Login;
     private TextView NewUser;
 
     private ProgressDialog mdial;
-    private FirebaseAuth authorization;
-    private FirebaseFirestore db;
+    FirebaseAuth authorization;
+    FirebaseFirestore db;
     /**
      * This method initializes the variables and gets the user input from the login page.
      */
@@ -59,7 +60,7 @@ public class Login extends AppCompatActivity {
     /**
      * This method validates the user input and sends the data to the database.
      */
-    private void login() {
+    void login() {
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

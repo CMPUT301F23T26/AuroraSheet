@@ -40,6 +40,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0-alpha01")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("androidx.test.espresso:espresso-intents:3.5.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -51,7 +52,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     implementation ("com.google.firebase:firebase-firestore-ktx")
     implementation ("com.google.android.material:material:1.12.0-alpha01")
-
+    testImplementation("org.mockito:mockito-core:3.+")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
 
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
