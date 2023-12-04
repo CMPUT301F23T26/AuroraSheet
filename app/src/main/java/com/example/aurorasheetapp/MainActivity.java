@@ -704,9 +704,7 @@ public class MainActivity extends AppCompatActivity implements
                     .document(currentUser.getUid())
                     .collection("tags")
                     .document(tag.getDocumentID())
-                    .delete()
-                    .addOnSuccessListener(documentReference -> Toast.makeText(this, "Tag deleted", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(this, "Error deleting tag", Toast.LENGTH_SHORT).show());
+                    .delete();
         }
     }
 

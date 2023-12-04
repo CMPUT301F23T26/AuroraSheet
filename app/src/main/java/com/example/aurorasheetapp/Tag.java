@@ -17,6 +17,10 @@ public class Tag{
 
     private String documentID;
 
+    /**
+     * Constructor of Tag objects
+     * @param name name of the tag in string form
+     */
     public Tag(String name){
         this.name = name;
         this.tagged_items = new ArrayList<>();
