@@ -125,19 +125,22 @@ public class ItemManager {
         ArrayList<Comparator> activeComparators = new ArrayList<>();
 
         // to make iteration easier, we will iterate through all these comparators
-        comparators.add(Comparator.comparing(Item::getName));
+
+        comparators.add(Comparator.comparing(Item::getNameLower));
         comparators.add(Comparator.comparing(Item::getDateOfPurchase));
-        comparators.add(Comparator.comparing(Item::getMake));
         comparators.add(Comparator.comparing(Item::getSerialNumber));
-        comparators.add(Comparator.comparing(Item::getModel));
+        comparators.add(Comparator.comparing(Item::getModelLower));
         comparators.add(Comparator.comparing(Item::getEstimatedValue));
-        comparators.add(Comparator.comparing(Item::getComment));
-        comparators.add(Comparator.comparing(Item::getBriefDescription));
+        comparators.add(Comparator.comparing(Item::getMakeLower));
+        comparators.add(Comparator.comparing(Item::getCommentLower));
+        comparators.add(Comparator.comparing(Item::getDescriptionLower));
+
 
         activeComparators.add(Comparator.comparing(Item::getHiddenness));
 
 
         for (int i = 0; i < 8; i++) {
+
             if (sortingStatus.get(i) == 2) {
                 activeComparators.add(comparators.get(i).reversed());
             } else if (sortingStatus.get(i) == 1) {

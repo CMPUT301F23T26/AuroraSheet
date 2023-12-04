@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,10 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerViewInterface,
         TagFragment.OnFragmentInteractionListener,
         TagItemsFragment.OnFragmentInteractionListener,
-        FilterFragment.OnFilterConfirmListener {
+        FilterFragment.OnFilterConfirmListener,
+        SortingFragment.OnSortingConfirmListener
+{
+
 
     private StorageReference storageReference;
     private ItemDate startDate, endDate;
@@ -104,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements
         deselectAllButton = findViewById(R.id.buttonDeselectAll);
         tagItemButton = findViewById(R.id.buttonTagItem);
         sort_btn = findViewById(R.id.sortItem_btn);
+        search_btn = findViewById(R.id.searchItem_btn);
+
         updateTotalValue();
 
         tagView = findViewById(R.id.tag_View);
@@ -168,7 +174,17 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // Create an instance of the dialog fragment and show it
-                FilterFragment sortFragment = new FilterFragment();
+                FilterFragment filterFragment = new FilterFragment();
+                filterFragment.show(getSupportFragmentManager(), "filter_fragment");
+            }
+        });
+
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an instance of the dialog fragment and show it
+                SortingFragment sortFragment = new SortingFragment();
+
                 sortFragment.show(getSupportFragmentManager(), "sort_fragment");
             }
         });
@@ -519,6 +535,10 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    /**
+     * load the items with specified tag
+     * @param tag tag of the item(s) to be loaaded
+     */
     public void loadTaggedItems(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         firestore.collection("users")
@@ -558,6 +578,10 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
+    /**
+     * set the view to display on the tagged items
+     * @param selected_tags the list of tags selected for filter
+     */
     public void viewTaggedItems(ArrayList<Tag> selected_tags){
         if (selected_tags.size() > 0){
             Tag first_tag = selected_tags.get(0);
@@ -571,7 +595,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
+    /**
+     * add a tag to firebase
+     * @param tag the tag object to be added
+     */
     private void db_add_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -591,6 +618,10 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnSuccessListener(documentReference -> tag.setDocumentID(documentReference.getId()));
     }
 
+    /**
+     * method for deleting a tag from firebase
+     * @param tag tag object to be deleted
+     */
     private void db_del_tag(Tag tag){
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -650,6 +681,10 @@ public class MainActivity extends AppCompatActivity implements
         viewTaggedItems(selected_tags);
     }
 
+    /**
+     * delete an item from firestore with given doucment ID
+     * @param documentId the ID of the documnent to be deleted
+     */
     public void deleteItemFromFirestore(String documentId) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null && documentId != null) {
@@ -663,24 +698,32 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * compute and update the total value of items
+     */
     public void updateTotalValue() {
         totalAmountTextView.setText(itemManager.computeTotal());
     }
+
+ 
+
+    /**
+     * filter the items with given parameters
+     * @param beforeDate  the date range at the before
+     * @param afterDate   the date range at the after
+     * @param descriptionKeyword  the description keyword to be used for sorting
+     * @param make the make string to be used for sorting
+     */
     public void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate, String descriptionKeyword, String make) {
         // Check if the start and end dates are real
         if (afterDate.getYear() == 0) {
             afterDate.setYear(9999);
         }
-
-
-
         // Filter items based on the dates
-
         itemManager.setFilterBeforeDate(beforeDate);
         itemManager.setFilterAfterDate(afterDate);
         itemManager.setFilterDescriptionSubstring(descriptionKeyword);
         itemManager.setFilterMake(make);
-
 
 
         itemManager.doFiltering();
@@ -693,8 +736,6 @@ public class MainActivity extends AppCompatActivity implements
         // Log the values
 
     }
-
-
 
 
     /**
@@ -717,4 +758,40 @@ public class MainActivity extends AppCompatActivity implements
     public void onCancel_Pressed() {
         deselectAllItems();
     }
+    // is this related to a tag thing?
+
+    /**
+     * When the confirm button is pressed from the sortingFragment, pass the information along into the itemManager for sorting
+     *
+     * @param nameMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param dateMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param valueMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param makeMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     * @param descMode integer. 0 means do not sort by this, 1 means sort ascending, 2 means sort descending
+     */
+
+    public void receiveSortingData(int nameMode, int dateMode, int valueMode, int makeMode, int descMode) {
+        ArrayList<Integer> sortingmode = new ArrayList<Integer>();
+
+        sortingmode.add(nameMode);
+        sortingmode.add(dateMode);
+        sortingmode.add(0);     // serial number
+        sortingmode.add(0);     // model
+        sortingmode.add(valueMode);
+        sortingmode.add(makeMode);
+        sortingmode.add(0);     // comment
+        sortingmode.add(descMode);
+
+
+        itemManager.setSortingStatus(sortingmode);
+
+        itemManager.doSorting();
+        itemManager.update_shown_items();
+
+
+        this.adapter.updateItems(itemManager.shownItems);
+        adapter.notifyDataSetChanged();
+
+    }
+
 }

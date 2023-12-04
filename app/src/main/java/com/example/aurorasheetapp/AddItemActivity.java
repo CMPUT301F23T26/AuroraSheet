@@ -127,7 +127,6 @@ public class AddItemActivity extends AppCompatActivity implements SerialNumberEx
         /**
          * This method launches the barcode scanner activity for scanning a barcode.
          */
-
         itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

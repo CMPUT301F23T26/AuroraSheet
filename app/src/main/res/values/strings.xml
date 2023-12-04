@@ -5,6 +5,8 @@
     <string name="main_activity_label">Main Activity</string>
     <!-- Add other string resources here as needed -->
     <string name="total">Total Estimated Value:</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
     <string-array name="spinner_options">
         <item>Filter By:</item>
         <item>Date</item>
