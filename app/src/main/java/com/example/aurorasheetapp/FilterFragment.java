@@ -2,10 +2,10 @@ package com.example.aurorasheetapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,23 +17,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class SortFragment extends DialogFragment {
+public class FilterFragment extends DialogFragment {
     private TextView date;
     private Button btnConfirm;
     private Spinner spinner;
     private RadioButton radioAscending, radioDescending;
     private int startYear, startMonth, startDay, endYear, endMonth, endDay;
 
-    public interface OnDateRangeSelectedListener {
-        void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay, String filterBy, String descriptionKeyword, String make, String sortOrder);
+    public interface OnFilterConfirmListener {
+        void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate,  String descriptionKeyword, String make);
     }
 
-    private OnDateRangeSelectedListener mListener;
+    private OnFilterConfirmListener mListener;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnDateRangeSelectedListener) {
-            mListener = (OnDateRangeSelectedListener) context;
+        if (context instanceof OnFilterConfirmListener) {
+            mListener = (OnFilterConfirmListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnDateRangeSelectedListener");
         }
@@ -52,7 +52,7 @@ public class SortFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.sort_frag, container, false);
+        View view = inflater.inflate(R.layout.filter_frag, container, false);
 
         date = view.findViewById(R.id.filter_date);
         btnConfirm = view.findViewById(R.id.done);
@@ -64,6 +64,7 @@ public class SortFragment extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,8 +73,22 @@ public class SortFragment extends DialogFragment {
                 String make = ((EditText) view.findViewById(R.id.filter_make)).getText().toString();
                 String sortOrder = radioAscending.isChecked() ? "Ascending" : "Descending";
 
+
+
+
+
+
+                String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
+                String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
+
+                // Create ItemDate objects
+
+                ItemDate startDate = new ItemDate(startDateFormat);
+                ItemDate endDate = new ItemDate(endDateFormat);
+
+
                 if (mListener != null) {
-                    mListener.onDateRangeSelected(startYear, startMonth, startDay, endYear, endMonth, endDay, selectedOption, descriptionKeyword, make, sortOrder);
+                    mListener.onDateRangeSelected(startDate, endDate, descriptionKeyword, make);
                 }
                 dismiss();
             }
@@ -103,12 +118,12 @@ public class SortFragment extends DialogFragment {
         datePicker.setOnDateRangeSelectedListener(new DatePicker.OnDateRangeSelectedListener() {
             @Override
             public void onDateRangeSelected(int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay) {
-                SortFragment.this.startYear = startYear;
-                SortFragment.this.startMonth = startMonth;
-                SortFragment.this.startDay = startDay;
-                SortFragment.this.endYear = endYear;
-                SortFragment.this.endMonth = endMonth;
-                SortFragment.this.endDay = endDay;
+                FilterFragment.this.startYear = startYear;
+                FilterFragment.this.startMonth = startMonth;
+                FilterFragment.this.startDay = startDay;
+                FilterFragment.this.endYear = endYear;
+                FilterFragment.this.endMonth = endMonth;
+                FilterFragment.this.endDay = endDay;
 
                 String startDate = formatDateString(startYear, startMonth, startDay);
                 String endDate = formatDateString(endYear, endMonth, endDay);
