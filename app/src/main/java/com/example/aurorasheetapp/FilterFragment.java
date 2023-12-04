@@ -31,9 +31,12 @@ public class FilterFragment extends DialogFragment {
     public interface OnFilterConfirmListener {
         void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate,  String descriptionKeyword, String make);
     }
-
     private OnFilterConfirmListener mListener;
 
+    /**
+     * Attaches the fragment to its context and ensures the context implements the OnFilterConfirmListener interface.
+     * This is crucial for the communication between the fragment and its host activity.
+     */
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFilterConfirmListener) {
@@ -43,6 +46,11 @@ public class FilterFragment extends DialogFragment {
         }
     }
 
+
+    /**
+     * Sets the dimensions of the dialog when the fragment starts. This ensures the dialog
+     * occupies the desired amount of screen space.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -53,6 +61,10 @@ public class FilterFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Inflates the layout for the filter fragment, initializes UI components, and sets up the necessary event listeners.
+     * It also populates the spinner with options and manages the interactions for setting filter criteria.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,21 +88,12 @@ public class FilterFragment extends DialogFragment {
                 String descriptionKeyword = ((EditText) view.findViewById(R.id.filter_keyword)).getText().toString();
                 String make = ((EditText) view.findViewById(R.id.filter_make)).getText().toString();
                 String sortOrder = radioAscending.isChecked() ? "Ascending" : "Descending";
-
-
-
-
-
-
                 String startDateFormat = startDay + "-" + (startMonth + 1) + "-" + startYear;
                 String endDateFormat = endDay + "-" + (endMonth + 1) + "-" + endYear;
 
                 // Create ItemDate objects
-
                 ItemDate startDate = new ItemDate(startDateFormat);
                 ItemDate endDate = new ItemDate(endDateFormat);
-
-
                 if (mListener != null) {
                     mListener.onDateRangeSelected(startDate, endDate, descriptionKeyword, make);
                 }
@@ -105,18 +108,15 @@ public class FilterFragment extends DialogFragment {
             }
         });
 
-        // Add functionality to the reset button
-        Button resetButton = view.findViewById(R.id.reset);
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Reset logic here
-            }
-        });
+
 
         return view;
     }
 
+    /**
+     * Displays the date picker dialog for the user to select a date range.
+     * Upon date selection, updates the corresponding UI elements with the chosen dates.
+     */
     private void showDatePickerDialog() {
         DatePicker datePicker = new DatePicker();
         datePicker.setOnDateRangeSelectedListener(new DatePicker.OnDateRangeSelectedListener() {
@@ -138,6 +138,15 @@ public class FilterFragment extends DialogFragment {
         datePicker.show(getParentFragmentManager(), "datePicker");
     }
 
+    /**
+     * Formats the date string to a readable format (dd/MM/yyyy). This method is used to convert date components
+     * into a formatted date string.
+     *
+     * @param year  The year component of the date.
+     * @param month The month component of the date.
+     * @param day   The day component of the date.
+     * @return The formatted date string.
+     */
     private String formatDateString(int year, int month, int day) {
         return String.format("%02d/%02d/%04d", day, month + 1, year);
     }

@@ -14,15 +14,30 @@ public class DatePicker extends DialogFragment {
         void onDateRangeSelected(int startYear, int startMonth, int startDay,
                                  int endYear, int endMonth, int endDay);
     }
-
     private OnDateRangeSelectedListener listener;
     private boolean isStartDate = true; // To track if we are setting the start or end date
 
+    /**
+     * Sets the listener for the date range selection. The provided listener will be notified
+     * when the user has selected both the start and end dates.
+     *
+     * @param listener The listener that will be called with the selected date range.
+     */
     public void setOnDateRangeSelectedListener(OnDateRangeSelectedListener listener) {
         this.listener = listener;
     }
 
 
+
+    /**
+     * Creates and returns a DatePickerDialog instance. This dialog allows users to select a date range (start and end dates).
+     * Once the start date is selected, another DatePickerDialog is shown for the end date. After both dates are selected,
+     * the listener is notified with the chosen date range.
+     *
+     * @param savedInstanceState If the dialog is being reinitialized after a prior shutdown, this bundle
+     *                           contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     * @return Returns a new dialog instance to be displayed by the fragment.
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Calendar calendar = Calendar.getInstance();
