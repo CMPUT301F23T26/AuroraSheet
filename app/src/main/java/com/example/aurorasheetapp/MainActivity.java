@@ -343,6 +343,10 @@ public class MainActivity extends AppCompatActivity implements
         return count;
     }
 
+    /**
+     * Initialize all items as unselected
+     *
+     */
     private void initialiseAsUnselected() {
         for (Item thisitem:itemManager.getItems()) {
             thisitem.unselect();
@@ -629,6 +633,12 @@ public class MainActivity extends AppCompatActivity implements
         selected_tag = null;
     }
 
+    /**
+     * Implementation of OnFragmentInteractionListener interface
+     * @param newTag new Tag object generated from the fragment
+     * @param oldTag original Tag object passed into the fragment
+     * @param editing if only editing an existing Tag object
+     */
     @Override
     public void onOkPressed(Tag newTag, Tag oldTag, Boolean editing) {
         // is editing a selected expense
