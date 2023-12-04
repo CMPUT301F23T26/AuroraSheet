@@ -705,12 +705,7 @@ public class MainActivity extends AppCompatActivity implements
         totalAmountTextView.setText(itemManager.computeTotal());
     }
 
-    public void onDateRangeSelected(ItemDate beforeDate, ItemDate afterDate, String descriptionKeyword, String make) {
-        // Check if the start and end dates are real
-        if (afterDate.getYear() == 0) {
-            afterDate.setYear(9999);
-        }
-
+ 
 
     /**
      * filter the items with given parameters
