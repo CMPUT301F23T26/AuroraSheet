@@ -32,6 +32,12 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
         this.recyclerViewInterface  = recyclerViewInterface;
     }
 
+    public void updateItems(List<Item> newListItems) {
+        this.listItems = newListItems;
+        notifyDataSetChanged();
+    }
+
+
     @NonNull
     @Override
     /**
@@ -104,6 +110,7 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
 
         public LinearLayout background;
 
+
         /**
          * This constructor takes in a view and a recycler view interface. It sets the views to the
          * views in the list_item layout.
@@ -123,11 +130,12 @@ public class CustomArrayAdapter extends RecyclerView.Adapter<CustomArrayAdapter.
             background = (LinearLayout) itemView.findViewById(R.id.Background);
             picture = (ImageView) itemView.findViewById(R.id.picture);
 
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (recyclerViewInterface != null) {
-                        int position = getAdapterPosition();
+                        int position = getBindingAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             recyclerViewInterface.onItemClick(position);
                         }

@@ -2,6 +2,7 @@ package com.example.aurorasheetapp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents an item with a date of purchase, description, make, serial number, model, estimated value, comment
@@ -18,8 +19,9 @@ public class Item {
     private String comment;
     private ArrayList<String> image;
     private int topImageIndex;
-    private String documentID;
     private String path;
+    private String documentID;
+    private String taggedDocumentID;
 
     private Boolean isSelected;
     /**
@@ -251,6 +253,10 @@ public class Item {
     public void setDocumentId(String documentId) {
         this.documentID = documentId;
     }
+
+    public String getTaggedDocumentId() {return taggedDocumentID;}
+
+    public void setTaggedDocumentId(String id) {taggedDocumentID = id;}
 
 }
 

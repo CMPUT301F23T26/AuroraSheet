@@ -1,11 +1,14 @@
 package com.example.aurorasheetapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,10 +24,16 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +45,26 @@ import java.util.UUID;
 import com.example.aurorasheetapp.ImageHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.firestore.v1.Document;
+
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
 
 /**
  * This class is responsible for providing the correct behavior for edit activities
  */
-public class EditItemActivity extends AppCompatActivity {
+public class EditItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback{
+    private StorageReference storageReference;
     private Button chooseImageButton, deleteImageButton, backButton, dateEditButton
-            , imageLeft, imageRight, camera;
+            , imageLeft, imageRight, camera, scanBarcodeButton_edit, scanSerialButton;
     private ImageView itemImage;
     private EditText itemName, itemDescription, itemValue, itemMake, itemModel, itemComment,
                          itemSerial;
@@ -56,11 +77,16 @@ public class EditItemActivity extends AppCompatActivity {
     //added this so we can reflect edits in firebase
     private FirebaseFirestore firestore;
     private String documentId;
+    private String userId;
 
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        storageReference = FirebaseStorage.getInstance().getReference();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = currentUser != null ? currentUser.getUid() : null;
+        userId = currentUser != null ? currentUser.getUid() : null;
         firestore = FirebaseFirestore.getInstance();
 
         super.onCreate(savedInstanceState);
@@ -91,8 +117,19 @@ public class EditItemActivity extends AppCompatActivity {
         imageLeft = findViewById(R.id.imageLeft_edit);
         imageRight = findViewById(R.id.imageRight_edit);
         camera = findViewById(R.id.cameraButton_edit);
-
-
+        scanSerialButton = findViewById(R.id.scanSerialButton);
+        scanBarcodeButton_edit = findViewById(R.id.scanBarcodeButton_edit);
+        scanBarcodeButton_edit.setOnClickListener(v -> {
+            scanBarcode();
+        });
+        scanSerialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the camera to scan the serial number
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                launchCameraActivity.launch(intent);
+            }
+        });
         //TODO: store / pass in image
 
         //get extras from passed in item
@@ -114,14 +151,18 @@ public class EditItemActivity extends AppCompatActivity {
         comment = inputIntent.getStringExtra("comment");
         time = inputIntent.getStringExtra("time");
         index = inputIntent.getIntExtra("index", -1);
-        serial = Double.toString(inputIntent.getDoubleExtra("serial", 0));
+        serial = inputIntent.getStringExtra("serial");
         imageIndex = inputIntent.getIntExtra("imageIndex", 0);
+
+
         //if the item already contains the image, initialize
          if(imageIndex != -1){
             images = inputIntent.getStringArrayListExtra("images");
+
             Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
             itemImage.setImageBitmap(bitmap);
         }
+
 
         //set the attributes in the view
         itemName.setText(name);
@@ -196,17 +237,17 @@ public class EditItemActivity extends AppCompatActivity {
                     itemUpdate.put("model", itemModel.getText().toString());
                     itemUpdate.put("make", itemMake.getText().toString());
                     itemUpdate.put("comment", itemComment.getText().toString());
-                    itemUpdate.put("time", itemDate.getText().toString());
-                    itemUpdate.put("serial", Double.parseDouble(itemSerial.getText().toString()));
+                    itemUpdate.put("date", itemDate.getText().toString());
+                    itemUpdate.put("path", path);
+                    itemUpdate.put("images", images);
+                    itemUpdate.put("imageIndex", imageIndex);
+                    itemUpdate.put("serial", itemSerial.getText().toString());
 
                     if (documentId == null) {
                         // Show a Toast message to the user
                         Toast.makeText(EditItemActivity.this, "Can't update try again", Toast.LENGTH_LONG).show();
                         return; // Exit the method to prevent further execution
                     }
-
-
-
 
                     //trace the exact path of where the items are placed
                     firestore.collection("users").document(userId).collection("items").document(documentId).update(itemUpdate)
@@ -228,6 +269,10 @@ public class EditItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent outputIntent = new Intent();
+                //delete images when deletion
+                for(String name : images){
+                    ImageHelpers.deleteFromStorage(storageReference, getApplicationContext(), name);
+                }
                 outputIntent.putExtra("isDelete", true);
                 outputIntent.putExtra("index", index);
                 setResult(1, outputIntent);
@@ -246,18 +291,21 @@ public class EditItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    itemImage.setImageDrawable(null);
+
+                    Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
+                    itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
                 }
                 else if(images.size() == 0){
                 }
-                //TODO need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    imageIndex = 0;
+                    imageIndex = images.size() - 1;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
                 }
@@ -313,6 +361,10 @@ public class EditItemActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
+            Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
             Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
             return false;
@@ -330,6 +382,19 @@ public class EditItemActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+    /**
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
+     */
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(EditItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
+        }
     }
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
             new ActivityResultContracts
@@ -351,11 +416,29 @@ public class EditItemActivity extends AppCompatActivity {
                             path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                             images.add(uniqueID);
                             itemImage.setVisibility(View.VISIBLE);
+                            ImageHelpers.uploadImage(storageReference, getApplicationContext(), selectedImageBitmap, uniqueID);
                             //index for correctly selecting image, no need to implement in Add
                         }
                         catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                }
+            });
+    ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // get the image bitmap from the camera activity and extract the serial number
+                    if (data != null && data.getExtras() != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        ImageHelpers imageHelpers = new ImageHelpers();
+                        Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver(), EditItemActivity.this);
+                        int rotationDegree = imageHelpers.getRotationDegree(imageUri);
+
+                        SerialNumberExtractor serialNumberExtractor = new SerialNumberExtractor();
+                        serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree, EditItemActivity.this);
                     }
                 }
             });
@@ -372,7 +455,31 @@ public class EditItemActivity extends AppCompatActivity {
                        path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                        images.add(uniqueID);
                        itemImage.setVisibility(View.VISIBLE);
+                       ImageHelpers.uploadImage(storageReference, getApplicationContext(), imageBitmap, uniqueID);
                    }
                }
             });
+
+    /**
+     * This method launches the barcode scanner activity for scanning a barcode.
+     */
+    private void scanBarcode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan a barcode");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            String barcode = result.getContents();
+            itemDescription.setText(barcode);
+        }
+        else{
+            Toast.makeText(this, "No barcode found", Toast.LENGTH_SHORT).show();
+        }
+    });
+
 }

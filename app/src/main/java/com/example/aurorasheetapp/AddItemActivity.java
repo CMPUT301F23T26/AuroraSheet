@@ -2,15 +2,20 @@ package com.example.aurorasheetapp;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,11 +24,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import com.journeyapps.barcodescanner.CaptureActivity;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,11 +50,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.grpc.Compressor;
+import io.grpc.Context;
+
 /**
  * This class manages adding new items to the item list. It gets user input and validates
  * all the item fields before sending the data back to the main item list activity.
  */
-public class AddItemActivity extends AppCompatActivity {
+
+public class AddItemActivity extends AppCompatActivity implements SerialNumberExtractor.SerialNumberCallback {
+
+    private Button scanBarcodeButton;
+
     private Button chooseImageButton;
     private ImageView itemImage;
     private EditText itemName;
@@ -48,10 +74,13 @@ public class AddItemActivity extends AppCompatActivity {
     private Button cameraImage;
     private EditText itemValue;
     private EditText itemSerial;
+    private Button scanSerialButton;
     private EditText itemMake;
     private EditText itemModel;
     private EditText itemComment;
     private FloatingActionButton addItemButton;
+    private StorageReference storageReference;
+    private LinearProgressIndicator progress;
     ArrayList<String> images;
     int imageIndex;
     String path;
@@ -66,6 +95,8 @@ public class AddItemActivity extends AppCompatActivity {
 
         //init a firebase
         firestore = FirebaseFirestore.getInstance();
+        FirebaseApp.initializeApp(AddItemActivity.this);
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         chooseImageButton = findViewById(R.id.selectImageButton);
         itemImage = findViewById(R.id.imageViewItem);
@@ -75,6 +106,7 @@ public class AddItemActivity extends AppCompatActivity {
         dateText = findViewById(R.id.dateText);
         itemValue = findViewById(R.id.itemValue);
         itemSerial = findViewById(R.id.itemSerialNumber);
+        scanSerialButton = findViewById(R.id.scanSerialButton);
         itemMake = findViewById(R.id.itemMake);
         itemModel = findViewById(R.id.itemModel);
         itemComment = findViewById(R.id.itemComment);
@@ -83,9 +115,18 @@ public class AddItemActivity extends AppCompatActivity {
         imageLeft = findViewById(R.id.imageLeft_add);
         imageRight = findViewById(R.id.imageRight_add);
         cameraImage = findViewById(R.id.cameraButton_add);
+        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
+        scanBarcodeButton.setOnClickListener(v -> {
+            scanbarcode();
+        });
+
 
         imageIndex = -1;
         images = new ArrayList<>();
+
+        /**
+         * This method launches the barcode scanner activity for scanning a barcode.
+         */
 
         itemDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,11 +149,19 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
-
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageChooser();
+            }
+        });
+
+        scanSerialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the camera to scan the serial number
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                launchCameraActivity.launch(intent);
             }
         });
         addItemButton.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +177,7 @@ public class AddItemActivity extends AppCompatActivity {
                 String model = itemModel.getText().toString();
                 String comment = itemComment.getText().toString();
 
-                if(!validateInput()){
+                if (!validateInput()) {
                     return;
                 }
 
@@ -139,13 +188,6 @@ public class AddItemActivity extends AppCompatActivity {
                     newvalue = Double.parseDouble(value);
                 } catch (NumberFormatException e) {
                     Toast.makeText(AddItemActivity.this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                try {
-                    newserial = Long.parseLong(serial);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(AddItemActivity.this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -162,10 +204,13 @@ public class AddItemActivity extends AppCompatActivity {
                 newItem.put("description", description);
                 newItem.put("date", date);
                 newItem.put("value", newvalue);
-                newItem.put("serial", newserial);
+                newItem.put("serial", serial);
                 newItem.put("make", make);
                 newItem.put("model", model);
                 newItem.put("comment", comment);
+                newItem.put("path", path);
+                newItem.put("images", images);
+                newItem.put("imageIndex", imageIndex);
 
                 //adding objects into database based on user
                 firestore.collection("users")
@@ -194,8 +239,6 @@ public class AddItemActivity extends AppCompatActivity {
                             finish();
                         })
                         .addOnFailureListener(e -> Toast.makeText(AddItemActivity.this, "Error adding item", Toast.LENGTH_SHORT).show());
-
-
             }
         });
         imageDelete.setOnClickListener(new View.OnClickListener() {
@@ -203,18 +246,20 @@ public class AddItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //if only one image and coming from input
                 if(images.size() == 1){
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    itemImage.setImageDrawable(null);
+
+                    Drawable defaultImage = ImageHelpers.getDefaultDrawable(getApplicationContext());
+                    itemImage.setImageDrawable(defaultImage);
                     imageIndex--;
                     itemImage.setVisibility(View.GONE);
+                } else if (images.size() == 0) {
                 }
-                else if(images.size() == 0){
-                }
-                //TODO might need to delete from local repository, as well
                 //if multiple, set to the next one on the stack
                 else{
+                    ImageHelpers.deleteFromStorage(storageReference,getApplicationContext(), images.get(imageIndex));
                     images.remove(imageIndex);
-                    imageIndex = 0;
+                    imageIndex = images.size() - 1;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
                 }
@@ -223,7 +268,7 @@ public class AddItemActivity extends AppCompatActivity {
         imageLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageIndex > 0){
+                if (imageIndex > 0) {
                     imageIndex--;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
@@ -233,7 +278,7 @@ public class AddItemActivity extends AppCompatActivity {
         imageRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageIndex + 1 < images.size()){
+                if (imageIndex + 1 < images.size()) {
                     imageIndex++;
                     Bitmap bitmap = ImageHelpers.loadImageFromStorage(path, images.get(imageIndex));
                     itemImage.setImageBitmap(bitmap);
@@ -250,6 +295,47 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     /**
+     * This method validates all of the user input for adding a new item.
+     */
+    public boolean validateInput() {
+        if (!ItemValidator.validateItemName(itemName.getText().toString())) {
+            Toast.makeText(this, "Please enter a valid name", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!ItemValidator.validateItemDescription(itemDescription.getText().toString())) {
+            Toast.makeText(this, "Please enter a valid description", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!ItemValidator.validateItemValue(itemValue.getText().toString())) {
+            Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if(!ItemValidator.validateSerialNumber(itemSerial.getText().toString())){
+            Toast.makeText(this, "Please enter a valid serial number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
+
+            Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!ItemValidator.validateItemModel(itemModel.getText().toString())) {
+            Toast.makeText(this, "Please enter a valid model", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!ItemValidator.validateItemComment(itemComment.getText().toString())) {
+            Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!ItemValidator.validateDate(dateText.getText().toString())){
+            Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * This method launches the image chooser activity for adding an image to the item.
      */
     public void imageChooser() {
@@ -258,37 +344,20 @@ public class AddItemActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         launchImageChoseActivity.launch(Intent.createChooser(intent, "Select Picture"));
     }
-
     /**
-     * This method validates all of the user input for adding a new item.
+     * This method is called when the serial number is extracted from the image.
+     * @param serialNumber
      */
-    public boolean validateInput(){
-        if(!ItemValidator.validateItemName(itemName.getText().toString())){
-            Toast.makeText(this, "Please enter a valid name", Toast.LENGTH_SHORT).show();
-            return false;
+    @Override
+    public void onSerialNumberExtracted(String serialNumber) {
+        if (serialNumber != null) {
+            runOnUiThread(() -> itemSerial.setText(serialNumber));
+        } else {
+            // Handle the case when serial number extraction fails
+            runOnUiThread(() -> Toast.makeText(AddItemActivity.this, "Failed to extract serial number", Toast.LENGTH_SHORT).show());
         }
-        if(!ItemValidator.validateItemDescription(itemDescription.getText().toString())){
-            Toast.makeText(this, "Please enter a valid description", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(!ItemValidator.validateItemValue(itemValue.getText().toString())){
-            Toast.makeText(this, "Please enter a valid value", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(!ItemValidator.validateItemMake(itemMake.getText().toString())){
-            Toast.makeText(this, "Please enter a valid make", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(!ItemValidator.validateItemModel(itemModel.getText().toString())){
-            Toast.makeText(this, "Please enter a valid model", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(!ItemValidator.validateItemComment(itemComment.getText().toString())){
-            Toast.makeText(this, "Please enter a valid comment", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
     }
+
     ActivityResultLauncher<Intent> launchImageChoseActivity = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
@@ -307,6 +376,7 @@ public class AddItemActivity extends AppCompatActivity {
                         path = ImageHelpers.saveToInternalStorage(this, selectedImageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), selectedImageBitmap, uniqueID);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -314,12 +384,32 @@ public class AddItemActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+    ActivityResultLauncher<Intent> launchCameraActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    // get the image bitmap from the camera activity and extract the serial number
+                    if (data != null && data.getExtras() != null) {
+                        Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                        ImageHelpers imageHelpers = new ImageHelpers();
+                        Uri imageUri = imageHelpers.getImageUriFromBitmap(imageBitmap, getContentResolver(), AddItemActivity.this);
+                        int rotationDegree = imageHelpers.getRotationDegree(imageUri);
+
+                        SerialNumberExtractor serialNumberExtractor = new SerialNumberExtractor();
+                        serialNumberExtractor.extractSerialNumberFromImage(imageBitmap, rotationDegree, AddItemActivity.this);
+                    }
+                }
+            });
+
     ActivityResultLauncher<Intent> cameraActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                if(result.getResultCode() == Activity.RESULT_OK){
+                if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    if (data != null && data.getExtras() != null){
+                    if (data != null && data.getExtras() != null) {
                         Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                         itemImage.setImageBitmap(imageBitmap);
                         imageIndex++;
@@ -327,7 +417,30 @@ public class AddItemActivity extends AppCompatActivity {
                         path = ImageHelpers.saveToInternalStorage(this, imageBitmap, uniqueID);
                         images.add(uniqueID);
                         itemImage.setVisibility(View.VISIBLE);
+                        ImageHelpers.uploadImage(storageReference, getApplicationContext(), imageBitmap, uniqueID);
                     }
                 }
             });
+    /**
+     * This method launches the barcode scanner activity for scanning a barcode.
+     */
+    private void scanbarcode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan a barcode");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            String barcode = result.getContents();
+            itemDescription.setText(barcode);
+        }
+        else{
+            Toast.makeText(this, "No barcode found", Toast.LENGTH_SHORT).show();
+        }
+    });
+
 }

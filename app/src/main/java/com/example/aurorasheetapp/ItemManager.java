@@ -5,17 +5,31 @@ import java.util.List;
 
 public class ItemManager {
     private List<Item> listItems;
+    private List<Item> tagged_Items;
 
     public ItemManager() {
         listItems = new ArrayList<>();
+        tagged_Items = new ArrayList<>();
     }
 
     public List<Item> getItems() {
         return listItems;
     }
 
+    public List<Item> getItems(Boolean showTagItem){
+        return tagged_Items;
+    }
+
     public Item getItem(int index) {
         return listItems.get(index);
+    }
+
+    public void addTagged_Items(Item item) {this.tagged_Items.add(item);}
+
+    public void delTagged_Items(Item item) {this.tagged_Items.remove(item);}
+
+    public void setTagged_Items(List<Item> tagged_Items){
+        this.tagged_Items = tagged_Items;
     }
 
     public void add(Item item) {

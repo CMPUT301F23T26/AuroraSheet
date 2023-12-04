@@ -78,9 +78,11 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
      */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tag tag = tags.get(position);
-        boolean status = tag.getStatus();
+        boolean main_status = tag.getStatus();
+        boolean tagItem_status = tag.getSelect_tagItem();
+
         holder.tagName.setText(tag.getName());
-        if (status) {
+        if (main_status || tagItem_status) {
             holder.tagName.setTextColor(Color.WHITE);
             holder.tagName.setBackgroundColor(Color.GREEN);
         } else {
@@ -93,13 +95,16 @@ public class CustomTagAdapter extends RecyclerView.Adapter<CustomTagAdapter.View
                 onItemClickListener.onItemClick(tag);
             }
         });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                onItemLongClickListener.onItemLongClick(tag);
-                return false;
-            }
-        });
+
+        if (onItemLongClickListener != null){
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onItemLongClickListener.onItemLongClick(tag);
+                    return false;
+                }
+            });
+        }
 
     }
 

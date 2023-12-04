@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/MainView"
     android:layout_width="match_parent"
+    android:background="@drawable/gradient"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -113,7 +114,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="165dp"
+        android:layout_marginBottom="239dp"
         android:clickable="true"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_edit" />
@@ -141,5 +142,18 @@
         android:clickable="true"
         android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonTagItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="165dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        android:src="@drawable/tag_btn_icon" />
+
 
 </RelativeLayout>

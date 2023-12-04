@@ -103,6 +103,17 @@
                         android:inputType="textMultiLine"
                         android:paddingLeft="5dp"
                         android:textSize="18sp" />
+                    <Button
+                        android:id="@+id/scanBarcodeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/itemDescription"
+                        android:text="Scan Barcode"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="25dp"/>
+
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -159,7 +170,6 @@
 
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="2dp"
-                        android:layout_marginEnd="319dp"
                         android:text="Date"
                         android:textColor="#FF0000" />
 
